@@ -49,7 +49,7 @@ class CustomButton extends StatelessWidget {
           elevation: 0,
           side: isOutlined
               ? BorderSide(
-                  color: AppColors.kPrimaryColor.withOpacity(0.5),
+                  color: AppColors.kPrimaryColor.withValues(alpha: 0.5),
                 ) // Slightly visible border for outlined
               : BorderSide.none,
           shape: RoundedRectangleBorder(
