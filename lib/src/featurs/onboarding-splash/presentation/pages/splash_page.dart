@@ -7,17 +7,22 @@ class SplashPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-            Image.asset(ImagesConstant.kAppIcon,height: MediaQuery.of(context).size.width/1.5,),
-         CustomText("GRABBY",variant: TextVariant.displayMedium,
-           color:AppColors.kPrimaryColor,
-           )
+      body: Center(child: GestureDetector(
+        onTap: () {
+          context.go(RoutesPath.onboardingPath);
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+              Image.asset(ImagesConstant.kAppIcon,height: MediaQuery.of(context).size.width/1.5,),
+           CustomText("GRABBY",variant: TextVariant.displayMedium,
+             color:AppColors.kPrimaryColor,
+             )
 
-          ],
-        )),
+            ],
+          ),
+      )),
     );
   }
 }

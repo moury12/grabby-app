@@ -1,3 +1,4 @@
+
 import '../../src_export.dart';
 
 class AppRouter {
@@ -9,14 +10,14 @@ class AppRouter {
         builder: (BuildContext context, GoRouterState state) {
           return const SplashPage();
         },
-        // routes: <RouteBase>[
-        //   GoRoute(
-        //     path: 'details',
-        //     builder: (BuildContext context, GoRouterState state) {
-        //       return const DetailsScreen();
-        //     },
-        //   ),
-        // ],
+
+      ), GoRoute(
+        path: RoutesPath.onboardingPath,
+
+        builder: (BuildContext context, GoRouterState state) {
+          return const OnboardingPage();
+        },
+
       ),
     ],
   );
