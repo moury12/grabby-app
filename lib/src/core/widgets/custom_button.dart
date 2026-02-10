@@ -10,8 +10,8 @@ class CustomButton extends StatelessWidget {
   final IconData? icon; // Use Flutter IconData
   final bool isOutlined;
   final bool isLoading;
-  final double? width;
-  final double? height;
+  final bool isExpanding;
+
   final double borderRadius;
   final TextStyle? textStyle;
 
@@ -25,10 +25,9 @@ class CustomButton extends StatelessWidget {
     this.icon,
     this.isOutlined = false,
     this.isLoading = false,
-    this.width,
-    this.height,
+
     this.borderRadius = 12.0,
-    this.textStyle,
+    this.textStyle,  this.isExpanding =true,
   });
 
   @override
@@ -37,8 +36,7 @@ class CustomButton extends StatelessWidget {
     final defaultColor = AppColors.kPrimaryColor;
 
     return SizedBox(
-      width: width ?? double.infinity,
-      height: height ?? 50.0,
+      width: isExpanding?double.infinity:null,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: isOutlined
@@ -110,13 +108,13 @@ class CustomButton extends StatelessWidget {
                     text,
                     style:
                         textStyle ??
-                        theme.textTheme.titleMedium?.copyWith(
+                        theme.textTheme.titleSmall?.copyWith(
                           color:
                               textColor ??
                               (isOutlined
                                   ? AppColors.kPrimaryColor
                                   : Colors.white),
-                          fontWeight: FontWeight.w600,
+                          // fontWeight: FontWeight.w600,
                         ),
                   ),
                 ],
