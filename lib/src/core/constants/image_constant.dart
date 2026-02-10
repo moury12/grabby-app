@@ -1,4 +1,4 @@
-class AssestImagesConstant {
+class ImagesConstant {
   // Images
   static const String kLogo =
       'assets/images/logo.png'; // Kept from user's original code, though not in ls output, maybe it exists or user intends to add it.
@@ -11,7 +11,7 @@ class AssestImagesConstant {
   static const String kVerifyAccImg = 'assets/images/verify_acc_img.svg';
 
   // Icons
-  static const String kAppIcon = 'assets/icons/app_icon.svg';
+  static const String kAppIcon = 'assets/icons/app_icon.png';
   static const String kCalenderIcon = 'assets/icons/calender_icon.svg';
   static const String kCallIcon = 'assets/icons/call_icon.svg';
   static const String kCancelIcon = 'assets/icons/cancel_icon.svg';
