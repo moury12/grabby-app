@@ -39,20 +39,20 @@ class OnboardingPage extends StatelessWidget {
       },
       {
         'title': CustomText(
-          AppStaticStrings.findTheBestCafe,
+          AppStaticStrings.pickUpWithoutWaiting,
           variant: TextVariant.headlineLarge,
           color: AppColors.kWhiteTextColor,
         ),
-        'subtitle': AppStaticStrings.searchExploreMenu,
+        'subtitle': AppStaticStrings.chooseCarOrCounter,
         'img': ImagesConstant.kOnboard3Img,
       },
       {
         'title': CustomText(
-          AppStaticStrings.findTheBestCafe,
+          AppStaticStrings.earnLoaylty,
           variant: TextVariant.headlineLarge,
           color: AppColors.kWhiteTextColor,
         ),
-        'subtitle': AppStaticStrings.searchExploreMenu,
+        'subtitle': AppStaticStrings.collectDigitalStamps,
         'img': ImagesConstant.kOnboard4Img,
       },
     ];
@@ -66,4 +66,3 @@ class OnboardingPage extends StatelessWidget {
     );
   }
 }
-

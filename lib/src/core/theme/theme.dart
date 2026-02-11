@@ -30,8 +30,8 @@ class AppTheme {
         iconTheme: IconThemeData(color: AppColors.kTextColor),
         titleTextStyle: TextStyle(
           color: AppColors.kTextColor,
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
         ),
       ),
 

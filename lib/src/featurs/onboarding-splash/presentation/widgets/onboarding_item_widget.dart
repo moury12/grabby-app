@@ -64,7 +64,9 @@ class OnboardingItemWidget extends StatelessWidget {
                     padding: AppPadding.getPadding12V(context),
                     child: CustomButton(
                       text: AppStaticStrings.startOrdering,
-                      onPressed: () {},
+                      onPressed: () {
+                        context.go(RoutesPath.loginPath);
+                      },
                     ),
                   ),
               ],

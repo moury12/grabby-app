@@ -3,4 +3,37 @@ class AppStaticStrings {
   static const String findTheBestCafe="Find the Best Cafés Near You";
   static const String startOrdering="Start Ordering";
   static const String searchExploreMenu="Search, explore menus, and add items to your cart effortlessly.";
+  static const String pickUpWithoutWaiting="Pick Up Without Waiting";
+  static const String chooseCarOrCounter="Choose car or counter pickup and enjoy your coffee instantly";
+  static const String earnLoaylty="Earn Loyalty Stamps";
+  static const String collectDigitalStamps="Collect digital stamps at your favorite cafés and redeem rewards.";
+
+  static const String gladToMeetYouAgain = "Glad to meet you again!";
+  static const String loginAccount = "Login Account";
+  static const String emailAddressOrPhoneNumber = "Email Address Or Phone Number";
+  static const String password = "Password";
+  static const String forgotThePassword = "Forgot the Password";
+  static const String logIn = "Log In";
+  static const String signUp = "Sign Up";
+  static const String letsGetYouSetUp = "Let's get you set up and ready to go.";
+  static const String preferredName = "Preferred Name";
+  static const String email = "Email";
+  static const String phoneNumber = "Phone Number";
+  static const String confirmPassword = "Confirm Password";
+  static const String iHaveReadAndAgree = "I have read and agree to Grabby Terms and Conditions and Policy.";
+  static const String forgotPassword = "Forgot Password";
+  static const String selectContactMethod = "Select the contact method we should use to reset your password";
+  static const String verify = "Verify";
+  static const String verification = "Verification";
+  static const String verifyYourAccount = "Verify Your Account";
+  static const String sentVerificationCode = "We've sent a verification code to your email/phone. Please check and enter it below.";
+  static const String didntGetCode = "Didn't get a code? Resend Code";
+  static const String verifyCode = "Verify Code";
+  static const String forgetEmail = "Forget Email";
+  static const String enterYourEmail = "Enter your email and we will send you a verification code";
+  static const String enterYourEmailHint = "Enter Your Email...";
+  static const String sendCode = "Send Code";
+  static const String resetPassword = "Reset Password";
+  static const String enterNewPassword = "Enter New Password";
+  static const String continueText = "Continue";
 }

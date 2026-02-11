@@ -1,4 +1,5 @@
 
+
 import '../../src_export.dart';
 
 class AppRouter {
@@ -11,11 +12,19 @@ class AppRouter {
           return const SplashPage();
         },
 
-      ), GoRoute(
+      ),
+      GoRoute(
         path: RoutesPath.onboardingPath,
 
         builder: (BuildContext context, GoRouterState state) {
           return const OnboardingPage();
+        },
+
+      ),GoRoute(
+        path: RoutesPath.loginPath,
+
+        builder: (BuildContext context, GoRouterState state) {
+          return const LoginPage();
         },
 
       ),
