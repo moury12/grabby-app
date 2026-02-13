@@ -39,7 +39,7 @@ class LoginPage extends StatelessWidget {
         ),
                 
                 CustomButton(text: AppStaticStrings.logIn, onPressed: () {
-
+context.pushNamed(RoutesPath.navigationPath);
                 },),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

@@ -8,4 +8,5 @@ class RoutesPath {
   static const String forgotEmailPath = '/ForgotEmailPage';
   static const String resetPasswordPath = '/ResetPasswordPage';
   static const String locationPath = '/LocationPage';
+  static const String navigationPath = '/NavigationPage';
 }

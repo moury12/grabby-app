@@ -25,7 +25,10 @@ class _NavigationPageState extends State<NavigationPage> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
-
+HomePage(),
+Placeholder(),
+Placeholder(),
+Placeholder(),
     ];
 
 
@@ -43,7 +46,11 @@ class _NavigationPageState extends State<NavigationPage> {
             child: IndexedStack(index: currentIndex, children: pages),
           ),
           bottomNavigationBar: BottomNavigationBar(
-
+            type: BottomNavigationBarType.fixed, // 👈 IMPORTANT
+            showSelectedLabels: true,
+            showUnselectedLabels: true,
+            selectedItemColor: AppColors.kPrimaryColor,
+            unselectedItemColor: AppColors.kSecondaryTextColor,
             currentIndex: currentIndex,
             onTap: (index) {
               _navigationBloc.add(ChangeNavEvent(currentIndex: index));
@@ -69,10 +76,15 @@ class _NavigationPageState extends State<NavigationPage> {
   BottomNavigationBarItem _buildBottomNavItem(
       String icon, String label, int currentIndex, int index) {
     return BottomNavigationBarItem(
-
+tooltip: label,
       icon: SvgPicture.asset(
         icon,
-        height: 20
+        height: 20,
+        colorFilter: ColorFilter.mode(
+          currentIndex == index
+              ? AppColors.kPrimaryColor
+              : AppColors.kSecondaryTextColor
+              , BlendMode.srcIn),
         // color: currentIndex == index
         //     ? AppColors.kPrimaryColor
         //     : AppColors.kSubTextColor,

@@ -53,6 +53,12 @@ class AppRouter {
         builder: (BuildContext context, GoRouterState state) {
           return const ForgotEmailPage();
         },
+      ),  GoRoute(
+        path: RoutesPath.navigationPath,
+        name: RoutesPath.navigationPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const NavigationPage();
+        },
       ),
       GoRoute(
         path: RoutesPath.resetPasswordPath,
