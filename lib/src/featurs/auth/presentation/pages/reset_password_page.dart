@@ -1,8 +1,5 @@
-import 'package:flutter/material.dart';
-import '../../../../core/constants/app_static_strings.dart';
-import '../../../../core/constants/padding_constant.dart';
-import '../../../../core/constants/space_constant.dart';
-import '../../../../core/widgets/widgets_export.dart';
+import '../../../../src_export.dart';
+
 
 class ResetPasswordPage extends StatelessWidget {
   const ResetPasswordPage({super.key});
