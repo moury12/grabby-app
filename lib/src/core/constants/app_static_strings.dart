@@ -36,4 +36,6 @@ class AppStaticStrings {
   static const String resetPassword = "Reset Password";
   static const String enterNewPassword = "Enter New Password";
   static const String continueText = "Continue";
+  static const String enableLocation = "Enable Location";
+  static const String locationDesc = "We need your location to show nearby cafés and provide accurate pickup times";
 }

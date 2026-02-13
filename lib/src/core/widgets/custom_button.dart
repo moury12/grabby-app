@@ -1,4 +1,3 @@
-import 'package:flutter_svg/flutter_svg.dart';
 import '../../src_export.dart';
 
 class CustomButton extends StatelessWidget {
