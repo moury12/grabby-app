@@ -5,3 +5,4 @@ export 'home_map_view.dart';
 export 'promoted_shop_item_widget.dart';
 export 'promoted_shop_card_widget.dart';
 export 'promoted_shops_sheet.dart';
+export 'opening_time_text_widget.dart';

@@ -43,6 +43,7 @@ class PromotedShopsSheet extends StatelessWidget {
           Flexible(
             child: SingleChildScrollView(
               child: Column(
+                spacing: 8,
                 children: List.generate(
                   3,
                   (index) => PromotedShopCardWidget(

@@ -18,20 +18,23 @@ class AppRouter {
           return const OnboardingPage();
         },
 
-      ),*/GoRoute(
+      ),*/
+      GoRoute(
         path: '/',
         // path: RoutesPath.loginPath,
         // name: RoutesPath.loginPath,
         builder: (BuildContext context, GoRouterState state) {
           return const LoginPage();
         },
-      ),GoRoute(
+      ),
+      GoRoute(
         path: RoutesPath.signUpPath,
         name: RoutesPath.signUpPath,
         builder: (BuildContext context, GoRouterState state) {
           return const SignUpPage();
         },
-      ),GoRoute(
+      ),
+      GoRoute(
         path: RoutesPath.forgotPasswordPath,
         name: RoutesPath.forgotPasswordPath,
         builder: (BuildContext context, GoRouterState state) {
@@ -42,9 +45,7 @@ class AppRouter {
         path: RoutesPath.verificationPath,
         name: RoutesPath.verificationPath,
         builder: (BuildContext context, GoRouterState state) {
-          return  VerificationPage(
-            extra: state.extra as String?,
-          );
+          return VerificationPage(extra: state.extra as String?);
         },
       ),
       GoRoute(
@@ -53,7 +54,8 @@ class AppRouter {
         builder: (BuildContext context, GoRouterState state) {
           return const ForgotEmailPage();
         },
-      ),  GoRoute(
+      ),
+      GoRoute(
         path: RoutesPath.navigationPath,
         name: RoutesPath.navigationPath,
         builder: (BuildContext context, GoRouterState state) {
@@ -72,6 +74,20 @@ class AppRouter {
         name: RoutesPath.locationPath,
         builder: (BuildContext context, GoRouterState state) {
           return const LocationPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.restruantDetailsPath,
+        name: RoutesPath.restruantDetailsPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const RestruantDetailsPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.menuPath,
+        name: RoutesPath.menuPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const MenuPage();
         },
       ),
     ],
