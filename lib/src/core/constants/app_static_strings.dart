@@ -1,16 +1,21 @@
 class AppStaticStrings {
-  static const String orderYourFavoriteCoffee="Order your favorite coffee from nearby cafés with just a few taps";
-  static const String findTheBestCafe="Find the Best Cafés Near You";
-  static const String startOrdering="Start Ordering";
-  static const String searchExploreMenu="Search, explore menus, and add items to your cart effortlessly.";
-  static const String pickUpWithoutWaiting="Pick Up Without Waiting";
-  static const String chooseCarOrCounter="Choose car or counter pickup and enjoy your coffee instantly";
-  static const String earnLoaylty="Earn Loyalty Stamps";
-  static const String collectDigitalStamps="Collect digital stamps at your favorite cafés and redeem rewards.";
+  static const String orderYourFavoriteCoffee =
+      "Order your favorite coffee from nearby cafés with just a few taps";
+  static const String findTheBestCafe = "Find the Best Cafés Near You";
+  static const String startOrdering = "Start Ordering";
+  static const String searchExploreMenu =
+      "Search, explore menus, and add items to your cart effortlessly.";
+  static const String pickUpWithoutWaiting = "Pick Up Without Waiting";
+  static const String chooseCarOrCounter =
+      "Choose car or counter pickup and enjoy your coffee instantly";
+  static const String earnLoaylty = "Earn Loyalty Stamps";
+  static const String collectDigitalStamps =
+      "Collect digital stamps at your favorite cafés and redeem rewards.";
 
   static const String gladToMeetYouAgain = "Glad to meet you again!";
   static const String loginAccount = "Login Account";
-  static const String emailAddressOrPhoneNumber = "Email Address Or Phone Number";
+  static const String emailAddressOrPhoneNumber =
+      "Email Address Or Phone Number";
   static const String password = "Password";
   static const String forgotThePassword = "Forgot the Password";
   static const String logIn = "Log In";
@@ -20,24 +25,29 @@ class AppStaticStrings {
   static const String email = "Email";
   static const String phoneNumber = "Phone Number";
   static const String confirmPassword = "Confirm Password";
-  static const String iHaveReadAndAgree = "I have read and agree to Grabby Terms and Conditions and Policy.";
+  static const String iHaveReadAndAgree =
+      "I have read and agree to Grabby Terms and Conditions and Policy.";
   static const String forgotPassword = "Forgot Password";
-  static const String selectContactMethod = "Select the contact method we should use to reset your password";
+  static const String selectContactMethod =
+      "Select the contact method we should use to reset your password";
   static const String verify = "Verify";
   static const String verification = "Verification";
   static const String verifyYourAccount = "Verify Your Account";
-  static const String sentVerificationCode = "We've sent a verification code to your email/phone. Please check and enter it below.";
+  static const String sentVerificationCode =
+      "We've sent a verification code to your email/phone. Please check and enter it below.";
   static const String didntGetCode = "Didn't get a code? Resend Code";
   static const String verifyCode = "Verify Code";
   static const String forgetEmail = "Forget Email";
-  static const String enterYourEmail = "Enter your email and we will send you a verification code";
+  static const String enterYourEmail =
+      "Enter your email and we will send you a verification code";
   static const String enterYourEmailHint = "Enter Your Email...";
   static const String sendCode = "Send Code";
   static const String resetPassword = "Reset Password";
   static const String enterNewPassword = "Enter New Password";
   static const String continueText = "Continue";
   static const String enableLocation = "Enable Location";
-  static const String locationDesc = "We need your location to show nearby cafés and provide accurate pickup times";
+  static const String locationDesc =
+      "We need your location to show nearby cafés and provide accurate pickup times";
   static const String searchCafes = "Search cafés...";
   static const String listView = "List View";
   static const String mapView = "Map View";
@@ -63,4 +73,11 @@ class AppStaticStrings {
   static const String caffeLatte = "Caffe Latte";
   static const String price = "14.50AED";
   static const String discount = "20% OFF";
+  static const String promotedShops = "Promoted Shops";
+  static const String promotedShopsDesc =
+      "Check out trending items from promoted shops!";
+  static const String sponsored = "Sponsored";
+  static const String viewFullDetails = "View Full Details";
+  static const String closed = "Closed";
+  static const String open = "Open:";
 }

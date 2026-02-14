@@ -4,9 +4,10 @@ part of 'home_bloc.dart';
 sealed class HomeState {}
 
 final class HomeInitial extends HomeState {
-  final bool? isMapView;
-  HomeInitial({this.isMapView=false});
+  final bool isMapView;
+  HomeInitial({required this.isMapView});
 }
+
 class ToggleViewState extends HomeState {
   final bool isMapView;
 

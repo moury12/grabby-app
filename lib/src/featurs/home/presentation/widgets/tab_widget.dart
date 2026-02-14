@@ -1,55 +1,56 @@
-
 import '../../../../src_export.dart';
 
-class TabWidget extends StatefulWidget {
+class TabWidget extends StatelessWidget {
   final String title;
   final String img;
-  const TabWidget({super.key, required this.title, required this.img});
+  final bool isSelected;
+  final VoidCallback onTap;
+  const TabWidget({
+    super.key,
+    required this.title,
+    required this.img,
+    required this.isSelected,
+    required this.onTap,
+  });
 
-  @override
-  State<TabWidget> createState() => _TabWidgetState();
-}
-
-class _TabWidgetState extends State<TabWidget> {
-  late HomeBloc _homeBloc;
-  @override
-  void initState() {
-    // TODO: implement initState
-      _homeBloc = HomeBloc();
-    super.initState();
-  }
-  @override
-  void dispose() {
-_homeBloc.close();
-super.dispose();
-  }
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: BlocBuilder<HomeBloc, HomeState>(
-        bloc: _homeBloc,
-        builder: (context, state) {
-          bool isMapView = false;
-          if (state is ToggleViewState) {
-            isMapView = state.isMapView;
-          }
-      return Container(
-        padding: AppPadding.getPadding12(context),
+      child: Container(
         decoration: BoxDecoration(
-          color: isMapView? AppColors.kPrimaryColor:Colors.white,
+          color: isSelected ? AppColors.kPrimaryColor : Colors.white,
           borderRadius: BorderRadius.circular(12),
         ),
         child: ButtonTapWidget(
-          onTap: () {
-            _homeBloc.add(ToggleThemeEvent(isMapView: !isMapView));
-          },
-          child: Row(
-
-              children: [SvgPicture.asset(widget.img,colorFilter: ColorFilter.mode(isMapView? Colors.white:AppColors.kSecondaryTextColor,
-              BlendMode.srcIn),), Expanded(child: CustomText(widget.title,color: isMapView? Colors.white:AppColors.kSecondaryTextColor,))]),
+          onTap: onTap,
+          child: Padding(
+            padding: AppPadding.getPadding12(context),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  img,
+                  colorFilter: ColorFilter.mode(
+                    isSelected ? Colors.white : AppColors.kSecondaryTextColor,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: CustomText(
+                    title,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    color: isSelected
+                        ? Colors.white
+                        : AppColors.kSecondaryTextColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-      );
-        },
       ),
     );
   }
