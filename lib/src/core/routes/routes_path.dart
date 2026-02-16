@@ -13,4 +13,6 @@ class RoutesPath {
   static const String menuPath = '/MenuPage';
   static const String itemDetailsPath = '/ItemDetailsPage';
   static const String cartPath = '/CartPage';
+  static const String carPlatesPath = '/CarPlatesPage';
+  static const String addCarPlatePath = '/AddCarPlatePage';
 }

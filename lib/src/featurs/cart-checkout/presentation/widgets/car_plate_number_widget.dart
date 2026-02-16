@@ -22,7 +22,9 @@ class CarPlateNumberWidget extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
         ButtonTapWidget(
-          onTap: onTap,
+          onTap: () {
+            context.pushNamed(RoutesPath.carPlatesPath);
+          },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(

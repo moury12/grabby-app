@@ -104,6 +104,20 @@ class AppRouter {
           return const CartPage();
         },
       ),
+      GoRoute(
+        path: RoutesPath.carPlatesPath,
+        name: RoutesPath.carPlatesPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const CarPlatesPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.addCarPlatePath,
+        name: RoutesPath.addCarPlatePath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const AddCarPlatePage();
+        },
+      ),
     ],
   );
 }

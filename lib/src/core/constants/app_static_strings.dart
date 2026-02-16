@@ -19,6 +19,7 @@ class AppStaticStrings {
   static const String password = "Password";
   static const String forgotThePassword = "Forgot the Password";
   static const String logIn = "Log In";
+  static const String carNumberSource = "Car Number Source";
   static const String signUp = "Sign Up";
   static const String letsGetYouSetUp = "Let's get you set up and ready to go.";
   static const String preferredName = "Preferred Name";
@@ -89,4 +90,9 @@ class AppStaticStrings {
   static const String free = "Free";
   static const String orderTotal = "Order Total";
   static const String proceedToCheckout = "Proceed to Checkout";
+  static const String carPlates = "Car Plates";
+  static const String addNewPlate = "Add New Plate";
+  static const String defaultText = "Default";
+  static const String setAsDefault = "Set as default";
+  static const String enterPlateNumber = "Enter Plate Number";
 }

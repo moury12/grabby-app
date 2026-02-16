@@ -13,25 +13,17 @@ class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F2FF),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => context.pop(),
-        ),
-        centerTitle: true,
-        title: const CustomText(
+        title: const Text(
           AppStaticStrings.cart,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
+          // fontSize: 20,
+          // fontWeight: FontWeight.bold,
         ),
       ),
       body: SingleChildScrollView(
-        padding: AppPadding.getPadding16(context),
+        padding: AppPadding.getPadding12(context),
         child: Column(
-          spacing: 24,
+          spacing: 12,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Cart Items
