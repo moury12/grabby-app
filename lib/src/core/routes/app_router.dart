@@ -90,6 +90,20 @@ class AppRouter {
           return const MenuPage();
         },
       ),
+      GoRoute(
+        path: RoutesPath.itemDetailsPath,
+        name: RoutesPath.itemDetailsPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const ItemDetailsPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.cartPath,
+        name: RoutesPath.cartPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const CartPage();
+        },
+      ),
     ],
   );
 }

@@ -1,7 +1,21 @@
 import '../../../../src_export.dart';
 
-class MenuPage extends StatelessWidget {
+class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
+
+  @override
+  State<MenuPage> createState() => _MenuPageState();
+}
+
+class _MenuPageState extends State<MenuPage> {
+  String _selectedCategory = AppStaticStrings.allItems;
+
+  final List<String> _categories = [
+    AppStaticStrings.allItems,
+    AppStaticStrings.matcha,
+    AppStaticStrings.hotCoffee,
+    AppStaticStrings.coldCoffee,
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -9,18 +23,22 @@ class MenuPage extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-
         centerTitle: true,
-        title: Text(AppStaticStrings.menu),
+        title: const Text(AppStaticStrings.menu),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: SvgPicture.asset(
-              ImagesConstant.kCartIcon,
-              height: 24,
-              colorFilter: const ColorFilter.mode(
-                Colors.black,
-                BlendMode.srcIn,
+          ButtonTapWidget(
+            onTap: () {
+              context.pushNamed(RoutesPath.cartPath);
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: SvgPicture.asset(
+                ImagesConstant.kCartIcon,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  Colors.black,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),
@@ -68,7 +86,7 @@ class MenuPage extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CustomText(
+                        const CustomText(
                           AppStaticStrings.hotCoffee,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -85,7 +103,7 @@ class MenuPage extends StatelessWidget {
                             ),
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: CustomText(
+                          child: const CustomText(
                             AppStaticStrings.tryItNow,
                             fontSize: 12,
                             color: Colors.white,
@@ -113,68 +131,84 @@ class MenuPage extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   spacing: 8,
-                  children: [
-                    _buildCategoryChip(AppStaticStrings.allItems, true),
-                    _buildCategoryChip(AppStaticStrings.matcha, false),
-                    _buildCategoryChip(AppStaticStrings.hotCoffee, false),
-                    _buildCategoryChip(AppStaticStrings.coldCoffee, false),
-                  ],
+                  children: _categories.map((category) {
+                    return _buildCategoryChip(
+                      category,
+                      _selectedCategory == category,
+                      onTap: () {
+                        setState(() {
+                          _selectedCategory = category;
+                        });
+                      },
+                    );
+                  }).toList(),
                 ),
               ),
             ),
 
             // Menu Sections
-            _buildMenuSection(AppStaticStrings.matcha, [
-              MenuItemWidget(
-                title: AppStaticStrings.caffeLatte,
-                price: AppStaticStrings.price,
-                image:
-                    "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop",
-                discount: AppStaticStrings.discount,
-                onAdd: () {},
-              ),
-              MenuItemWidget(
-                title: AppStaticStrings.caffeLatte,
-                price: AppStaticStrings.price,
-                image:
-                    "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=2033&auto=format&fit=crop",
-                onAdd: () {},
-              ),
-            ]),
+            if (_selectedCategory == AppStaticStrings.allItems ||
+                _selectedCategory == AppStaticStrings.matcha)
+              _buildMenuSection(AppStaticStrings.matcha, [
+                MenuItemWidget(
+                  title: AppStaticStrings.caffeLatte,
+                  price: AppStaticStrings.price,
+                  image:
+                      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop",
+                  discount: AppStaticStrings.discount,
+                  onAdd: () {},
+                ),
+                MenuItemWidget(
+                  title: AppStaticStrings.caffeLatte,
+                  price: AppStaticStrings.price,
+                  image:
+                      "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=2033&auto=format&fit=crop",
+                  onAdd: () {},
+                ),
+              ]),
 
-            _buildMenuSection(AppStaticStrings.hotCoffee, [
-              MenuItemWidget(
-                title: AppStaticStrings.caffeLatte,
-                price: AppStaticStrings.price,
-                image:
-                    "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop",
-                onAdd: () {},
-              ),
-              MenuItemWidget(
-                title: AppStaticStrings.caffeLatte,
-                price: AppStaticStrings.price,
-                image:
-                    "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=2033&auto=format&fit=crop",
-                onAdd: () {},
-              ),
-            ]),
+            if (_selectedCategory == AppStaticStrings.allItems ||
+                _selectedCategory == AppStaticStrings.hotCoffee)
+              _buildMenuSection(AppStaticStrings.hotCoffee, [
+                MenuItemWidget(
+                  title: AppStaticStrings.caffeLatte,
+                  price: AppStaticStrings.price,
+                  image:
+                      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop",
+                  onAdd: () {},
+                ),
+                MenuItemWidget(
+                  title: AppStaticStrings.caffeLatte,
+                  price: AppStaticStrings.price,
+                  image:
+                      "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=2033&auto=format&fit=crop",
+                  onAdd: () {},
+                ),
+              ]),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCategoryChip(String label, bool isSelected) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: isSelected ? AppColors.kSecondaryColor : Colors.transparent,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: CustomText(
-        label,
-        variant: TextVariant.titleMedium,
-        color: AppColors.kWhiteTextColor,
+  Widget _buildCategoryChip(
+    String label,
+    bool isSelected, {
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.kSecondaryColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: CustomText(
+          label,
+          variant: TextVariant.titleMedium,
+          color: AppColors.kWhiteTextColor,
+        ),
       ),
     );
   }
@@ -185,7 +219,6 @@ class MenuPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomText(title, fontSize: 18, fontWeight: FontWeight.bold),
-
         ...items,
         const Divider(height: 2),
       ],

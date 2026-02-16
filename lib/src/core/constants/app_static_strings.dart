@@ -64,6 +64,7 @@ class AppStaticStrings {
   static const String loyaltyProgress = "Loyalty Progress";
   static const String viewFullMenu = "View Full Menu";
   static const String menu = "Menu";
+  static const String addToCart = "Add to Cart";
   static const String tryItNow = "Try it now";
   static const String hotCoffee = "Hot Coffee";
   static const String moreStamps = "10 more stamps to get a free coffee";
@@ -80,4 +81,12 @@ class AppStaticStrings {
   static const String viewFullDetails = "View Full Details";
   static const String closed = "Closed";
   static const String open = "Open:";
+  static const String icedMatchaLatte = "Iced Matcha Latte";
+  static const String carPickup = "Car Pickup";
+  static const String counterPickup = "Counter Pickup";
+  static const String carPlateNumber = "Car Plate Number";
+  static const String freeDrinkLoyaltyReward = "Free Drink (Loyalty Reward)";
+  static const String free = "Free";
+  static const String orderTotal = "Order Total";
+  static const String proceedToCheckout = "Proceed to Checkout";
 }

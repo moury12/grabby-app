@@ -25,12 +25,11 @@ class _NavigationPageState extends State<NavigationPage> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
-HomePage(),
-Placeholder(),
-Placeholder(),
-Placeholder(),
+      HomePage(),
+      Placeholder(),
+      CartPage(),
+      Placeholder(),
     ];
-
 
     return BlocBuilder<NavigationBloc, NavigationState>(
       bloc: _navigationBloc,
@@ -41,7 +40,6 @@ Placeholder(),
         }
 
         return Scaffold(
-
           body: SafeArea(
             child: IndexedStack(index: currentIndex, children: pages),
           ),
@@ -57,16 +55,32 @@ Placeholder(),
             },
             items: [
               _buildBottomNavItem(
-                  ImagesConstant.kHomeIcon, AppStaticStrings.home, currentIndex, 0),
+                ImagesConstant.kHomeIcon,
+                AppStaticStrings.home,
+                currentIndex,
+                0,
+              ),
               _buildBottomNavItem(
-                  ImagesConstant.kOrderIcon, AppStaticStrings.orders, currentIndex, 1),
+                ImagesConstant.kOrderIcon,
+                AppStaticStrings.orders,
+                currentIndex,
+                1,
+              ),
 
-                _buildBottomNavItem(
-                    ImagesConstant.kCartIcon, AppStaticStrings.cart, currentIndex, 2),
-                  _buildBottomNavItem(
-                  ImagesConstant.kProfileIcon, AppStaticStrings.profile, currentIndex,3),
+              _buildBottomNavItem(
+                ImagesConstant.kCartIcon,
+                AppStaticStrings.cart,
+                currentIndex,
+                2,
+              ),
+              _buildBottomNavItem(
+                ImagesConstant.kProfileIcon,
+                AppStaticStrings.profile,
+                currentIndex,
+                3,
+              ),
             ],
-            backgroundColor:Colors.white,
+            backgroundColor: Colors.white,
           ),
         );
       },
@@ -74,17 +88,22 @@ Placeholder(),
   }
 
   BottomNavigationBarItem _buildBottomNavItem(
-      String icon, String label, int currentIndex, int index) {
+    String icon,
+    String label,
+    int currentIndex,
+    int index,
+  ) {
     return BottomNavigationBarItem(
-tooltip: label,
+      tooltip: label,
       icon: SvgPicture.asset(
         icon,
         height: 20,
         colorFilter: ColorFilter.mode(
           currentIndex == index
               ? AppColors.kPrimaryColor
-              : AppColors.kSecondaryTextColor
-              , BlendMode.srcIn),
+              : AppColors.kSecondaryTextColor,
+          BlendMode.srcIn,
+        ),
         // color: currentIndex == index
         //     ? AppColors.kPrimaryColor
         //     : AppColors.kSubTextColor,

@@ -103,7 +103,9 @@ class PromotedShopCardWidget extends StatelessWidget {
 
           CustomButton(
             text: AppStaticStrings.viewFullDetails,
-            onPressed: () {},
+            onPressed: () {
+              context.pushNamed(RoutesPath.menuPath);
+            },
             backgroundColor: AppColors.kPrimaryColor,
             borderRadius: 12,
           ),
