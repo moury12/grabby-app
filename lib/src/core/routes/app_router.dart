@@ -118,6 +118,27 @@ class AppRouter {
           return const AddCarPlatePage();
         },
       ),
+      GoRoute(
+        path: RoutesPath.checkoutPath,
+        name: RoutesPath.checkoutPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const PaymentPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.paymentSuccessPath,
+        name: RoutesPath.paymentSuccessPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const PaymentSuccessPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.orderTrackingPath,
+        name: RoutesPath.orderTrackingPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const OrderTrackingPage();
+        },
+      ),
     ],
   );
 }

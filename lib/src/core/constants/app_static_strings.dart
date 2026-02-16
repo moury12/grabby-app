@@ -95,4 +95,27 @@ class AppStaticStrings {
   static const String defaultText = "Default";
   static const String setAsDefault = "Set as default";
   static const String enterPlateNumber = "Enter Plate Number";
+  static const String payment = "Payment";
+  static const String pickupDetails = "Pickup Details";
+  static const String readyIn1520mins = "Ready in 15-20 mins";
+  static const String paymentMethod = "Payment Method";
+  static const String creditDebitCard = "Credit/Debit Card";
+  static const String digitalWallet = "Digital Wallet";
+  static const String availableCredit = "Available Credit";
+  static const String applyCredit = "Apply Credit";
+  static const String subtotal = "Subtotal";
+  static const String payNow = "Pay Now";
+  static const String paymentSuccessful = "Payment Successful!";
+  static const String trackOrder = "Track Order";
+  static const String backToHome = "Back to Home";
+  static const String orderTracking = "Order Tracking";
+  static const String orderNumber = "Order Number";
+  static const String waitingForCafeConfirmation =
+      "Waiting For Cafe Confirmation";
+  static const String preparingYourOrder = "Preparing your Order";
+  static const String readyForPickup = "Ready for Pickup";
+  static const String completed = "Completed";
+  static const String navigateToCafe = "Navigate to Café";
+  static const String callShop = "Call Shop";
+  static const String orderItems = "Order Items";
 }

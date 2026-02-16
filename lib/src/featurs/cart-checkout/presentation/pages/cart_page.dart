@@ -77,7 +77,9 @@ class _CartPageState extends State<CartPage> {
         padding: AppPadding.getPadding16(context).copyWith(bottom: 24),
         child: CustomButton(
           text: AppStaticStrings.proceedToCheckout,
-          onPressed: () {},
+          onPressed: () {
+            context.pushNamed(RoutesPath.checkoutPath);
+          },
         ),
       ),
     );

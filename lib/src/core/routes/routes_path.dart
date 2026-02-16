@@ -15,4 +15,7 @@ class RoutesPath {
   static const String cartPath = '/CartPage';
   static const String carPlatesPath = '/CarPlatesPage';
   static const String addCarPlatePath = '/AddCarPlatePage';
+  static const String checkoutPath = '/CheckoutPage';
+  static const String paymentSuccessPath = '/PaymentSuccessPage';
+  static const String orderTrackingPath = '/OrderTrackingPage';
 }
