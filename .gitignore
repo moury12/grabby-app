@@ -47,3 +47,4 @@ app.*.map.json
 # Secrets
 android/local.properties
 ios/Runner/Secrets.xcconfig
+Secrets.xcconfig
