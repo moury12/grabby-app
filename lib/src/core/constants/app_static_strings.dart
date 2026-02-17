@@ -19,6 +19,7 @@ class AppStaticStrings {
   static const String password = "Password";
   static const String forgotThePassword = "Forgot the Password";
   static const String logIn = "Log In";
+  static const String totalPaid = "Total Paid";
   static const String carNumberSource = "Car Number Source";
   static const String signUp = "Sign Up";
   static const String letsGetYouSetUp = "Let's get you set up and ready to go.";
