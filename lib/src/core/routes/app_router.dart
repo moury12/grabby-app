@@ -139,6 +139,27 @@ class AppRouter {
           return const OrderTrackingPage();
         },
       ),
+      GoRoute(
+        path: RoutesPath.orderHistoryPath,
+        name: RoutesPath.orderHistoryPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const OrderHistoryPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.orderDetailsPath,
+        name: RoutesPath.orderDetailsPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const OrderDetailsPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.orderCanceledPath,
+        name: RoutesPath.orderCanceledPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const OrderCanceledPage();
+        },
+      ),
     ],
   );
 }

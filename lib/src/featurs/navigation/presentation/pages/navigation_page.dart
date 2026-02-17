@@ -26,7 +26,7 @@ class _NavigationPageState extends State<NavigationPage> {
   Widget build(BuildContext context) {
     final List<Widget> pages = [
       HomePage(),
-      Placeholder(),
+      OrderHistoryPage(),
       CartPage(),
       Placeholder(),
     ];

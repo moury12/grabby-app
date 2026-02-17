@@ -76,11 +76,7 @@ class OrderTrackingPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 spacing: 8,
                 children: [
-                  const Icon(
-                    Icons.location_on,
-                    color: Color(0xFFA59BF9),
-                    size: 40,
-                  ),
+                  Icon(Icons.location_on, color: Color(0xFFA59BF9), size: 40),
                   const CustomText(
                     "Brew & Co - Main Street 0.3 Km away",
                     fontSize: 14,
@@ -102,7 +98,9 @@ class OrderTrackingPage extends StatelessWidget {
                 Expanded(
                   child: CustomButton(
                     text: AppStaticStrings.navigateToCafe,
-                    onPressed: () {},
+                    onPressed: () {
+                      // context.push(RoutesPath.locationPath);
+                    },
                   ),
                 ),
                 Expanded(
