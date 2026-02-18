@@ -160,6 +160,55 @@ class AppRouter {
           return const OrderCanceledPage();
         },
       ),
+      GoRoute(
+        path: RoutesPath.loyaltyRewardPath,
+        name: RoutesPath.loyaltyRewardPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const LoyaltyRewardPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.suggestAShopPath,
+        name: RoutesPath.suggestAShopPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const SuggestAShopPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.profilePath,
+        name: RoutesPath.profilePath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const ProfilePage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.personalInfoPath,
+        name: RoutesPath.personalInfoPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const PersonalInformationPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.notificationPath,
+        name: RoutesPath.notificationPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const NotificationPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.accountSettingsPath,
+        name: RoutesPath.accountSettingsPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const AccountSettingsPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.changePasswordPath,
+        name: RoutesPath.changePasswordPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const ChangePasswordPage();
+        },
+      ),
     ],
   );
 }

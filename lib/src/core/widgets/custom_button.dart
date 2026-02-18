@@ -12,6 +12,7 @@ class CustomButton extends StatelessWidget {
   final bool isExpanding;
 
   final double borderRadius;
+  final Color? borderColor;
   final TextStyle? textStyle;
 
   const CustomButton({
@@ -26,7 +27,9 @@ class CustomButton extends StatelessWidget {
     this.isLoading = false,
 
     this.borderRadius = 12.0,
-    this.textStyle,  this.isExpanding =true,
+    this.borderColor,
+    this.textStyle,
+    this.isExpanding = true,
   });
 
   @override
@@ -35,7 +38,7 @@ class CustomButton extends StatelessWidget {
     final defaultColor = AppColors.kPrimaryColor;
 
     return SizedBox(
-      width: isExpanding?double.infinity:null,
+      width: isExpanding ? double.infinity : null,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: isOutlined
@@ -44,10 +47,12 @@ class CustomButton extends StatelessWidget {
           foregroundColor:
               textColor ?? (isOutlined ? AppColors.kTextColor : Colors.white),
           elevation: 0,
-          side: isOutlined
+          side: isOutlined || borderColor != null
               ? BorderSide(
-                  color: AppColors.kPrimaryColor.withValues(alpha: 0.5),
-                ) // Slightly visible border for outlined
+                  color:
+                      borderColor ??
+                      AppColors.kPrimaryColor.withValues(alpha: 0.5),
+                ) // Custom border color or slightly visible border for outlined
               : BorderSide.none,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),

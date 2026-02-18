@@ -133,4 +133,84 @@ class AppStaticStrings {
       "Any paid amount will be refunded as in-app credit.";
   static const String arrivalNotificationDesc =
       "Shop will be automatically notified by your arrival";
+  static const String iveArrived = "I've Arrived";
+  static const String iveArrivedDesc =
+      "Let the café know you've arrived so they can prepare your handover";
+  static const String notifyShop = "Notify Shop";
+
+  // Loyalty Reward
+  static const String loyaltyReward = "Loyalty Reward";
+  static const String rewards = "Rewards";
+  static const String totalPoint = "Total Point";
+  static const String progressToNextReward = "Progress to next reward";
+  static const String availableRewards = "Available Rewards";
+  static const String tenPercentDiscount = "10% Discount";
+  static const String fifteenPercentDiscount = "15% Discount";
+  static const String pointsRequired = "points required";
+  static const String redeemNow = "Redeem Now";
+  static const String validForSelectedShops =
+      "Valid for selected shops only. Check if your favorite café accepts reward points before placing an order.";
+  static const String howRewardPointsWork = "How Reward Points Work";
+  static const String earnPoints = "Earn Points";
+  static const String earnPointsDesc =
+      "Get 1 points for every 1 AED you spend at participating cafés";
+  static const String unlockRewards = "Unlock Rewards";
+  static const String unlockRewardsDesc =
+      "Spend points to unlock Grabby credit.";
+  static const String redeemAndSave = "Redeem & Save";
+  static const String redeemAndSaveDesc =
+      "Apply your Grabby credit to your next order.";
+  static const String cancel = "Cancel";
+
+  // Redeem Reward Popup
+  static const String redeemRewardTitle = "Redeem Reward?";
+  static const String redeemRewardDesc = "Redeem 5% discount for 1000 points?";
+  static const String currentPoints = "Current Points";
+  static const String pointsRequiredLabel = "Points Required";
+  static const String remainingPoints = "Remaining Points";
+  static const String confirmRedemption = "Confirm Redemption";
+
+  // Suggest a Shop
+  static const String suggestAShop = "Suggest a Shop";
+  static const String suggestAShopDesc =
+      "Know a great café that should be on GoCafe? Let us know and we'll reach out to them!";
+  static const String cafeName = "Cafe Name";
+  static const String enterCafeName = "Enter Cafe Name";
+  static const String location = "Location";
+  static const String cityOrAddress = "City Or Address";
+  static const String additionalNotes = "Additional Notes";
+  static const String additionalNotesHint =
+      "why should this cafe be on gocafe? (optional)";
+  static const String submitSuggestion = "Submit Suggestion";
+
+  // Profile Settings
+  static const String memberSince = "Member since";
+  static const String personalInformation = "Personal Information";
+  static const String paymentMethods = "Payment Methods";
+  static const String preferences = "PREFERENCES";
+  static const String profilePhoto = "Profile Photo";
+  static const String changePhoto = "Change Photo";
+  static const String basicInformation = "Basic Information";
+  static const String name = "Name";
+  static const String emailAddress = "Email Address";
+  static const String dateOfBirth = "Date of Birth";
+  static const String saveChange = "Save Change";
+  static const String welcomeToGrabby = "Welcome to Grabby";
+  static const String welcomeToGrabbyDesc = "We're glad to have you here!";
+  static const String notificationPaymentSuccessful =
+      "Your Payment was successful";
+  static const String notificationPaymentSuccessfulDesc =
+      "Thank you for your order!";
+  static const String notificationNewReservation = "Your got new reservation.";
+  static const String notificationNewReservationDesc =
+      "Check your orders list.";
+  static const String notifications = "Notifications";
+  static const String settings = "Settings";
+  static const String accountSettings = "Account Settings";
+  static const String changePassword = "Change Password";
+  static const String deleteAccount = "Delete Account";
+  static const String typePassword = "Type Password";
+  static const String newPassword = "New Password";
+  static const String newConfirmPassword = "New Confirm Password";
+  static const String update = "Update";
 }

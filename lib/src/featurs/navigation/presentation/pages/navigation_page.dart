@@ -27,8 +27,8 @@ class _NavigationPageState extends State<NavigationPage> {
     final List<Widget> pages = [
       HomePage(),
       OrderHistoryPage(),
-      CartPage(),
-      Placeholder(),
+      LoyaltyRewardPage(),
+      ProfilePage(),
     ];
 
     return BlocBuilder<NavigationBloc, NavigationState>(
@@ -68,8 +68,8 @@ class _NavigationPageState extends State<NavigationPage> {
               ),
 
               _buildBottomNavItem(
-                ImagesConstant.kCartIcon,
-                AppStaticStrings.cart,
+                ImagesConstant.kGiftIcon,
+                AppStaticStrings.rewards,
                 currentIndex,
                 2,
               ),

@@ -21,4 +21,12 @@ class RoutesPath {
   static const String orderHistoryPath = '/OrderHistoryPage';
   static const String orderTrackingMapViewPath = '/OrderTrackingMapViewPage';
   static const String orderCanceledPath = '/OrderCanceledPage';
+  static const String loyaltyRewardPath = "/loyalty_reward";
+  static const String suggestAShopPath = "/suggest_a_shop";
+
+  static const String profilePath = "/profile";
+  static const String personalInfoPath = "/personal_info";
+  static const String notificationPath = "/notification";
+  static const String accountSettingsPath = "/account_settings";
+  static const String changePasswordPath = "/change_password";
 }
