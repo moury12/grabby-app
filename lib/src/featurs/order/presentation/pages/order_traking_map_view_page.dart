@@ -1,18 +1,12 @@
 import '../../../../src_export.dart';
 
-class OrderDetailsPage extends StatelessWidget {
-  const OrderDetailsPage({super.key});
+class OrderTrackingMapViewPage extends StatelessWidget {
+  const OrderTrackingMapViewPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const CustomText(
-          "Order Details",
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+      appBar: AppBar(title: const Text(AppStaticStrings.orderTracking)),
       body: SingleChildScrollView(
         padding: AppPadding.getPadding12(context),
         child: Column(

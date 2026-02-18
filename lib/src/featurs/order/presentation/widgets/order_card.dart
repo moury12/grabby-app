@@ -51,7 +51,7 @@ class OrderCard extends StatelessWidget {
             spacing: 4,
             children: [
               CustomText(
-                "Order $orderId",
+                "${AppStaticStrings.order} $orderId",
                 fontSize: 14,
                 color: AppColors.kSecondaryTextColor,
               ),
@@ -75,7 +75,6 @@ class OrderCard extends StatelessWidget {
               CustomText(price, fontSize: 16, fontWeight: FontWeight.bold),
             ],
           ),
-          const Divider(height: 1),
           if (isActive)
             Row(
               spacing: 12,
@@ -94,41 +93,21 @@ class OrderCard extends StatelessWidget {
                       context.push(RoutesPath.orderCanceledPath);
                     },
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Color(0xFFF3F2FF)),
-                      backgroundColor: const Color(0xFFF3F2FF),
+                      side: BorderSide(color: AppColors.kPrimaryColor),
+                      // backgroundColor: const Color(0xFFF3F2FF),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: const CustomText(
-                      "Cancel Order",
+                      AppStaticStrings.cancelOrder,
                       color: AppColors.kPrimaryColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ],
-            )
-          else
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                onPressed: () {},
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Color(0xFFE8E7FD)),
-                  backgroundColor: const Color(0xFFE8E7FD),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const CustomText(
-                  "Reorder",
-                  color: AppColors.kPrimaryColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
             ),
         ],
       ),

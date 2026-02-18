@@ -6,18 +6,11 @@ class OrderCanceledPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FE),
-      appBar: AppBar(
-        title: const CustomText(
-          "Order Canceled",
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+      appBar: AppBar(title: Text(AppStaticStrings.orderCanceled)),
       body: Padding(
         padding: AppPadding.getPadding12(context),
         child: Column(
-          spacing: 24,
+          spacing: 12,
           children: [
             // Order Number Card
             Container(
@@ -32,7 +25,7 @@ class OrderCanceledPage extends StatelessWidget {
                 spacing: 4,
                 children: [
                   CustomText(
-                    "Order Number",
+                    AppStaticStrings.orderNumber,
                     fontSize: 12,
                     color: AppColors.kSecondaryTextColor,
                   ),
@@ -71,12 +64,12 @@ class OrderCanceledPage extends StatelessWidget {
                       ),
                     ),
                     const CustomText(
-                      "Cancelled",
+                      AppStaticStrings.cancelled,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                     const CustomText(
-                      "The shop didn't confirm your order within the required time. Your order has been cancelled.",
+                      AppStaticStrings.orderCanceledDesc,
                       textAlign: TextAlign.center,
                       fontSize: 14,
                       color: AppColors.kSecondaryTextColor,
@@ -88,7 +81,7 @@ class OrderCanceledPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const CustomText(
-                        "Any paid amount will be refunded as in-app credit.",
+                        AppStaticStrings.refundAsCredit,
                         textAlign: TextAlign.center,
                         fontSize: 12,
                         color: AppColors.kPrimaryColor,
@@ -103,12 +96,13 @@ class OrderCanceledPage extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: CustomButton(
-                text: "Back to Home",
+                text: AppStaticStrings.backToHome,
                 onPressed: () {
                   context.go(RoutesPath.navigationPath);
                 },
               ),
             ),
+            space12H,
           ],
         ),
       ),

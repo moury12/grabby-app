@@ -6,19 +6,18 @@ class OrderTrackingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(title: const Text(AppStaticStrings.orderTracking)),
       body: SingleChildScrollView(
         padding: AppPadding.getPadding12(context),
         child: Column(
-          spacing: 24,
+          spacing: 12,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Order Info Card
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFF3F2FF),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: const Row(
@@ -29,15 +28,11 @@ class OrderTrackingPage extends StatelessWidget {
                     spacing: 4,
                     children: [
                       CustomText(
-                        "Order Number",
+                        AppStaticStrings.orderNumber,
                         fontSize: 12,
                         color: AppColors.kSecondaryTextColor,
                       ),
-                      CustomText(
-                        "#GC12345",
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+
                       CustomText(
                         "Brew & Co - Main Street",
                         fontSize: 12,
@@ -50,7 +45,12 @@ class OrderTrackingPage extends StatelessWidget {
                     spacing: 4,
                     children: [
                       CustomText(
-                        "Ready for Pickup",
+                        "#GC12345",
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      CustomText(
+                        AppStaticStrings.readyForPickup,
                         fontSize: 12,
                         color: Colors.green,
                         fontWeight: FontWeight.bold,
@@ -69,7 +69,7 @@ class OrderTrackingPage extends StatelessWidget {
               height: 150,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: const Color(0xFFF3F2FF),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -83,7 +83,7 @@ class OrderTrackingPage extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                   CustomText(
-                    "Shop will be automatically notified by your arrival",
+                    AppStaticStrings.arrivalNotificationDesc,
                     fontSize: 12,
                     color: AppColors.kSecondaryTextColor,
                   ),
@@ -98,36 +98,20 @@ class OrderTrackingPage extends StatelessWidget {
                 Expanded(
                   child: CustomButton(
                     text: AppStaticStrings.navigateToCafe,
+                    iconPath: ImagesConstant.kNavigationIcon,
                     onPressed: () {
-                      // context.push(RoutesPath.locationPath);
+                      context.push(RoutesPath.orderTrackingMapViewPath);
                     },
                   ),
                 ),
                 Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      side: const BorderSide(color: Color(0xFF90CAF9)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      backgroundColor: const Color(
-                        0xFF90CAF9,
-                      ).withValues(alpha: 0.2),
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      spacing: 8,
-                      children: [
-                        Icon(Icons.call, color: Color(0xFF1976D2), size: 20),
-                        CustomText(
-                          AppStaticStrings.callShop,
-                          color: Color(0xFF1976D2),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ],
-                    ),
+                  child: CustomButton(
+                    text: AppStaticStrings.callShop,
+                    iconPath: ImagesConstant.kCallIcon,
+                    backgroundColor: AppColors.kSecondaryColor,
+                    onPressed: () {
+                      // context.push(RoutesPath.locationPath);
+                    },
                   ),
                 ),
               ],
@@ -162,7 +146,7 @@ class OrderTrackingPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                const Divider(),
+                const Divider(height: 1),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -180,6 +164,7 @@ class OrderTrackingPage extends StatelessWidget {
                 ),
               ],
             ),
+            space12H,
           ],
         ),
       ),

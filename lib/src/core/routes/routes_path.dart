@@ -19,6 +19,6 @@ class RoutesPath {
   static const String paymentSuccessPath = '/PaymentSuccessPage';
   static const String orderTrackingPath = '/OrderTrackingPage';
   static const String orderHistoryPath = '/OrderHistoryPage';
-  static const String orderDetailsPath = '/OrderDetailsPage';
+  static const String orderTrackingMapViewPath = '/OrderTrackingMapViewPage';
   static const String orderCanceledPath = '/OrderCanceledPage';
 }

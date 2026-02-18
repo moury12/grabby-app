@@ -147,10 +147,10 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: RoutesPath.orderDetailsPath,
-        name: RoutesPath.orderDetailsPath,
+        path: RoutesPath.orderTrackingMapViewPath,
+        name: RoutesPath.orderTrackingMapViewPath,
         builder: (BuildContext context, GoRouterState state) {
-          return const OrderDetailsPage();
+          return const OrderTrackingMapViewPage();
         },
       ),
       GoRoute(

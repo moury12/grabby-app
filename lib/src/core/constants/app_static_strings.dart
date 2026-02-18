@@ -17,7 +17,9 @@ class AppStaticStrings {
   static const String emailAddressOrPhoneNumber =
       "Email Address Or Phone Number";
   static const String password = "Password";
-  static const String forgotThePassword = "Forgot the Password";
+  static const String cancelOrder = "Cancel Order";
+  static const String dontHaveAnAccount = "Don't Have an Account?";
+  static const String forgotThePassword = "Forgot Password";
   static const String logIn = "Log In";
   static const String totalPaid = "Total Paid";
   static const String carNumberSource = "Car Number Source";
@@ -59,6 +61,7 @@ class AppStaticStrings {
   static const String counter = "Counter";
   static const String home = "Home";
   static const String orders = "Orders";
+  static const String orderCanceled = "Order Canceled";
   static const String cart = "Cart";
   static const String profile = "Profile";
   static const String selectBranch = "Select Branch";
@@ -119,4 +122,15 @@ class AppStaticStrings {
   static const String navigateToCafe = "Navigate to Café";
   static const String callShop = "Call Shop";
   static const String orderItems = "Order Items";
+  static const String all = "All";
+  static const String active = "Active";
+  static const String order = "Order";
+  static const String orderDetails = "Order Details";
+  static const String cancelled = "Cancelled";
+  static const String orderCanceledDesc =
+      "The shop didn't confirm your order within the required time. Your order has been cancelled.";
+  static const String refundAsCredit =
+      "Any paid amount will be refunded as in-app credit.";
+  static const String arrivalNotificationDesc =
+      "Shop will be automatically notified by your arrival";
 }

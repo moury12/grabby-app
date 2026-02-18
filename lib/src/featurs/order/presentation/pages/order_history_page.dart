@@ -8,7 +8,6 @@ class OrderHistoryPage extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF8F9FE),
         body: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
@@ -31,9 +30,9 @@ class OrderHistoryPage extends StatelessWidget {
                   dividerColor: Colors.transparent,
                   indicatorPadding: const EdgeInsets.symmetric(horizontal: -20),
                   tabs: [
-                    _buildTab("All"),
-                    _buildTab("Active"),
-                    _buildTab("Completed"),
+                    _buildTab(AppStaticStrings.all),
+                    _buildTab(AppStaticStrings.active),
+                    _buildTab(AppStaticStrings.completed),
                   ],
                 ),
               ),
@@ -73,7 +72,9 @@ class OrderHistoryPage extends StatelessWidget {
           items: const ["2x Caffe Latte", "1x Croissant"],
           dateTime: "Today, 10:30 AM",
           price: "\$11.60",
-          status: filter == "active" ? "Ready for Pickup" : "Completed",
+          status: filter == "active"
+              ? AppStaticStrings.readyForPickup
+              : AppStaticStrings.completed,
           isActive: filter == "active",
         );
       },
