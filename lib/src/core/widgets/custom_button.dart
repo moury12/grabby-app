@@ -5,6 +5,7 @@ class CustomButton extends StatelessWidget {
   final VoidCallback onPressed;
   final Color? backgroundColor;
   final Color? textColor;
+  final Color? iconColor;
   final String? iconPath; // Use SVG asset path
   final IconData? icon; // Use Flutter IconData
   final bool isOutlined;
@@ -21,6 +22,7 @@ class CustomButton extends StatelessWidget {
     required this.onPressed,
     this.backgroundColor,
     this.textColor,
+    this.iconColor,
     this.iconPath,
     this.icon,
     this.isOutlined = false,
@@ -78,6 +80,7 @@ class CustomButton extends StatelessWidget {
                       icon,
                       size: 20,
                       color:
+                          iconColor ??
                           textColor ??
                           (isOutlined ? AppColors.kPrimaryColor : Colors.white),
                     ),
@@ -89,7 +92,8 @@ class CustomButton extends StatelessWidget {
                         height: 20,
                         width: 20,
                         colorFilter: ColorFilter.mode(
-                          textColor ??
+                          iconColor ??
+                              textColor ??
                               (isOutlined
                                   ? AppColors.kTextColor
                                   : Colors.white),
@@ -101,6 +105,7 @@ class CustomButton extends StatelessWidget {
                         iconPath!,
                         height: 20,
                         color:
+                            iconColor ??
                             textColor ??
                             (isOutlined
                                 ? AppColors.kPrimaryColor

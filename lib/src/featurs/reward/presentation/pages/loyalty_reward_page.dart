@@ -13,7 +13,7 @@ class LoyaltyRewardPage extends StatelessWidget {
           spacing: 12,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Total Point Card
+            // Total Point Card (Header)
             Container(
               width: double.infinity,
               padding: AppPadding.getPadding12(context),
@@ -23,68 +23,122 @@ class LoyaltyRewardPage extends StatelessWidget {
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 8,
+                spacing: 4,
                 children: [
-                  const CustomText(
-                    AppStaticStrings.totalPoint,
-                    fontSize: 14,
-                    color: AppColors.kSecondaryTextColor,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  const CustomText(
-                    "1350 Points",
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const CustomText(
-                        AppStaticStrings.progressToNextReward,
-                        fontSize: 12,
-                        color: AppColors.kSecondaryTextColor,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 4,
+                        children: [
+                          CustomText(
+                            AppStaticStrings.gPoints,
+                            fontSize: ResponsiveTextSizes.getFontSizeSemiSmall(
+                              context,
+                            ),
+                            fontWeight: FontWeight.w600,
+                          ),
+                          CustomText(
+                            "1350 Points",
+                            fontSize: ResponsiveTextSizes.getFontSizeExtraLarge(
+                              context,
+                            ),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ],
                       ),
-                      const CustomText(
-                        "1340 / 1000 Points",
-                        fontSize: 12,
-                        color: AppColors.kSecondaryTextColor,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        spacing: 4,
+                        children: [
+                          CustomText(
+                            AppStaticStrings.walletBalance,
+                            fontSize: ResponsiveTextSizes.getFontSizeSemiSmall(
+                              context,
+                            ),
+                            fontWeight: FontWeight.w600,
+                          ),
+                          CustomText(
+                            "133.85 AED",
+                            fontSize: ResponsiveTextSizes.getFontSizeExtraLarge(
+                              context,
+                            ),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ],
                       ),
                     ],
                   ),
-
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: const LinearProgressIndicator(
-                      value: .8,
-                      minHeight: 8,
-                      backgroundColor: Colors.black12,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        AppColors.kPrimaryColor,
+                  space8H,
+                  Column(
+                    spacing: 8,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CustomText(
+                            AppStaticStrings.progressToNextReward,
+                            fontSize: ResponsiveTextSizes.getFontSizeSmall(
+                              context,
+                            ),
+                            color: AppColors.kSecondaryTextColor,
+                          ),
+                          CustomText(
+                            "1340 / 1000 Points",
+                            fontSize: ResponsiveTextSizes.getFontSizeSmall(
+                              context,
+                            ),
+                            color: AppColors.kSecondaryTextColor,
+                          ),
+                        ],
                       ),
-                    ),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: const LinearProgressIndicator(
+                          value: .8,
+                          minHeight: 8,
+                          backgroundColor: Colors.black12,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.kPrimaryColor,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
 
             // Available Rewards Section
-            const CustomText(
+            CustomText(
               AppStaticStrings.availableRewards,
-              fontSize: 18,
+              fontSize: ResponsiveTextSizes.getFontSizeDefault(context),
               fontWeight: FontWeight.bold,
             ),
 
             _buildRewardCard(
               context,
               title: AppStaticStrings.tenPercentDiscount,
-              subTitle: "1,000 ${AppStaticStrings.pointsRequired}",
+              subTitle: "500 ${AppStaticStrings.pointsRequired}",
             ),
 
             _buildRewardCard(
               context,
               title: AppStaticStrings.fifteenPercentDiscount,
-              subTitle: "2,500 ${AppStaticStrings.pointsRequired}",
+              subTitle: "1000 ${AppStaticStrings.pointsRequired}",
+            ),
+
+            _buildRewardCard(
+              context,
+              title: AppStaticStrings.fifteenAED,
+              subTitle: "1500 ${AppStaticStrings.pointsRequired}",
+            ),
+
+            _buildRewardCard(
+              context,
+              title: AppStaticStrings.twentyAED,
+              subTitle: "2000 ${AppStaticStrings.pointsRequired}",
             ),
 
             // Warning Banner
@@ -97,18 +151,18 @@ class LoyaltyRewardPage extends StatelessWidget {
               ),
               child: Row(
                 spacing: 12,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.info_outline,
+                    Icons.help_outline,
                     color: Colors.amber.shade800,
                     size: 20,
                   ),
-                  const Expanded(
+                  Expanded(
                     child: CustomText(
                       AppStaticStrings.validForSelectedShops,
-                      fontSize: 12,
-                      color: Color(0xFF856404),
+                      fontSize: ResponsiveTextSizes.getFontSizeSmall(context),
+                      color: const Color(0xFF856404),
                     ),
                   ),
                 ],
@@ -127,22 +181,25 @@ class LoyaltyRewardPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 16,
                 children: [
-                  const CustomText(
+                  CustomText(
                     AppStaticStrings.howRewardPointsWork,
-                    fontSize: 16,
+                    fontSize: ResponsiveTextSizes.getFontSizeSemiSmall(context),
                     fontWeight: FontWeight.bold,
                   ),
                   _buildStepItem(
+                    context,
                     number: "1",
                     title: AppStaticStrings.earnPoints,
                     description: AppStaticStrings.earnPointsDesc,
                   ),
                   _buildStepItem(
+                    context,
                     number: "2",
                     title: AppStaticStrings.unlockRewards,
                     description: AppStaticStrings.unlockRewardsDesc,
                   ),
                   _buildStepItem(
+                    context,
                     number: "3",
                     title: AppStaticStrings.redeemAndSave,
                     description: AppStaticStrings.redeemAndSaveDesc,
@@ -189,13 +246,15 @@ class LoyaltyRewardPage extends StatelessWidget {
                   children: [
                     CustomText(
                       title,
-                      fontSize: 16,
+                      fontSize: ResponsiveTextSizes.getFontSizeSemiSmall(
+                        context,
+                      ),
                       fontWeight: FontWeight.bold,
                       color: AppColors.kPrimaryColor,
                     ),
                     CustomText(
                       subTitle,
-                      fontSize: 12,
+                      fontSize: ResponsiveTextSizes.getFontSizeSmall(context),
                       color: AppColors.kSecondaryTextColor,
                     ),
                   ],
@@ -235,7 +294,8 @@ class LoyaltyRewardPage extends StatelessWidget {
     );
   }
 
-  Widget _buildStepItem({
+  Widget _buildStepItem(
+    BuildContext context, {
     required String number,
     required String title,
     required String description,
@@ -254,7 +314,7 @@ class LoyaltyRewardPage extends StatelessWidget {
           child: Center(
             child: CustomText(
               number,
-              fontSize: 12,
+              fontSize: ResponsiveTextSizes.getFontSizeSmall(context),
               fontWeight: FontWeight.bold,
               color: AppColors.kPrimaryColor,
             ),
@@ -265,10 +325,14 @@ class LoyaltyRewardPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 2,
             children: [
-              CustomText(title, fontSize: 14, fontWeight: FontWeight.bold),
+              CustomText(
+                title,
+                fontSize: ResponsiveTextSizes.getFontSizeSmall(context),
+                fontWeight: FontWeight.bold,
+              ),
               CustomText(
                 description,
-                fontSize: 12,
+                fontSize: ResponsiveTextSizes.getFontSizeSmall(context),
                 color: AppColors.kSecondaryTextColor,
               ),
             ],

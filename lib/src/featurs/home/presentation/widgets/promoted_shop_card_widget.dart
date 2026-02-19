@@ -31,35 +31,8 @@ class PromotedShopCardWidget extends StatelessWidget {
             children: [
               CircleAvatar(radius: 18, backgroundImage: NetworkImage(shopImg)),
 
-              Expanded(
-                child: Column(
-                  spacing: 4,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomText(
-                      shopName,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.kPrimaryColor.withValues(alpha: .15),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: CustomText(
-                        AppStaticStrings.sponsored,
-
-                        color: AppColors.kPrimaryColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              CustomText(shopName, fontSize: 14, fontWeight: FontWeight.w600),
+              Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(

@@ -10,16 +10,28 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   bool _isCarPickup = true;
 
+  final List<Map<String, String>> _cartItems = [
+    {
+      "quantity": "1x",
+      "title": AppStaticStrings.icedMatchaLatte,
+      "description": "Honey, Full Fat, Chocolate Muffin, Medium",
+      "price": "16.60",
+    },
+    {
+      "quantity": "1x",
+      "title": AppStaticStrings.icedMatchaLatte,
+      "description": "Honey, Full Fat, Chocolate Muffin, Medium",
+      "price": "16.60",
+    },
+  ];
+
+  double get _totalPrice =>
+      _cartItems.fold(0.0, (sum, item) => sum + double.parse(item["price"]!));
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          AppStaticStrings.cart,
-          // fontSize: 20,
-          // fontWeight: FontWeight.bold,
-        ),
-      ),
+      appBar: AppBar(title: const Text(AppStaticStrings.cart)),
       body: SingleChildScrollView(
         padding: AppPadding.getPadding12(context),
         child: Column(
@@ -27,12 +39,34 @@ class _CartPageState extends State<CartPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Cart Items
-            const CartItemCard(
-              quantity: "1x",
-              title: AppStaticStrings.icedMatchaLatte,
-              description: "Honey, Full Fat, Chocolate Muffin, Medium",
-              price: "AED 16.60",
-            ),
+            ..._cartItems.asMap().entries.map((entry) {
+              final index = entry.key;
+              final item = entry.value;
+              return Dismissible(
+                key: UniqueKey(),
+                direction: DismissDirection.endToStart,
+                onDismissed: (direction) {
+                  setState(() {
+                    _cartItems.removeAt(index);
+                  });
+                },
+                background: Container(
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.only(right: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade400,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Icon(Icons.delete, color: Colors.white),
+                ),
+                child: CartItemCard(
+                  quantity: item["quantity"]!,
+                  title: item["title"]!,
+                  description: item["description"]!,
+                  price: "AED ${item["price"]}",
+                ),
+              );
+            }),
 
             // Pickup Selection
             PickupSelectionWidget(
@@ -63,8 +97,8 @@ class _CartPageState extends State<CartPage> {
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
-                const CustomText(
-                  "16.60 AED",
+                CustomText(
+                  "${_totalPrice.toStringAsFixed(2)} AED",
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),

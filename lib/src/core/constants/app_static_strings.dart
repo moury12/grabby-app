@@ -1,7 +1,7 @@
 class AppStaticStrings {
   static const String orderYourFavoriteCoffee =
-      "Order your favorite coffee from nearby cafés with just a few taps";
-  static const String findTheBestCafe = "Find the Best Cafés Near You";
+      "Order your favorite coffee from nearby shops with just a few taps";
+  static const String findTheBestCafe = "Find the Best shops Near You";
   static const String startOrdering = "Start Ordering";
   static const String searchExploreMenu =
       "Search, explore menus, and add items to your cart effortlessly.";
@@ -10,7 +10,7 @@ class AppStaticStrings {
       "Choose car or counter pickup and enjoy your coffee instantly";
   static const String earnLoaylty = "Earn Loyalty Stamps";
   static const String collectDigitalStamps =
-      "Collect digital stamps at your favorite cafés and redeem rewards.";
+      "Collect digital stamps at your favorite shops and redeem rewards.";
 
   static const String gladToMeetYouAgain = "Glad to meet you again!";
   static const String loginAccount = "Login Account";
@@ -21,6 +21,7 @@ class AppStaticStrings {
   static const String dontHaveAnAccount = "Don't Have an Account?";
   static const String forgotThePassword = "Forgot Password";
   static const String logIn = "Log In";
+  static const String logOut = "Log Out";
   static const String totalPaid = "Total Paid";
   static const String carNumberSource = "Car Number Source";
   static const String signUp = "Sign Up";
@@ -29,8 +30,10 @@ class AppStaticStrings {
   static const String email = "Email";
   static const String phoneNumber = "Phone Number";
   static const String confirmPassword = "Confirm Password";
-  static const String iHaveReadAndAgree =
-      "I have read and agree to Grabby Terms and Conditions and Policy.";
+  static const String iHaveReadAndAgree = "I have read and agree to ";
+  static const String termsAndConditions = "Terms and Conditions";
+  static const String and = " and ";
+  static const String privacyPolicy = "Privacy Policy";
   static const String forgotPassword = "Forgot Password";
   static const String selectContactMethod =
       "Select the contact method we should use to reset your password";
@@ -51,8 +54,8 @@ class AppStaticStrings {
   static const String continueText = "Continue";
   static const String enableLocation = "Enable Location";
   static const String locationDesc =
-      "We need your location to show nearby cafés and provide accurate pickup times";
-  static const String searchCafes = "Search cafés...";
+      "We need your location to show nearby shops and provide accurate pickup times";
+  static const String searchCafes = "Search shops...";
   static const String listView = "List View";
   static const String mapView = "Map View";
   static const String openNow = "Open Now";
@@ -77,7 +80,7 @@ class AppStaticStrings {
   static const String matcha = "Matcha";
   static const String coldCoffee = "Cold Cof";
   static const String caffeLatte = "Caffe Latte";
-  static const String price = "14.50AED";
+  static const String price = "AED 14.50";
   static const String discount = "20% OFF";
   static const String promotedShops = "Promoted Shops";
   static const String promotedShopsDesc =
@@ -119,7 +122,7 @@ class AppStaticStrings {
   static const String preparingYourOrder = "Preparing your Order";
   static const String readyForPickup = "Ready for Pickup";
   static const String completed = "Completed";
-  static const String navigateToCafe = "Navigate to Café";
+  static const String navigateToCafe = "Navigate to shop";
   static const String callShop = "Call Shop";
   static const String orderItems = "Order Items";
   static const String all = "All";
@@ -135,7 +138,7 @@ class AppStaticStrings {
       "Shop will be automatically notified by your arrival";
   static const String iveArrived = "I've Arrived";
   static const String iveArrivedDesc =
-      "Let the café know you've arrived so they can prepare your handover";
+      "Let the shop know you've arrived so they can prepare your handover";
   static const String notifyShop = "Notify Shop";
 
   // Loyalty Reward
@@ -144,16 +147,20 @@ class AppStaticStrings {
   static const String totalPoint = "Total Point";
   static const String progressToNextReward = "Progress to next reward";
   static const String availableRewards = "Available Rewards";
-  static const String tenPercentDiscount = "10% Discount";
-  static const String fifteenPercentDiscount = "15% Discount";
+  static const String gPoints = "G Points";
+  static const String walletBalance = "Wallet Balance";
+  static const String tenPercentDiscount = "AED 5";
+  static const String fifteenPercentDiscount = "AED 10";
+  static const String fifteenAED = "AED 15";
+  static const String twentyAED = "AED 20";
   static const String pointsRequired = "points required";
   static const String redeemNow = "Redeem Now";
   static const String validForSelectedShops =
-      "Valid for selected shops only. Check if your favorite café accepts reward points before placing an order.";
+      "Valid for selected shops only. Check if your favorite shop accepts reward points before placing an order.";
   static const String howRewardPointsWork = "How Reward Points Work";
   static const String earnPoints = "Earn Points";
   static const String earnPointsDesc =
-      "Get 1 points for every 1 AED you spend at participating cafés";
+      "Get 1 points for every AED 1 you spend at participating shops";
   static const String unlockRewards = "Unlock Rewards";
   static const String unlockRewardsDesc =
       "Spend points to unlock Grabby credit.";
@@ -164,16 +171,27 @@ class AppStaticStrings {
 
   // Redeem Reward Popup
   static const String redeemRewardTitle = "Redeem Reward?";
-  static const String redeemRewardDesc = "Redeem 5% discount for 1000 points?";
+  static const String redeemRewardDesc = "Redeem AED 5 for 500 points?";
   static const String currentPoints = "Current Points";
   static const String pointsRequiredLabel = "Points Required";
   static const String remainingPoints = "Remaining Points";
   static const String confirmRedemption = "Confirm Redemption";
 
+  // Item Details
+  static const String choiceOfMilk = "Choice of Milk";
+  static const String fullFatMilk = "Full Fat Milk";
+  static const String lowFatMilk = "Low Fat Milk";
+  static const String soyMilk = "Soy Milk";
+  static const String coconutMilk = "Coconut Milk";
+  static const String almondMilk = "Almond Milk";
+  static const String notes = "Notes";
+  static const String addToBag = "Add to bag";
+  static const String yourChoiceOf = "Your Choice of";
+
   // Suggest a Shop
   static const String suggestAShop = "Suggest a Shop";
   static const String suggestAShopDesc =
-      "Know a great café that should be on GoCafe? Let us know and we'll reach out to them!";
+      "Know a great shop that should be on GoCafe? Let us know and we'll reach out to them!";
   static const String cafeName = "Cafe Name";
   static const String enterCafeName = "Enter Cafe Name";
   static const String location = "Location";

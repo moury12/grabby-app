@@ -20,7 +20,7 @@ class ChangePasswordPage extends StatelessWidget {
         padding: AppPadding.getPadding12(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 24,
+          spacing: 12,
           children: [
             _buildField(label: AppStaticStrings.typePassword, hint: "••••••••"),
             _buildField(label: AppStaticStrings.newPassword, hint: "••••••••"),
@@ -29,7 +29,7 @@ class ChangePasswordPage extends StatelessWidget {
               hint: "••••••••",
             ),
 
-            space24H,
+            // space24H,
             CustomButton(
               text: AppStaticStrings.update,
               onPressed: () {},

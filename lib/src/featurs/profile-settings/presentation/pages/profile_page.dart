@@ -81,6 +81,16 @@ class ProfilePage extends StatelessWidget {
                     onTap: () =>
                         context.pushNamed(RoutesPath.accountSettingsPath),
                   ),
+                  CustomButton(
+                    text: AppStaticStrings.logOut,
+                    onPressed: () {
+                      context.goNamed(RoutesPath.loginPath);
+                    },
+                    icon: Icons.logout,
+                    iconColor: AppColors.kRedColor,
+                    textColor: AppColors.kTextColor,
+                    backgroundColor: Colors.white,
+                  ),
                 ],
               ),
               space24H,

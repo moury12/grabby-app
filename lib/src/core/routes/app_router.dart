@@ -2,6 +2,11 @@ import '../../src_export.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
+    debugLogDiagnostics: true,
+    redirect: (context, state) {
+      debugPrint("Navigating to: ${state.matchedLocation}");
+      return null; // No redirection, just logging
+    },
     routes: <RouteBase>[
       /*GoRoute(
         path: '/',
@@ -21,8 +26,7 @@ class AppRouter {
       ),*/
       GoRoute(
         path: '/',
-        // path: RoutesPath.loginPath,
-        // name: RoutesPath.loginPath,
+        name: RoutesPath.loginPath,
         builder: (BuildContext context, GoRouterState state) {
           return const LoginPage();
         },
