@@ -48,7 +48,12 @@ class LoginPage extends StatelessWidget {
                 CustomButton(
                   text: AppStaticStrings.logIn,
                   onPressed: () {
-                    context.pushNamed(RoutesPath.navigationPath);
+                    final role = sl<OnboardingSplashBloc>().selectedRole;
+                    if (role == UserRole.shop) {
+                      context.pushNamed(RoutesPath.shopNavigationPath);
+                    } else {
+                      context.pushNamed(RoutesPath.navigationPath);
+                    }
                   },
                 ),
                 Row(

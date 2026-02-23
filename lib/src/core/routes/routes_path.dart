@@ -29,4 +29,7 @@ class RoutesPath {
   static const String notificationPath = "/notification";
   static const String accountSettingsPath = "/account_settings";
   static const String changePasswordPath = "/change_password";
+
+  static const String shopNavigationPath = '/ShopNavigationPage';
+  static const String roleSelectionPath = "/RoleSelectionPage";
 }

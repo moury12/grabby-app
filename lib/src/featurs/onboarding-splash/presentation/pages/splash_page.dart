@@ -1,4 +1,3 @@
-
 import '../../../../src_export.dart';
 
 class SplashPage extends StatelessWidget {
@@ -6,23 +5,32 @@ class SplashPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: GestureDetector(
-        onTap: () {
-          context.go(RoutesPath.onboardingPath);
+    return BlocProvider.value(
+      // Use the singleton instance and fire the splash timer
+      value: sl<OnboardingSplashBloc>()..add(LoadInitialData()),
+      child: BlocListener<OnboardingSplashBloc, OnboardingSplashState>(
+        listener: (context, state) {
+          if (state is SplashFinished) {
+            // Navigate to Onboarding slides
+            context.go(RoutesPath.roleSelectionPath);
+          }
         },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-              Image.asset(ImagesConstant.kAppIcon,height: MediaQuery.of(context).size.width/1.5,),
-           CustomText("GRABBY",variant: TextVariant.displayMedium,
-             color:AppColors.kPrimaryColor,
-             )
-
-            ],
+        child: Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  ImagesConstant.kAppIcon,
+                  height: MediaQuery.of(context).size.width / 1.5,
+                ),
+                AppNameTextWidget(),
+              ],
+            ),
           ),
-      )),
+        ),
+      ),
     );
   }
 }

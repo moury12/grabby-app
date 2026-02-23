@@ -8,13 +8,12 @@ class AppRouter {
       return null; // No redirection, just logging
     },
     routes: <RouteBase>[
-      /*GoRoute(
+      GoRoute(
         path: '/',
 
         builder: (BuildContext context, GoRouterState state) {
           return const SplashPage();
         },
-
       ),
       GoRoute(
         path: RoutesPath.onboardingPath,
@@ -22,10 +21,16 @@ class AppRouter {
         builder: (BuildContext context, GoRouterState state) {
           return const OnboardingPage();
         },
-
-      ),*/
+      ),
       GoRoute(
-        path: '/',
+        path: RoutesPath.roleSelectionPath,
+        name: RoutesPath.roleSelectionPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const RoleSelectionPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.loginPath,
         name: RoutesPath.loginPath,
         builder: (BuildContext context, GoRouterState state) {
           return const LoginPage();
@@ -211,6 +216,13 @@ class AppRouter {
         name: RoutesPath.changePasswordPath,
         builder: (BuildContext context, GoRouterState state) {
           return const ChangePasswordPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.shopNavigationPath,
+        name: RoutesPath.shopNavigationPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const ShopNavigationPage();
         },
       ),
     ],

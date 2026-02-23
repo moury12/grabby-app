@@ -1,9 +1,11 @@
 import '../../../../src_export.dart';
+
 class OnboardingItemWidget extends StatelessWidget {
   const OnboardingItemWidget({
     super.key,
     required this.item,
-    required this.onboardingData, required this.index,
+    required this.onboardingData,
+    required this.index,
   });
 
   final Map<String, dynamic> item;
@@ -26,7 +28,7 @@ class OnboardingItemWidget extends StatelessWidget {
         ),
         Positioned(
           bottom:
-          MediaQuery.sizeOf(context).height /
+              MediaQuery.sizeOf(context).height /
               (MediaQuery.sizeOf(context).height / 10),
           left: 0,
           right: 0,
@@ -49,13 +51,13 @@ class OnboardingItemWidget extends StatelessWidget {
                   spacing: 4,
                   children: List.generate(
                     onboardingData.length,
-                        (index) => Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
+                    (i) => Container(
                       height: 10,
                       width: 10,
+                      decoration: BoxDecoration(
+                        color: i == index ? Colors.white : Colors.white24,
+                        shape: BoxShape.circle,
+                      ),
                     ),
                   ),
                 ),
@@ -63,9 +65,12 @@ class OnboardingItemWidget extends StatelessWidget {
                   Padding(
                     padding: AppPadding.getPadding12V(context),
                     child: CustomButton(
-                      text: AppStaticStrings.startOrdering,
+                      text:
+                          item['buttonText'] ?? AppStaticStrings.startOrdering,
                       onPressed: () {
-                        context.go(RoutesPath.loginPath);
+                        context.read<OnboardingSplashBloc>().add(
+                          OnboardingCompleted(),
+                        );
                       },
                     ),
                   ),

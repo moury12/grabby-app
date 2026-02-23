@@ -23,8 +23,20 @@ class ImagesConstant {
       'assets/icons/contact_pickup_icon.svg';
   static const String kDeleteAccIcon = 'assets/icons/delete_acc_icon.svg';
   static const String kEmailIcon = 'assets/icons/email_icon.svg';
+  static const String kShopOwnerIcon = 'assets/icons/shopowner_role_icon.svg';
+  static const String kCustomerIcon = 'assets/icons/customer_role_icon.svg';
   static const String kGiftIcon = 'assets/icons/gift_icon.svg';
+  static const String kOnboardShopOwner1Img =
+      'assets/images/onboard_1_shop_owner_img.jpg';
+  static const String kOnboardShopOwner2Img =
+      'assets/images/onboard_2_shop_owner_img.jpg';
+  static const String kOnboardShopOwner3Img =
+      'assets/images/onboard_3_shop_owner_img.jpg';
+  static const String kOnboardShopOwner4Img =
+      'assets/images/onboard_4_shop_owner_img.jpg';
+
   static const String kHomeIcon = 'assets/icons/home_icon.svg';
+  static const String kMenuIcon = "assets/icons/menu_icon.svg";
   static const String kListIcon = 'assets/icons/list_Icon.svg';
   static const String kLocationIcon = 'assets/icons/location_Icon.svg';
   static const String kMapIcon = 'assets/icons/map_Icon.svg';
@@ -36,4 +48,5 @@ class ImagesConstant {
   static const String kRewardIcon = 'assets/icons/reward_icon.svg';
   static const String kSettingsIcon = 'assets/icons/settings_icon.svg';
   static const String kSuccesfullIcon = 'assets/icons/succesfull_icon.svg';
+  static const String kGroupIcon = 'assets/icons/customer_icon.svg';
 }

@@ -13,26 +13,29 @@ enum TextVariant {
   labelLarge,
   labelMedium,
   labelSmall,
+  bodyLarge,
+  bodyMedium,
+  bodySmall,
 }
 
 class CustomText extends StatelessWidget {
   const CustomText(
-      this.text, {
-        super.key,
-        this.variant = TextVariant.labelMedium,
-        this.color,
-        this.fontSize,
-        this.fontWeight,
-        this.textAlign,
-        this.maxLines,
-        this.overflow,
-        this.height,
-        this.letterSpacing,
-        this.decoration,
-        this.decorationColor,
-        this.softWrap,
-        this.style,
-      });
+    this.text, {
+    super.key,
+    this.variant = TextVariant.labelMedium,
+    this.color,
+    this.fontSize,
+    this.fontWeight,
+    this.textAlign,
+    this.maxLines,
+    this.overflow,
+    this.height,
+    this.letterSpacing,
+    this.decoration,
+    this.decorationColor,
+    this.softWrap,
+    this.style,
+  });
 
   final String text;
   final TextVariant variant;
@@ -55,18 +58,21 @@ class CustomText extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     final base = switch (variant) {
-      TextVariant.displayLarge  => textTheme.displayLarge,
+      TextVariant.displayLarge => textTheme.displayLarge,
       TextVariant.displayMedium => textTheme.displayMedium,
-      TextVariant.displaySmall  => textTheme.displaySmall,
+      TextVariant.displaySmall => textTheme.displaySmall,
       TextVariant.headlineLarge => textTheme.headlineLarge,
-      TextVariant.headlineMedium=> textTheme.headlineMedium,
+      TextVariant.headlineMedium => textTheme.headlineMedium,
       TextVariant.headlineSmall => textTheme.headlineSmall,
-      TextVariant.titleLarge    => textTheme.titleLarge,
-      TextVariant.titleMedium   => textTheme.titleMedium,
-      TextVariant.titleSmall    => textTheme.titleSmall,
-      TextVariant.labelLarge    => textTheme.labelLarge,
-      TextVariant.labelMedium   => textTheme.labelMedium,
-      TextVariant.labelSmall    => textTheme.labelSmall,
+      TextVariant.titleLarge => textTheme.titleLarge,
+      TextVariant.titleMedium => textTheme.titleMedium,
+      TextVariant.titleSmall => textTheme.titleSmall,
+      TextVariant.labelLarge => textTheme.labelLarge,
+      TextVariant.labelMedium => textTheme.labelMedium,
+      TextVariant.labelSmall => textTheme.labelSmall,
+      TextVariant.bodyLarge => textTheme.bodyLarge,
+      TextVariant.bodyMedium => textTheme.bodyMedium,
+      TextVariant.bodySmall => textTheme.bodySmall,
     };
 
     return base?.copyWith(

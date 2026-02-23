@@ -231,4 +231,38 @@ class AppStaticStrings {
   static const String newPassword = "New Password";
   static const String newConfirmPassword = "New Confirm Password";
   static const String update = "Update";
+
+  // Role Selection
+  static const String yourFavoriteCafeOneTapAway =
+      "Your favourite Cafe, one tap away";
+  static const String continueAsCustomer = "Continue as Customer";
+  static const String browseCafesAndOrderDrinks = "Browse cafes & order drinks";
+  static const String continueAsShop = "Continue as Shop";
+  static const String manageOrdersAndMenu = "Manage orders & menu";
+
+  // Shop Owner Onboarding
+  static const String manageOrdersInRealTime = "Manage Orders in Real Time";
+  static const String receiveOrdersInstantly =
+      "Receive orders instantly and prepare them before customers arrive.";
+  static const String controlMenuAndPromotions = "Control Menu & Promotions";
+  static const String updateItemsPricesAvailability =
+      "Update items, prices, availability, and run special discounts anytime.";
+  static const String trackPerformanceAndGrow = "Track Performance & Grow";
+  static const String viewOrdersLoyalActivity =
+      "View orders, loyalty activity, and grow your café with smart tools.";
+  static const String onboardYourShop = "Onboard your Shop";
+  static const String promotions = "Promotions";
+
+  // Shop Home Page
+  static const String brewAndCo = "Brew & Co";
+  static const String downtownBranch = "Downtown Branch";
+  static const String todaysOrders = "Today's Orders";
+  static const String revenue = "Revenue";
+  static const String activeItems = "Active Items";
+  static const String customers = "Customers";
+  static const String recentOrders = "Recent Orders";
+  static const String branch = "Branch";
+  static const String preparing = "Preparing";
+  static const String pending = "Pending";
+  static const String ready = "Ready";
 }
