@@ -145,6 +145,7 @@ class ShopOrderCard extends StatelessWidget {
                           CustomText(
                             pickupType,
                             variant: TextVariant.labelSmall,
+                            fontWeight: FontWeight.w500,
                             color: AppColors.kPrimaryColor,
                           ),
                         ],
@@ -186,7 +187,7 @@ class ShopOrderCard extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(24),
@@ -203,7 +204,7 @@ class ShopOrderCard extends StatelessWidget {
           ),
           CustomText(
             status,
-            variant: TextVariant.labelLarge,
+            variant: TextVariant.labelMedium,
             color: color,
             fontWeight: FontWeight.bold,
           ),

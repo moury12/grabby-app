@@ -43,6 +43,7 @@ class OrderHistoryPage extends StatelessWidget {
               _buildOrderList(context, "all"),
               _buildOrderList(context, "active"),
               _buildOrderList(context, "completed"),
+              _buildOrderList(context, "ready"),
             ],
           ),
         ),
@@ -74,6 +75,8 @@ class OrderHistoryPage extends StatelessWidget {
           price: "\$11.60",
           status: filter == "active"
               ? AppStaticStrings.readyForPickup
+              : filter == "ready"
+              ? AppStaticStrings.ready
               : AppStaticStrings.completed,
           isActive: filter == "active",
         );
