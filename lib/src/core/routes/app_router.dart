@@ -225,6 +225,20 @@ class AppRouter {
           return const ShopNavigationPage();
         },
       ),
+      GoRoute(
+        path: RoutesPath.shopOrderManagementPath,
+        name: RoutesPath.shopOrderManagementPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const ShopOrderManagementPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.shopOrderDetailsPath,
+        name: RoutesPath.shopOrderDetailsPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const ShopOrderDetailsPage();
+        },
+      ),
     ],
   );
 }

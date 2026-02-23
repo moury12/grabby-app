@@ -31,5 +31,7 @@ class RoutesPath {
   static const String changePasswordPath = "/change_password";
 
   static const String shopNavigationPath = '/ShopNavigationPage';
+  static const String shopOrderManagementPath = '/ShopOrderManagementPage';
+  static const String shopOrderDetailsPath = '/ShopOrderDetailsPage';
   static const String roleSelectionPath = "/RoleSelectionPage";
 }

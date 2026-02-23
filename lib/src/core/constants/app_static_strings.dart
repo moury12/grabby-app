@@ -265,4 +265,19 @@ class AppStaticStrings {
   static const String preparing = "Preparing";
   static const String pending = "Pending";
   static const String ready = "Ready";
+
+  // Shop Order Management
+  static const String orderManagement = "Order Management";
+  static const String startPreparing = "Start Preparing";
+  static const String markAsReady = "Mark as Ready";
+  static const String completeOrder = "Complete Order";
+  static const String acceptedStatus = "Accepted";
+  static const String placedStatus = "Placed";
+  static const String pickupCounter = "Pickup : Counter";
+  static const String carPickupWithPlate = "Car Pickup-";
+  static const String paid = "Paid";
+  static const String customerIsOnTheWay = "Customer is on the way";
+  static const String itemsCount = "items";
+  static const String ordersCount = "orders";
+  static const String stampsCount = "stamps";
 }

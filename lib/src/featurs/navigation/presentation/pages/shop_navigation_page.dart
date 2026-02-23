@@ -26,7 +26,7 @@ class _ShopNavigationPageState extends State<ShopNavigationPage> {
   Widget build(BuildContext context) {
     final List<Widget> pages = [
       ShopHomePage(),
-      OrderHistoryPage(),
+      ShopOrderManagementPage(),
       MenuPage(),
       LoyaltyRewardPage(),
       ProfilePage(),

@@ -22,48 +22,45 @@ class ShopOrderItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomText(
-                  id,
-                  variant: TextVariant.titleMedium,
-                  fontWeight: FontWeight.bold,
-                ),
-                CustomText(
-                  "$name \u2022 $items",
-                  variant: TextVariant.bodyMedium,
-                  color: AppColors.kSecondaryTextColor,
-                ),
-                const SizedBox(height: 8),
-                _buildStatusChip(status, statusColor),
-              ],
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomText(
-                price,
+                id,
                 variant: TextVariant.titleMedium,
-                color: AppColors.kPrimaryColor,
                 fontWeight: FontWeight.bold,
               ),
               CustomText(
-                time,
-                variant: TextVariant.labelSmall,
+                "$name \u2022 $items",
+                variant: TextVariant.bodyMedium,
                 color: AppColors.kSecondaryTextColor,
               ),
+              const SizedBox(height: 8),
+              _buildStatusChip(status, statusColor),
             ],
           ),
-        ],
-      ),
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            CustomText(
+              price,
+              variant: TextVariant.titleMedium,
+              color: AppColors.kPrimaryColor,
+              fontWeight: FontWeight.bold,
+            ),
+            CustomText(
+              time,
+              variant: TextVariant.labelSmall,
+              color: AppColors.kSecondaryTextColor,
+            ),
+          ],
+        ),
+      ],
     );
   }
 
