@@ -28,8 +28,8 @@ class _ShopNavigationPageState extends State<ShopNavigationPage> {
       ShopHomePage(),
       ShopOrderManagementPage(),
       MenuPage(),
-      LoyaltyRewardPage(),
-      ProfilePage(),
+      PromotionPage(),
+      BusinessProfilePage(),
     ];
 
     return BlocBuilder<NavigationBloc, NavigationState>(

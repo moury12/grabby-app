@@ -11,6 +11,7 @@ class ShopOrderCard extends StatelessWidget {
   final String pickupType;
   final String totalPrice;
   final bool isPaid;
+  final bool hasArrived;
   final VoidCallback? onTap;
 
   const ShopOrderCard({
@@ -25,6 +26,7 @@ class ShopOrderCard extends StatelessWidget {
     required this.pickupType,
     required this.totalPrice,
     this.isPaid = true,
+    this.hasArrived = false,
     this.onTap,
   });
 
@@ -123,39 +125,59 @@ class ShopOrderCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.kPrimaryColor.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(appRadius),
-                      ),
-                      child: Row(
-                        spacing: 4,
-                        children: [
-                          Icon(
-                            pickupType.contains('Car')
-                                ? Icons.directions_car_filled_outlined
-                                : Icons.person_outline,
-                            size: 16,
-                            color: AppColors.kPrimaryColor,
+                    if (hasArrived)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.kSecondaryColor.withValues(
+                            alpha: 0.1,
                           ),
-                          CustomText(
-                            pickupType,
-                            variant: TextVariant.labelSmall,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.kPrimaryColor,
-                          ),
-                        ],
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: CustomText(
+                          AppStaticStrings.customerArrived,
+                          variant: TextVariant.labelSmall,
+                          color: AppColors.kSecondaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    else
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.kPrimaryColor.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(appRadius),
+                        ),
+                        child: Row(
+                          spacing: 4,
+                          children: [
+                            Icon(
+                              pickupType.contains('Car')
+                                  ? Icons.directions_car_filled_outlined
+                                  : Icons.person_outline,
+                              size: 16,
+                              color: AppColors.kPrimaryColor,
+                            ),
+                            CustomText(
+                              pickupType,
+                              variant: TextVariant.labelSmall,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.kPrimaryColor,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
                   ],
                 ),
                 CustomText(
                   "$totalPrice AED",
-                  variant: TextVariant.headlineMedium,
+                  variant: TextVariant.titleLarge,
                   color: AppColors.kPrimaryColor,
                   fontWeight: FontWeight.bold,
                 ),

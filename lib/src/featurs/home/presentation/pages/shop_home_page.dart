@@ -79,6 +79,7 @@ class ShopHomePage extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: 3,
+
       itemBuilder: (context, index) {
         final List<Map<String, dynamic>> dummyOrders = [
           {

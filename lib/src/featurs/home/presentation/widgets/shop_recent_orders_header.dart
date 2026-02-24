@@ -27,6 +27,7 @@ class _ShopRecentOrdersHeaderState extends State<ShopRecentOrdersHeader> {
           fontWeight: FontWeight.bold,
         ),
         Container(
+          height: 40,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
             color: Colors.white,

@@ -14,5 +14,6 @@ SizedBox space12W = SizedBox(width: 12);
 SizedBox space8W = SizedBox(width: 8);
 SizedBox space6W = SizedBox(width: 6);
 
-double appRadius = 8;
+double appRadius = 12;
 double appRadius24 = 24;
+double appRadius16 = 16;

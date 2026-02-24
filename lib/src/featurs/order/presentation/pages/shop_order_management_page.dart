@@ -150,9 +150,25 @@ class _ShopOrderManagementPageState extends State<ShopOrderManagementPage> {
           {"qty": 2, "name": "Cappuccino", "price": "5.50"},
           {"qty": 1, "name": "Croissant", "price": "5.50"},
         ],
-        "status": AppStaticStrings.pending,
+        "status": AppStaticStrings.ready,
         "pickup": AppStaticStrings.pickupCounter,
         "total": "14.50",
+        "hasArrived": true,
+      },
+      {
+        "id": "#ORD-1234",
+        "time": "2 min ago",
+        "customer": "John Doe",
+        "orderCount": 12,
+        "stampCount": 6,
+        "items": [
+          {"qty": 2, "name": "Cappuccino", "price": "5.50"},
+          {"qty": 1, "name": "Croissant", "price": "5.50"},
+        ],
+        "status": AppStaticStrings.ready,
+        "pickup": AppStaticStrings.pickupCounter,
+        "total": "14.50",
+        "hasArrived": true,
       },
       {
         "id": "#ORD-1235",
@@ -166,6 +182,7 @@ class _ShopOrderManagementPageState extends State<ShopOrderManagementPage> {
         "status": AppStaticStrings.preparing,
         "pickup": "${AppStaticStrings.carPickupWithPlate}ABC 123",
         "total": "14.50",
+        "hasArrived": false,
       },
     ];
 
@@ -188,6 +205,7 @@ class _ShopOrderManagementPageState extends State<ShopOrderManagementPage> {
           status: order['status'],
           pickupType: order['pickup'],
           totalPrice: order['total'],
+          hasArrived: order['hasArrived'] ?? false,
           onTap: () {
             context.pushNamed(RoutesPath.shopOrderDetailsPath);
           },

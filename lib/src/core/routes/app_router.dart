@@ -239,6 +239,41 @@ class AppRouter {
           return const ShopOrderDetailsPage();
         },
       ),
+      GoRoute(
+        path: RoutesPath.promotionPath,
+        name: RoutesPath.promotionPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const PromotionPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.businessProfilePath,
+        name: RoutesPath.businessProfileName,
+        builder: (BuildContext context, GoRouterState state) {
+          return const BusinessProfilePage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.branchManagementPath,
+        name: RoutesPath.branchManagementName,
+        builder: (BuildContext context, GoRouterState state) {
+          return const BranchManagementPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.branchTimingsPath,
+        name: RoutesPath.branchTimingsName,
+        builder: (BuildContext context, GoRouterState state) {
+          return const BranchTimingsPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.rewardSettingsPath,
+        name: RoutesPath.rewardSettingsName,
+        builder: (BuildContext context, GoRouterState state) {
+          return const RewardSettingsPage();
+        },
+      ),
     ],
   );
 }

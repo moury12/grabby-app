@@ -34,4 +34,13 @@ class RoutesPath {
   static const String shopOrderManagementPath = '/ShopOrderManagementPage';
   static const String shopOrderDetailsPath = '/ShopOrderDetailsPage';
   static const String roleSelectionPath = "/RoleSelectionPage";
+  static const String promotionPath = "/PromotionPage";
+  static const String businessProfilePath = "/BusinessProfilePage";
+  static const String businessProfileName = "BusinessProfilePage";
+  static const String branchManagementPath = "/BranchManagementPage";
+  static const String branchManagementName = "BranchManagementPage";
+  static const String branchTimingsPath = "/BranchTimingsPage";
+  static const String branchTimingsName = "BranchTimingsPage";
+  static const String rewardSettingsPath = "/RewardSettingsPage";
+  static const String rewardSettingsName = "RewardSettingsPage";
 }

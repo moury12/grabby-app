@@ -37,35 +37,37 @@ class AppTheme {
 
       // Text Theme (Applies the text color globally)
       // ─────────────────────────────────────────────────────────────────
-//  ResponsiveTextSizes → TextTheme mapping (size-ordered reference)
-//
-//  Size Scale (mobile → desktop):
-//  small        12 → 15
-//  semiSmall    14 → 16
-//  default      16 → 18
-//  large        16 → 20
-//  extraLarge   18 → 20
-//  buttonSize   20 → 26
-//  largeFontSz  24 → 26
-//  buttonLarge  24 → 30
-//  overLarge    46 → 56
-//  forReview    36 (static)
-// ─────────────────────────────────────────────────────────────────
-
+      //  ResponsiveTextSizes → TextTheme mapping (size-ordered reference)
+      //
+      //  Size Scale (mobile → desktop):
+      //  small        12 → 15
+      //  semiSmall    14 → 16
+      //  default      16 → 18
+      //  large        16 → 20
+      //  extraLarge   18 → 20
+      //  buttonSize   20 → 26
+      //  largeFontSz  24 → 26
+      //  buttonLarge  24 → 30
+      //  overLarge    46 → 56
+      //  forReview    36 (static)
+      // ─────────────────────────────────────────────────────────────────
       textTheme: TextTheme(
         // ── Display ─────────────────────────────────────────────────────
         // Hero / banner text — largest sizes
-
         displayLarge: TextStyle(
           fontFamily: 'Poppins',
-          fontSize: ResponsiveTextSizes.getFontSizeOverLarge(context), // 46 → 56
+          fontSize: ResponsiveTextSizes.getFontSizeOverLarge(
+            context,
+          ), // 46 → 56
           fontWeight: FontWeight.bold,
           color: AppColors.kTextColor,
         ),
 
         displayMedium: TextStyle(
           fontFamily: 'Poppins',
-          fontSize: ResponsiveTextSizes.getButtonFontSizeLarge(context), // 24 → 30
+          fontSize: ResponsiveTextSizes.getButtonFontSizeLarge(
+            context,
+          ), // 24 → 30
           fontWeight: FontWeight.w700,
           color: AppColors.kTextColor,
         ),
@@ -79,7 +81,6 @@ class AppTheme {
 
         // ── Headline ────────────────────────────────────────────────────
         // Section headers / page titles
-
         headlineLarge: TextStyle(
           fontFamily: 'Poppins',
           fontSize: ResponsiveTextSizes.getButtonFontSize(context), // 20 → 26
@@ -89,7 +90,9 @@ class AppTheme {
 
         headlineMedium: TextStyle(
           fontFamily: 'Poppins',
-          fontSize: ResponsiveTextSizes.getFontSizeExtraLarge(context), // 18 → 20
+          fontSize: ResponsiveTextSizes.getFontSizeExtraLarge(
+            context,
+          ), // 18 → 20
           fontWeight: FontWeight.w600,
           color: AppColors.kTextColor,
         ),
@@ -103,7 +106,6 @@ class AppTheme {
 
         // ── Title ───────────────────────────────────────────────────────
         // Card titles / list headers / modal titles
-
         titleLarge: TextStyle(
           fontFamily: 'Poppins',
           fontSize: ResponsiveTextSizes.getFontSizeDefault(context), // 16 → 18
@@ -120,32 +122,35 @@ class AppTheme {
 
         titleSmall: TextStyle(
           fontFamily: 'Poppins',
-          fontSize: ResponsiveTextSizes.getFontSizeSemiSmall(context), // 14 → 16
+          fontSize: ResponsiveTextSizes.getFontSizeSemiSmall(
+            context,
+          ), // 14 → 16
           fontWeight: FontWeight.w500,
           color: AppColors.kTextColor,
         ),
 
         // ── Label ───────────────────────────────────────────────────────
         // Body text / captions / supporting text
-
         labelLarge: TextStyle(
           fontFamily: 'Poppins',
-          fontSize: ResponsiveTextSizes.getFontSizeSemiSmall(context), // 14 → 16
-          fontWeight: FontWeight.w400,
+          fontSize: ResponsiveTextSizes.getFontSizeSemiSmall(
+            context,
+          ), // 14 → 16
+          fontWeight: FontWeight.w500,
           color: AppColors.kTextColor,
         ),
 
         labelMedium: TextStyle(
           fontFamily: 'Poppins',
           fontSize: ResponsiveTextSizes.getFontSizeSmall(context), // 12 → 15
-          fontWeight: FontWeight.w400,
+          fontWeight: FontWeight.w500,
           color: AppColors.kTextColor,
         ),
 
         labelSmall: TextStyle(
           fontFamily: 'Poppins',
           fontSize: ResponsiveTextSizes.getFontSizeSmall(context), // 12 → 15
-          fontWeight: FontWeight.w300,
+          fontWeight: FontWeight.w500,
           color: AppColors.kTextColor,
         ),
 
@@ -153,21 +158,23 @@ class AppTheme {
         bodyLarge: TextStyle(
           fontFamily: 'Poppins',
           fontSize: ResponsiveTextSizes.getFontSizeDefault(context), // 16 → 18
-          fontWeight: FontWeight.w400,
+          fontWeight: FontWeight.w500,
           color: AppColors.kTextColor,
         ),
 
         bodyMedium: TextStyle(
           fontFamily: 'Poppins',
-          fontSize: ResponsiveTextSizes.getFontSizeSemiSmall(context), // 14 → 16
-          fontWeight: FontWeight.w400,
+          fontSize: ResponsiveTextSizes.getFontSizeSemiSmall(
+            context,
+          ), // 14 → 16
+          fontWeight: FontWeight.w500,
           color: AppColors.kTextColor,
         ),
 
         bodySmall: TextStyle(
           fontFamily: 'Poppins',
           fontSize: ResponsiveTextSizes.getFontSizeSmall(context), // 12 → 15
-          fontWeight: FontWeight.w300,
+          fontWeight: FontWeight.w500,
           color: AppColors.kTextColor,
         ),
       ),

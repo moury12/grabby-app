@@ -252,6 +252,8 @@ class AppStaticStrings {
       "View orders, loyalty activity, and grow your café with smart tools.";
   static const String onboardYourShop = "Onboard your Shop";
   static const String promotions = "Promotions";
+  static const String addPromotion = "Add Promotion";
+  static const String promotionImage = "Promotion Image";
 
   // Shop Home Page
   static const String brewAndCo = "Brew & Co";
@@ -265,6 +267,7 @@ class AppStaticStrings {
   static const String preparing = "Preparing";
   static const String pending = "Pending";
   static const String ready = "Ready";
+  static const String edit = "Edit";
 
   // Shop Order Management
   static const String orderManagement = "Order Management";
@@ -280,4 +283,86 @@ class AppStaticStrings {
   static const String itemsCount = "items";
   static const String ordersCount = "orders";
   static const String stampsCount = "stamps";
+  static const String customerArrived = "Customer Arrived";
+
+  // Promotion
+  static const String upcomingEvents = "Upcoming Events";
+  static const String activeDiscounts = "Active Discounts";
+  static const String editDiscount = "Edit Discount";
+  static const String deleteDiscount = "Delete Discount?";
+  static const String areYouSureDeleteDiscount =
+      "Are you sure you want to delete";
+  static const String thisActionCannotBeUndone =
+      "This action cannot be undone.";
+  static const String yesDelete = "Yes, Delete";
+  static const String discountName = "Discount Name *";
+  static const String eventOccasionOptional = "Event/Occasion (Optional) *";
+  static const String startDate = "Start Date *";
+  static const String endDate = "End Date *";
+  static const String appliedToItem = "Applied To Item *";
+  static const String discountPercentage = "Discount Percentage";
+  static const String makeDiscountActiveRightAway =
+      "Make this this discount active right away";
+  static const String saveChanges = "Save Changes";
+  static const String createPromotion = "Create Promotion";
+  static const String ramadanSpecial = "Ramadan Special";
+  static const String weekendDiscount = "Weekend Discount";
+  static const String happyHour = "Happy Hour";
+  static const String appliedToAllCoffeePastries =
+      "Applied to: All Coffee, All Pastries";
+  static const String appliedToAll = "Applied to: All";
+
+  // Business Profile
+  static const String businessProfile = "Business Profile";
+  static const String totalRevenue = "Total Revenue";
+  static const String totalOrders = "Total Orders";
+  static const String branchManagement = "Branch Management";
+  static const String branchTimings = "Branch Timings";
+  static const String marketingCampaigns = "Marketing Campaigns";
+  static const String rewardSettings = "Reward Settings";
+  static const String rewardPointsSystem = "Reward Points System";
+  static const String rewardPointsSystemDesc =
+      "Control whether your shop accepts reward points and which discounts customers can redeem.";
+  static const String acceptRewardPoints = "Accept Reward Points";
+  static const String allowCustomersToRedeem =
+      "Allow customers to redeem discounts using reward points";
+  static const String pointsEarningRule = "Points Earning Rule";
+  static const String pointsEarningRuleDesc =
+      "Customers earn 2 points for every 5 AED spent at your shop";
+  static const String selectDiscountOffers = "Select Discount Offers";
+  static const String chooseWhichDiscount =
+      "Choose which discount rewards customers can redeem at your shop";
+  static const String rewardPointsValidAtParticipating =
+      "Reward points and discounts are only valid at participating shops.";
+  static const String customersCanOnlyUseRewards =
+      "Customers can only use rewards at shops that have rewards enabled";
+  static const String pointsDeductedAutomatically =
+      "Points are deducted automatically when a discount is redeemed";
+  static const String enableDisableRewardsAnytime =
+      "You can enable or disable rewards anytime without affecting existing customer points";
+  static const String helpCenter = "Help Center";
+  static const String totalBranches = "Total Branches";
+  static const String branchName = "Branch Name";
+  static const String operatingHours = "Operating Hours";
+  static const String inactive = "Inactive";
+  static const String addNewBranch = "Add New Branch";
+  static const String branchNamePrompt = "e.g., Downtown Branch";
+  static const String fullAddress = "Full Address";
+  static const String enterCompleteAddress = "Enter complete address";
+  static const String activateBranch = "Activate Branch";
+  static const String startAcceptingOrdersImmediately =
+      "Start accepting orders immediately";
+  static const String addBranch = "Add Branch";
+  static const String perBranch = "Per Branch";
+  static const String mainBranch = "Main Branch";
+  static const String openingTime = "Opening Time";
+  static const String closingTime = "Closing Time";
+  static const String hoursSummary = "Hours Summary";
+  static const String importantNotes = "Important Notes";
+  static const String hoursChangesEffect =
+      "Hours changes take effect immediately for new orders";
+  static const String customersSeeUpdatedHours =
+      "Customers will see updated hours on your shop page";
+  static const String specialHolidayHours =
+      "Special holiday hours can be set separately";
 }

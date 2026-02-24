@@ -6,4 +6,5 @@ export 'restruant/restruant_export.dart';
 export 'cart-checkout/cart_export.dart';
 export 'order/order_export.dart';
 export 'reward/reward_export.dart';
+export 'promotion/promotion_export.dart';
 export 'profile-settings/profile_settings_export.dart';
