@@ -88,12 +88,22 @@ class _ShopMenuManagementPageState extends State<ShopMenuManagementPage> {
                             : Colors.white,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: CustomText(
-                        category,
-                        color: isSelected
-                            ? Colors.white
-                            : AppColors.kSecondaryTextColor,
-                        fontWeight: FontWeight.w600,
+                      child: Row(
+                        spacing: 8,
+                        children: [
+                          CustomNetworkImage(
+                            imageUrl: "",
+                            height: 20,
+                            width: 20,
+                          ),
+                          CustomText(
+                            category,
+                            color: isSelected
+                                ? Colors.white
+                                : AppColors.kSecondaryTextColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ],
                       ),
                     ),
                   );
