@@ -340,6 +340,7 @@ class AppStaticStrings {
       "Points are deducted automatically when a discount is redeemed";
   static const String enableDisableRewardsAnytime =
       "You can enable or disable rewards anytime without affecting existing customer points";
+  static const String important = "Important:";
   static const String helpCenter = "Help Center";
   static const String totalBranches = "Total Branches";
   static const String branchName = "Branch Name";
