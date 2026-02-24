@@ -91,7 +91,7 @@ class ShopOrderCard extends StatelessWidget {
                       variant: TextVariant.bodyMedium,
                     ),
                     CustomText(
-                      "${item['price']}AED",
+                      "AED ${item['price']}",
                       variant: TextVariant.titleSmall,
                       fontWeight: FontWeight.bold,
                     ),
@@ -176,7 +176,7 @@ class ShopOrderCard extends StatelessWidget {
                   ],
                 ),
                 CustomText(
-                  "$totalPrice AED",
+                  "AED $totalPrice",
                   variant: TextVariant.titleLarge,
                   color: AppColors.kPrimaryColor,
                   fontWeight: FontWeight.bold,

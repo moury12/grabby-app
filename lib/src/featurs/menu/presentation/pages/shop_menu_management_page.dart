@@ -139,7 +139,7 @@ class _ShopMenuManagementPageState extends State<ShopMenuManagementPage> {
                 return MenuManagementItemCard(
                   title: "Cappuccino",
                   description: "Classic Italian coffee with steamed milk",
-                  price: "5.50AED",
+                  price: "AED 5.50",
                   image: index == 0
                       ? "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=2033&auto=format&fit=crop"
                       : "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop",
