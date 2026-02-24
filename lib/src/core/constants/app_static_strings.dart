@@ -366,4 +366,43 @@ class AppStaticStrings {
       "Customers will see updated hours on your shop page";
   static const String specialHolidayHours =
       "Special holiday hours can be set separately";
+
+  // Menu Management
+  static const String menuManagement = "Menu Management";
+  static const String addItem = "Add Item";
+  static const String searchMenuItems = "Search menu items...";
+  static const String totalItems = "Total Items:";
+  static const String available = "Available:";
+  static const String outOfStock = "Out Of Stock";
+  static const String availableStatus = "Available";
+  static const String delete = "Delete";
+  static const String hide = "Hide";
+  static const String show = "Show";
+  static const String editItem = "Edit Item";
+  static const String image = "Image";
+  static const String uploadImage = "Upload Image";
+  static const String itemName = "Item Name *";
+  static const String enterItemName = "Cappuccino";
+  static const String category = "Category *";
+  static const String editCategory = "Edit Category";
+  static const String priceAED = "Price (AED) *";
+  static const String description = "Description";
+  static const String describeYourItem = "Describe your item...";
+  static const String addCustomization = "+ Add Customization";
+  static const String deleteGroup = "Delete Group";
+  static const String loyalty = "Loyalty";
+  static const String giveStampForItem = "Give Stamp for this item";
+  static const String availableNow = "Available Now";
+  static const String makeItemAvailable = "Make this item available for orders";
+  static const String categories = "Categories";
+  static const String categoryName = "Category Name....";
+  static const String submit = "Submit";
+  static const String deleteMenuItem = "Delete Menu Item?";
+  static const String areYouSureDeleteMenuItem =
+      "Are you sure you want to delete";
+  static const String addCustomizeGroup = "Add Customize Group";
+  static const String title = "Title";
+  static const String required = "Required";
+  static const String optional = "Optional";
+  static const String addCustomizationCategory = "+ Add Customization Category";
 }

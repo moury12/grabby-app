@@ -274,6 +274,20 @@ class AppRouter {
           return const RewardSettingsPage();
         },
       ),
+      GoRoute(
+        path: RoutesPath.shopMenuManagementPath,
+        name: RoutesPath.shopMenuManagementName,
+        builder: (BuildContext context, GoRouterState state) {
+          return const ShopMenuManagementPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.editItemPath,
+        name: RoutesPath.editItemName,
+        builder: (BuildContext context, GoRouterState state) {
+          return EditItemPage(item: state.extra as Map<String, dynamic>?);
+        },
+      ),
     ],
   );
 }

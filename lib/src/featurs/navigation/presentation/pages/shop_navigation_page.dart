@@ -27,7 +27,7 @@ class _ShopNavigationPageState extends State<ShopNavigationPage> {
     final List<Widget> pages = [
       ShopHomePage(),
       ShopOrderManagementPage(),
-      MenuPage(),
+      ShopMenuManagementPage(),
       PromotionPage(),
       BusinessProfilePage(),
     ];

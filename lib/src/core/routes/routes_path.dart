@@ -43,4 +43,8 @@ class RoutesPath {
   static const String branchTimingsName = "BranchTimingsPage";
   static const String rewardSettingsPath = "/RewardSettingsPage";
   static const String rewardSettingsName = "RewardSettingsPage";
+  static const String shopMenuManagementPath = "/ShopMenuManagementPage";
+  static const String shopMenuManagementName = "ShopMenuManagementPage";
+  static const String editItemPath = "/EditItemPage";
+  static const String editItemName = "EditItemPage";
 }

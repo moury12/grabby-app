@@ -1,3 +1,4 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../src_export.dart';
 
 class ShopOrderDetailsPage extends StatefulWidget {
@@ -17,20 +18,14 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
       appBar: AppBar(
         title: CustomText(
           "#ORD-1234",
-          variant: TextVariant.titleLarge,
-          fontWeight: FontWeight.bold,
+          variant: TextVariant.headlineMedium,
+          // fontWeight: FontWeight.bold,
         ),
-        actions: [
-          IconButton(
-            onPressed: () => context.pop(),
-            icon: const Icon(Icons.cancel_outlined),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
-        padding: AppPadding.getPadding12(context),
+        padding: AppPadding.getPadding12(context).copyWith(top: 0),
         child: Column(
-          spacing: 16,
+          spacing: 8,
           children: [
             _buildStatusStepper(),
             _buildPickupInfo(),
@@ -53,7 +48,7 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
     ];
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppPadding.getPadding8(context),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(appRadius),
@@ -131,7 +126,7 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
 
   Widget _buildPickupInfo() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppPadding.getPadding8(context),
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -149,11 +144,7 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
           Row(
             spacing: 8,
             children: [
-              const Icon(
-                Icons.person_outline,
-                color: AppColors.kPrimaryColor,
-                size: 20,
-              ),
+              SvgPicture.asset(ImagesConstant.kGroupIcon),
               CustomText("Counter Pickup", variant: TextVariant.bodyMedium),
             ],
           ),
@@ -170,57 +161,70 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
         color: AppColors.kAccentColor,
         borderRadius: BorderRadius.circular(appRadius),
       ),
-      child: Stack(
-        children: [
-          const Center(
-            child: Icon(Icons.map_outlined, size: 50, color: Colors.grey),
-          ),
-          Positioned(
-            top: 12,
-            left: 12,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(appRadius),
+        child: Stack(
+          children: [
+            const GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: LatLng(25.2048, 55.2708), // Example location
+                zoom: 14,
               ),
-              child: Row(
-                spacing: 8,
-                children: [
-                  const Icon(
-                    Icons.navigation_outlined,
-                    color: AppColors.kPrimaryColor,
-                    size: 16,
-                  ),
-                  CustomText(
-                    AppStaticStrings.customerIsOnTheWay,
-                    variant: TextVariant.labelMedium,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ],
+              zoomControlsEnabled: false,
+              myLocationButtonEnabled: false,
+              markers: {},
+            ),
+            Positioned(
+              top: 12,
+              left: 12,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  spacing: 8,
+                  children: [
+                    const Icon(
+                      Icons.navigation_outlined,
+                      color: AppColors.kPrimaryColor,
+                      size: 16,
+                    ),
+                    CustomText(
+                      AppStaticStrings.customerIsOnTheWay,
+                      variant: TextVariant.labelMedium,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildItemsSection() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppPadding.getPadding8(context),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(appRadius),
       ),
       child: Column(
+        spacing: 8,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomText(
@@ -228,9 +232,8 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
             variant: TextVariant.titleMedium,
             fontWeight: FontWeight.bold,
           ),
-          const SizedBox(height: 12),
           _buildItemRow("2x Caffe Latte", "9.00 AED"),
-          const Divider(height: 24),
+          const Divider(height: 1),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -280,7 +283,7 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
     }
 
     return Column(
-      spacing: 12,
+      // spacing: 12,
       children: [
         if (mainButtonText.isNotEmpty)
           CustomButton(text: mainButtonText, onPressed: onMainTap!),
