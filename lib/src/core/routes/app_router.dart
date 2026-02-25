@@ -311,6 +311,24 @@ class AppRouter {
           );
         },
       ),
+      GoRoute(
+        path: RoutesPath.businessInfoPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const BusinessInfoPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.branchLocationsPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const BranchLocationsPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.requiredDocumentsPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const RequiredDocumentsPage();
+        },
+      ),
     ],
   );
 }

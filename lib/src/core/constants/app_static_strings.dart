@@ -473,4 +473,28 @@ class AppStaticStrings {
       "Promoted shops will be at the beginning of the list";
   static const String newlyAddedShopNotification =
       "Customers will receive a notification of your newly added shop 3 times per day.";
+
+  // Shop Onboarding
+  static const String businessInformation = "Business Information";
+  static const String shopLicenseNumber = "Shop License Number";
+  static const String enterYourCafeName = "Enter your cafe name";
+  static const String contactEmail = "Contact Email";
+  static const String businessEmailHint = "business@email.com";
+  static const String contactPhone = "Contact Phone";
+  static const String phoneHint = "+(971) 000-000";
+  static const String branchLocations = "Branch Locations";
+  static const String branch1 = "Branch 1";
+  static const String branchNameHint = "Branch name";
+  static const String addAnotherBranch = "Add Another Branch";
+  static const String applySameMenuForAllBranches =
+      "Apply the same Menu for all branches";
+  static const String requiredDocuments = "Required Documents";
+  static const String businessLicense = "Business License";
+  static const String uploadDocument = "Upload Document";
+  static const String cafeLogo = "Cafe Logo";
+  static const String pdfJpgPngMax5MB = "PDF, JPG or PNG. Max 5MB";
+  static const String businessInfoLabel = "Business Info";
+  static const String branchesLabel = "Branches";
+  static const String documentsLabel = "Documents";
+  static const String back = "Back";
 }

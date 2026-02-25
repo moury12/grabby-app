@@ -71,6 +71,16 @@ class BusinessProfilePage extends StatelessWidget {
               onTap: () {},
             ),
             Divider(color: Colors.white, height: 1),
+            CustomButton(
+              text: AppStaticStrings.logOut,
+              onPressed: () {
+                context.goNamed(RoutesPath.loginPath);
+              },
+              icon: Icons.logout,
+              iconColor: AppColors.kRedColor,
+              textColor: AppColors.kTextColor,
+              backgroundColor: Colors.white,
+            ),
           ],
         ),
       ),

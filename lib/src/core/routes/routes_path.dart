@@ -52,4 +52,8 @@ class RoutesPath {
   static const String marketingCampaignsName = "MarketingCampaignsPage";
   static const String campaignTierDetailPath = "/CampaignTierDetailPage";
   static const String campaignTierDetailName = "CampaignTierDetailPage";
+
+  static const String businessInfoPath = "/BusinessInfoPage";
+  static const String branchLocationsPath = "/BranchLocationsPage";
+  static const String requiredDocumentsPath = "/RequiredDocumentsPage";
 }
