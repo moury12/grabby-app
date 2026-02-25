@@ -16,95 +16,95 @@ class LoyaltyRewardPage extends StatelessWidget {
             // Total Point Card (Header)
             Container(
               width: double.infinity,
+              padding: AppPadding.getPadding8(context),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [AppColors.kPrimaryColor, AppColors.kSecondaryColor],
+                ),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  const Icon(
+                    Icons.emoji_events_outlined,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+
+                  CustomText(
+                    AppStaticStrings.totalPoints,
+                    fontSize: 14,
+                    color: Colors.white.withOpacity(0.8),
+                    fontWeight: FontWeight.w500,
+                  ),
+                  const CustomText(
+                    "94",
+                    fontSize: 24,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  Divider(color: Colors.white24, height: 12),
+                  CustomText(
+                    AppStaticStrings.earnedCredit,
+                    fontSize: 14,
+                    color: Colors.white.withOpacity(0.8),
+                    fontWeight: FontWeight.w500,
+                  ),
+                  const CustomText(
+                    "AED 0.94",
+                    fontSize: 18,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ],
+              ),
+            ),
+
+            // Progress Card
+            Container(
+              width: double.infinity,
               padding: AppPadding.getPadding12(context),
               decoration: BoxDecoration(
-                color: AppColors.kPrimaryColor.withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 4,
+                spacing: 10,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        spacing: 4,
-                        children: [
-                          CustomText(
-                            AppStaticStrings.gPoints,
-                            fontSize: ResponsiveTextSizes.getFontSizeSemiSmall(
-                              context,
-                            ),
-                            fontWeight: FontWeight.w600,
-                          ),
-                          CustomText(
-                            "1350 Points",
-                            fontSize: ResponsiveTextSizes.getFontSizeExtraLarge(
-                              context,
-                            ),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ],
+                      CustomText(
+                        AppStaticStrings.progressToNextReward,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.kTextColor,
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        spacing: 4,
-                        children: [
-                          CustomText(
-                            AppStaticStrings.walletBalance,
-                            fontSize: ResponsiveTextSizes.getFontSizeSemiSmall(
-                              context,
-                            ),
-                            fontWeight: FontWeight.w600,
-                          ),
-                          CustomText(
-                            "133.85 AED",
-                            fontSize: ResponsiveTextSizes.getFontSizeExtraLarge(
-                              context,
-                            ),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ],
+                      const CustomText(
+                        "94/500",
+                        fontSize: 12,
+                        color: Color(0xFFA59BF9),
                       ),
                     ],
                   ),
-                  space8H,
-                  Column(
-                    spacing: 8,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          CustomText(
-                            AppStaticStrings.progressToNextReward,
-                            fontSize: ResponsiveTextSizes.getFontSizeSmall(
-                              context,
-                            ),
-                            color: AppColors.kSecondaryTextColor,
-                          ),
-                          CustomText(
-                            "1340 / 1000 Points",
-                            fontSize: ResponsiveTextSizes.getFontSizeSmall(
-                              context,
-                            ),
-                            color: AppColors.kSecondaryTextColor,
-                          ),
-                        ],
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: const LinearProgressIndicator(
+                      value: 94 / 500,
+                      minHeight: 6,
+                      backgroundColor: Color(0xFFE5E7EB),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Color(0xFFA59BF9),
                       ),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: const LinearProgressIndicator(
-                          value: .8,
-                          minHeight: 8,
-                          backgroundColor: Colors.black12,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            AppColors.kPrimaryColor,
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
+                  ),
+                  const CustomText(
+                    "406 more points to unlock 5 AED Grabby Credit",
+                    fontSize: 11,
+                    color: AppColors.kTextColor,
                   ),
                 ],
               ),
@@ -113,31 +113,30 @@ class LoyaltyRewardPage extends StatelessWidget {
             // Available Rewards Section
             CustomText(
               AppStaticStrings.availableRewards,
-              fontSize: ResponsiveTextSizes.getFontSizeDefault(context),
-              fontWeight: FontWeight.bold,
+              variant: TextVariant.titleMedium,
             ),
 
             _buildRewardCard(
               context,
-              title: AppStaticStrings.tenPercentDiscount,
+              title: "5 ${AppStaticStrings.earnedCredit}",
               subTitle: "500 ${AppStaticStrings.pointsRequired}",
             ),
 
             _buildRewardCard(
               context,
-              title: AppStaticStrings.fifteenPercentDiscount,
+              title: "10 ${AppStaticStrings.earnedCredit}",
               subTitle: "1000 ${AppStaticStrings.pointsRequired}",
             ),
 
             _buildRewardCard(
               context,
-              title: AppStaticStrings.fifteenAED,
+              title: "15 ${AppStaticStrings.earnedCredit}",
               subTitle: "1500 ${AppStaticStrings.pointsRequired}",
             ),
 
             _buildRewardCard(
               context,
-              title: AppStaticStrings.twentyAED,
+              title: "20 ${AppStaticStrings.earnedCredit}",
               subTitle: "2000 ${AppStaticStrings.pointsRequired}",
             ),
 
@@ -145,24 +144,24 @@ class LoyaltyRewardPage extends StatelessWidget {
             Container(
               padding: AppPadding.getPadding12(context),
               decoration: BoxDecoration(
-                color: Colors.amber.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.amber.shade200),
+                color: const Color(0xFFFFFBEB),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFFEF3C7)),
               ),
               child: Row(
                 spacing: 12,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.help_outline,
-                    color: Colors.amber.shade800,
+                  const Icon(
+                    Icons.info_outline_rounded,
+                    color: Color(0xFFF59E0B),
                     size: 20,
                   ),
                   Expanded(
                     child: CustomText(
                       AppStaticStrings.validForSelectedShops,
-                      fontSize: ResponsiveTextSizes.getFontSizeSmall(context),
-                      color: const Color(0xFF856404),
+                      fontSize: 12,
+                      color: const Color(0xFF92400E),
                     ),
                   ),
                 ],
@@ -172,18 +171,18 @@ class LoyaltyRewardPage extends StatelessWidget {
             // How Reward Points Work Section
             Container(
               width: double.infinity,
-              padding: AppPadding.getPadding12(context),
+              padding: AppPadding.getPadding16(context),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.8),
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 16,
+                spacing: 20,
                 children: [
                   CustomText(
                     AppStaticStrings.howRewardPointsWork,
-                    fontSize: ResponsiveTextSizes.getFontSizeSemiSmall(context),
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                   _buildStepItem(
@@ -207,7 +206,6 @@ class LoyaltyRewardPage extends StatelessWidget {
                 ],
               ),
             ),
-            space12H,
           ],
         ),
       ),
@@ -221,7 +219,7 @@ class LoyaltyRewardPage extends StatelessWidget {
   }) {
     return Container(
       width: double.infinity,
-      padding: AppPadding.getPadding12(context),
+      // padding: AppPadding.getPadding12(context),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -233,24 +231,44 @@ class LoyaltyRewardPage extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        spacing: 12,
-        children: [
-          Row(
-            spacing: 12,
+      child: ButtonTapWidget(
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (context) => RedeemRewardPopup(),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            spacing: 16,
             children: [
+              Container(
+                height: 48,
+                width: 48,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF3F2FF),
+                  shape: BoxShape.circle,
+                ),
+                child: SvgPicture.asset(
+                  ImagesConstant.kGiftIcon,
+                  colorFilter: const ColorFilter.mode(
+                    Color(0xFFA59BF9),
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 4,
+                  spacing: 2,
                   children: [
                     CustomText(
                       title,
-                      fontSize: ResponsiveTextSizes.getFontSizeSemiSmall(
-                        context,
-                      ),
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.kPrimaryColor,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFFA59BF9),
                     ),
                     CustomText(
                       subTitle,
@@ -260,36 +278,9 @@ class LoyaltyRewardPage extends StatelessWidget {
                   ],
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppColors.kPrimaryColor,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: SvgPicture.asset(
-                  ImagesConstant.kGiftIcon,
-                  height: 24,
-                  width: 24,
-                  colorFilter: const ColorFilter.mode(
-                    Colors.white,
-                    BlendMode.srcIn,
-                  ),
-                ),
-              ),
             ],
           ),
-          CustomButton(
-            text: AppStaticStrings.redeemNow,
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => const RedeemRewardPopup(),
-              );
-            },
-            backgroundColor: AppColors.kPrimaryColor,
-            borderRadius: 12,
-          ),
-        ],
+        ),
       ),
     );
   }

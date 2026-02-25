@@ -26,24 +26,25 @@ class ProfilePage extends StatelessWidget {
 
               // Metric Card
               const ProfileMetricCard(
-                icon: ImagesConstant.kRewardIcon,
+                icon: ImagesConstant.kGiftIcon,
                 value: "47",
                 label: "Orders",
               ),
 
               // Menu List
               Column(
+                spacing: 8,
                 children: [
                   ProfileMenuTile(
                     icon: ImagesConstant.kProfileIcon,
                     title: AppStaticStrings.personalInformation,
                     onTap: () => context.pushNamed(RoutesPath.personalInfoPath),
                   ),
-                  ProfileMenuTile(
-                    icon: ImagesConstant.kCartIcon,
-                    title: AppStaticStrings.cart,
-                    onTap: () => context.pushNamed(RoutesPath.cartPath),
-                  ),
+                  // ProfileMenuTile(
+                  //   icon: ImagesConstant.kCartIcon,
+                  //   title: AppStaticStrings.cart,
+                  //   onTap: () => context.pushNamed(RoutesPath.cartPath),
+                  // ),
                   ProfileMenuTile(
                     icon: ImagesConstant.kCardIcon,
                     title: AppStaticStrings.paymentMethods,
@@ -61,15 +62,10 @@ class ProfilePage extends StatelessWidget {
 
               // Preferences Section
               Column(
+                spacing: 8,
                 crossAxisAlignment: CrossAxisAlignment.start,
 
                 children: [
-                  const CustomText(
-                    AppStaticStrings.preferences,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.kSecondaryTextColor,
-                  ),
                   ProfileMenuTile(
                     icon: ImagesConstant.kNotificationIcon,
                     title: AppStaticStrings.notifications,
@@ -80,6 +76,11 @@ class ProfilePage extends StatelessWidget {
                     title: AppStaticStrings.settings,
                     onTap: () =>
                         context.pushNamed(RoutesPath.accountSettingsPath),
+                  ),
+                  ProfileMenuTile(
+                    icon: ImagesConstant.kLocationIcon,
+                    title: AppStaticStrings.suggestAShop,
+                    onTap: () => context.pushNamed(RoutesPath.suggestAShopPath),
                   ),
                   CustomButton(
                     text: AppStaticStrings.logOut,

@@ -30,49 +30,48 @@ class ProfileHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Stack(
-            children: [
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  image: imageUrl != null
-                      ? DecorationImage(
-                          image: NetworkImage(imageUrl!),
-                          fit: BoxFit.cover,
-                        )
-                      : const DecorationImage(
-                          image: AssetImage(
-                            ImagesConstant.kOnboard1Img,
-                          ), // Placeholder
-                          fit: BoxFit.cover,
-                        ),
-                ),
-              ),
-              Positioned(
-                bottom: -5,
-                right: -5,
-                child: IconButton(
-                  onPressed: onEditImage,
-                  icon: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: AppColors.kPrimaryColor,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: const Icon(
-                      Icons.edit_outlined,
-                      size: 16,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          space4H,
-
+          // Stack(
+          //   children: [
+          //     Container(
+          //       width: 80,
+          //       height: 80,
+          //       decoration: BoxDecoration(
+          //         borderRadius: BorderRadius.circular(12),
+          //         image: imageUrl != null
+          //             ? DecorationImage(
+          //                 image: NetworkImage(imageUrl!),
+          //                 fit: BoxFit.cover,
+          //               )
+          //             : const DecorationImage(
+          //                 image: AssetImage(
+          //                   ImagesConstant.kOnboard1Img,
+          //                 ), // Placeholder
+          //                 fit: BoxFit.cover,
+          //               ),
+          //       ),
+          //     ),
+          //     Positioned(
+          //       bottom: -5,
+          //       right: -5,
+          //       child: IconButton(
+          //         onPressed: onEditImage,
+          //         icon: Container(
+          //           padding: const EdgeInsets.all(4),
+          //           decoration: BoxDecoration(
+          //             color: AppColors.kPrimaryColor,
+          //             borderRadius: BorderRadius.circular(4),
+          //           ),
+          //           child: const Icon(
+          //             Icons.edit_outlined,
+          //             size: 16,
+          //             color: Colors.white,
+          //           ),
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // space4H,
           CustomText(
             name,
             fontSize: 24,

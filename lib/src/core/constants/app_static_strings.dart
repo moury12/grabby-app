@@ -165,6 +165,9 @@ class AppStaticStrings {
   static const String fifteenAED = "AED 15";
   static const String twentyAED = "AED 20";
   static const String pointsRequired = "points required";
+  static const String earnedCredit = "Earned Credit";
+  static const String totalPoints = "Total Points";
+  static const String grabbyCredit = "Grabby Credit";
   static const String redeemNow = "Redeem Now";
   static const String validForSelectedShops =
       "Valid for selected shops only. Check if your favorite shop accepts reward points before placing an order.";

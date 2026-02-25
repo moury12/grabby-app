@@ -19,19 +19,18 @@ class ProfileMenuTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: isBackground
-          ? BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-            )
-          : null,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: ListTile(
         onTap: onTap,
         contentPadding: EdgeInsets.zero,
         leading: Container(
+          margin: EdgeInsets.only(left: 12),
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: (iconColor ?? Colors.white),
+            color: (iconColor ?? AppColors.kAccentColor.withValues(alpha: 0.5)),
             shape: BoxShape.circle,
           ),
           child: SvgPicture.asset(
