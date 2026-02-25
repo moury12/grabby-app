@@ -37,7 +37,7 @@ class OrderCard extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 12,
+        spacing: 8,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -48,27 +48,60 @@ class OrderCard extends StatelessWidget {
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 4,
+            spacing: 8,
             children: [
               CustomText(
                 "${AppStaticStrings.order} $orderId",
                 fontSize: 14,
-                color: AppColors.kSecondaryTextColor,
+                color: AppColors.kTextColor,
+                fontWeight: FontWeight.w600,
               ),
-              ...items.map(
-                (item) => CustomText(
-                  item,
-                  fontSize: 14,
-                  color: AppColors.kSecondaryTextColor,
-                ),
+              Row(
+                spacing: 12,
+                children: [
+                  Row(
+                    spacing: 4,
+                    children: [
+                      SvgPicture.asset(
+                        ImagesConstant.kCarIcon,
+                        height: 14,
+                        colorFilter: const ColorFilter.mode(
+                          AppColors.kSecondaryTextColor,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      const CustomText(
+                        "Car - A 24204",
+                        fontSize: 13,
+                        color: AppColors.kSecondaryTextColor,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    spacing: 4,
+                    children: [
+                      const Icon(
+                        Icons.access_time,
+                        size: 14,
+                        color: AppColors.kSecondaryTextColor,
+                      ),
+                      CustomText(
+                        dateTime,
+                        fontSize: 13,
+                        color: AppColors.kSecondaryTextColor,
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),
+          const Divider(height: 1),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CustomText(
-                dateTime,
+                "${items.length} ${AppStaticStrings.itemsCount}",
                 fontSize: 14,
                 color: AppColors.kSecondaryTextColor,
               ),

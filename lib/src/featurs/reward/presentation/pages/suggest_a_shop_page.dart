@@ -30,9 +30,9 @@ class SuggestAShopPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 16,
               children: [
-                _buildFieldLabel(AppStaticStrings.cafeName, isRequired: true),
+                _buildFieldLabel(AppStaticStrings.shopName, isRequired: true),
                 CustomTextField(
-                  hintText: AppStaticStrings.enterCafeName,
+                  hintText: AppStaticStrings.enterShopName,
                   borderRadius: 12,
                 ),
 

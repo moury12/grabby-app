@@ -43,7 +43,6 @@ class OrderHistoryPage extends StatelessWidget {
               _buildOrderList(context, "all"),
               _buildOrderList(context, "active"),
               _buildOrderList(context, "completed"),
-              _buildOrderList(context, "ready"),
             ],
           ),
         ),

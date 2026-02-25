@@ -27,7 +27,7 @@ class RoleSelectionPage extends StatelessWidget {
                   children: [
                     const AppNameTextWidget(),
                     CustomText(
-                      AppStaticStrings.yourFavoriteCafeOneTapAway,
+                      AppStaticStrings.yourFavoriteShopOneTapAway,
                       variant: TextVariant.titleMedium,
                       color: AppColors.kSecondaryTextColor,
                       textAlign: TextAlign.center,
@@ -35,7 +35,7 @@ class RoleSelectionPage extends StatelessWidget {
 
                     RoleCard(
                       title: AppStaticStrings.continueAsCustomer,
-                      subtitle: AppStaticStrings.browseCafesAndOrderDrinks,
+                      subtitle: AppStaticStrings.browseShopsAndOrderDrinks,
                       icon: ImagesConstant.kCustomerIcon,
                       role: UserRole.customer,
                     ),

@@ -121,28 +121,21 @@ class _MenuPageState extends State<MenuPage> {
             const LoyaltyStampsWidget(currentStamps: 4),
 
             // Category Chips
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.kPrimaryColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: AppPadding.getPadding4(context),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  spacing: 8,
-                  children: _categories.map((category) {
-                    return _buildCategoryChip(
-                      category,
-                      _selectedCategory == category,
-                      onTap: () {
-                        setState(() {
-                          _selectedCategory = category;
-                        });
-                      },
-                    );
-                  }).toList(),
-                ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                spacing: 8,
+                children: _categories.map((category) {
+                  return _buildCategoryChip(
+                    category,
+                    _selectedCategory == category,
+                    onTap: () {
+                      setState(() {
+                        _selectedCategory = category;
+                      });
+                    },
+                  );
+                }).toList(),
               ),
             ),
 
@@ -201,13 +194,15 @@ class _MenuPageState extends State<MenuPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.kSecondaryColor : Colors.transparent,
+          color: isSelected ? AppColors.kPrimaryColor : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
         ),
         child: CustomText(
           label,
           variant: TextVariant.titleMedium,
-          color: AppColors.kWhiteTextColor,
+          color: isSelected
+              ? AppColors.kWhiteTextColor
+              : AppColors.kSecondaryTextColor,
         ),
       ),
     );

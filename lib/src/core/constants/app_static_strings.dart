@@ -111,18 +111,24 @@ class AppStaticStrings {
   static const String availableCredit = "Available Credit";
   static const String applyCredit = "Apply Credit";
   static const String subtotal = "Subtotal";
+  static const String total = "Total";
+  static const String aedPrefix = "AED ";
+  static const String managePlates = "Manage Plates";
+  static const String grabbyCreditRewards = "Grabby Credit ( Rewards)";
+  static const String promoCode = "Promo Code";
+  static const String apply = "Apply";
   static const String payNow = "Pay Now";
   static const String paymentSuccessful = "Payment Successful!";
   static const String trackOrder = "Track Order";
   static const String backToHome = "Back to Home";
   static const String orderTracking = "Order Tracking";
   static const String orderNumber = "Order Number";
-  static const String waitingForCafeConfirmation =
-      "Waiting For Cafe Confirmation";
+  static const String waitingForShopConfirmation =
+      "Waiting For Shop Confirmation";
   static const String preparingYourOrder = "Preparing your Order";
   static const String readyForPickup = "Ready for Pickup";
   static const String completed = "Completed";
-  static const String navigateToCafe = "Navigate to shop";
+  static const String navigateToShop = "Navigate to shop";
   static const String callShop = "Call Shop";
   static const String orderItems = "Order Items";
   static const String all = "All";
@@ -140,6 +146,11 @@ class AppStaticStrings {
   static const String iveArrivedDesc =
       "Let the shop know you've arrived so they can prepare your handover";
   static const String notifyShop = "Notify Shop";
+  static const String pickupInfo = "Pickup Info";
+  static const String sharingLiveLocation = "Sharing live location";
+  static const String shopCanSeeArrival =
+      "The shop can see when your're arriving";
+  static const String locationUpdatingLive = "Location updating live";
 
   // Loyalty Reward
   static const String loyaltyReward = "Loyalty Reward";
@@ -192,13 +203,13 @@ class AppStaticStrings {
   static const String suggestAShop = "Suggest a Shop";
   static const String suggestAShopDesc =
       "Know a great shop that should be on GoCafe? Let us know and we'll reach out to them!";
-  static const String cafeName = "Cafe Name";
-  static const String enterCafeName = "Enter Cafe Name";
+  static const String shopName = "Shop Name";
+  static const String enterShopName = "Enter Shop Name";
   static const String location = "Location";
   static const String cityOrAddress = "City Or Address";
   static const String additionalNotes = "Additional Notes";
   static const String additionalNotesHint =
-      "why should this cafe be on gocafe? (optional)";
+      "why should this shop be on grabby? (optional)";
   static const String submitSuggestion = "Submit Suggestion";
 
   // Profile Settings
@@ -233,10 +244,10 @@ class AppStaticStrings {
   static const String update = "Update";
 
   // Role Selection
-  static const String yourFavoriteCafeOneTapAway =
-      "Your favourite Cafe, one tap away";
+  static const String yourFavoriteShopOneTapAway =
+      "Your favourite shop, one tap away";
   static const String continueAsCustomer = "Continue as Customer";
-  static const String browseCafesAndOrderDrinks = "Browse cafes & order drinks";
+  static const String browseShopsAndOrderDrinks = "Browse shops & order drinks";
   static const String continueAsShop = "Continue as Shop";
   static const String manageOrdersAndMenu = "Manage orders & menu";
 
@@ -477,7 +488,7 @@ class AppStaticStrings {
   // Shop Onboarding
   static const String businessInformation = "Business Information";
   static const String shopLicenseNumber = "Shop License Number";
-  static const String enterYourCafeName = "Enter your cafe name";
+  static const String enterYourShopName = "Enter your shop name";
   static const String contactEmail = "Contact Email";
   static const String businessEmailHint = "business@email.com";
   static const String contactPhone = "Contact Phone";
@@ -491,7 +502,7 @@ class AppStaticStrings {
   static const String requiredDocuments = "Required Documents";
   static const String businessLicense = "Business License";
   static const String uploadDocument = "Upload Document";
-  static const String cafeLogo = "Cafe Logo";
+  static const String shopLogo = "Shop Logo";
   static const String pdfJpgPngMax5MB = "PDF, JPG or PNG. Max 5MB";
   static const String businessInfoLabel = "Business Info";
   static const String branchesLabel = "Branches";

@@ -34,7 +34,7 @@ class RequiredDocumentsPage extends StatelessWidget {
                     onUpload: () {},
                   ),
                   DocumentUploadCard(
-                    title: AppStaticStrings.cafeLogo,
+                    title: AppStaticStrings.shopLogo,
                     subtitle: AppStaticStrings.pdfJpgPngMax5MB,
                     onUpload: () {},
                   ),

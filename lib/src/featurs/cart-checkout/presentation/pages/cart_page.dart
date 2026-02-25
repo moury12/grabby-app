@@ -10,32 +10,58 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   bool _isCarPickup = true;
 
-  final List<Map<String, String>> _cartItems = [
+  final List<Map<String, dynamic>> _cartItems = [
     {
-      "quantity": "1x",
-      "title": AppStaticStrings.icedMatchaLatte,
-      "description": "Honey, Full Fat, Chocolate Muffin, Medium",
-      "price": "16.60",
-    },
-    {
-      "quantity": "1x",
-      "title": AppStaticStrings.icedMatchaLatte,
-      "description": "Honey, Full Fat, Chocolate Muffin, Medium",
-      "price": "16.60",
+      'title': AppStaticStrings.icedMatchaLatte,
+      'description': 'Honey, Full Fat, Chocolate Muffin, Medium',
+      'price': 16.60,
+      'quantity': 1,
+      'imageUrl': null,
     },
   ];
 
-  double get _totalPrice =>
-      _cartItems.fold(0.0, (sum, item) => sum + double.parse(item["price"]!));
+  double get _subtotal => _cartItems.fold(
+    0.0,
+    (sum, item) => sum + (item['price'] as double) * (item['quantity'] as int),
+  );
+
+  double get _total => _subtotal;
+
+  void _incrementQuantity(int index) {
+    setState(() {
+      _cartItems[index]['quantity'] =
+          (_cartItems[index]['quantity'] as int) + 1;
+    });
+  }
+
+  void _decrementQuantity(int index) {
+    setState(() {
+      final current = _cartItems[index]['quantity'] as int;
+      if (current > 1) {
+        _cartItems[index]['quantity'] = current - 1;
+      }
+    });
+  }
+
+  void _deleteItem(int index) {
+    setState(() {
+      _cartItems.removeAt(index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(AppStaticStrings.cart)),
+      backgroundColor: AppColors.kBackgroundColor,
+      appBar: AppBar(
+        title: const Text(AppStaticStrings.cart),
+        backgroundColor: AppColors.kBackgroundColor,
+        elevation: 0,
+      ),
       body: SingleChildScrollView(
-        padding: AppPadding.getPadding12(context),
+        padding: AppPadding.getPadding12(context).copyWith(top: 0),
         child: Column(
-          spacing: 12,
+          spacing: 8,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Cart Items
@@ -45,70 +71,60 @@ class _CartPageState extends State<CartPage> {
               return Dismissible(
                 key: UniqueKey(),
                 direction: DismissDirection.endToStart,
-                onDismissed: (direction) {
-                  setState(() {
-                    _cartItems.removeAt(index);
-                  });
-                },
+                onDismissed: (_) => _deleteItem(index),
                 background: Container(
                   alignment: Alignment.centerRight,
                   padding: const EdgeInsets.only(right: 20),
                   decoration: BoxDecoration(
                     color: Colors.red.shade400,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(18),
                   ),
-                  child: const Icon(Icons.delete, color: Colors.white),
+                  child: const Icon(Icons.delete_rounded, color: Colors.white),
                 ),
-                child: CartItemCard(
-                  quantity: item["quantity"]!,
-                  title: item["title"]!,
-                  description: item["description"]!,
-                  price: "AED ${item["price"]}",
+                child: CartItemWithStepperCard(
+                  title: item['title'] as String,
+                  description: item['description'] as String,
+                  quantity: item['quantity'] as int,
+                  price: (item['price'] as double) * (item['quantity'] as int),
+                  imageUrl: item['imageUrl'] as String?,
+                  onIncrement: () => _incrementQuantity(index),
+                  onDecrement: () => _decrementQuantity(index),
+                  onDelete: () => _deleteItem(index),
                 ),
               );
             }),
 
-            // Pickup Selection
+            // Pickup Type Section
             PickupSelectionWidget(
               isCarPickup: _isCarPickup,
               onSelectionChanged: (value) {
-                setState(() {
-                  _isCarPickup = value;
-                });
+                setState(() => _isCarPickup = value);
               },
             ),
 
-            // Car Plate Number (only if car pickup selected)
+            // Car Plate row (only visible when Car Pickup selected)
             if (_isCarPickup)
-              CarPlateNumberWidget(plateNumber: "ABC 1234", onTap: () {}),
+              CarPlateNumberWidget(plateNumber: 'A 24202', onTap: () {}),
 
-            // Loyalty Reward
-            const LoyaltyRewardWidget(
-              label: AppStaticStrings.freeDrinkLoyaltyReward,
-              reward: AppStaticStrings.free,
+            // Grabby Credit (Rewards)
+            GrabbyCreditWidget(
+              availableAmount: 0.66,
+              availablePoints: 66,
+              onApplyCredit: () {},
             ),
 
-            // Order Total
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const CustomText(
-                  AppStaticStrings.orderTotal,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-                CustomText(
-                  "${_totalPrice.toStringAsFixed(2)} AED",
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ],
-            ),
+            // Promo Code
+            PromoCodeWidget(onApply: () {}),
+
+            // Order Summary
+            CartOrderSummaryWidget(subtotal: _subtotal, total: _total),
+
+            const SizedBox(height: 8),
           ],
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: AppPadding.getPadding16(context).copyWith(bottom: 24),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
         child: CustomButton(
           text: AppStaticStrings.proceedToCheckout,
           onPressed: () {

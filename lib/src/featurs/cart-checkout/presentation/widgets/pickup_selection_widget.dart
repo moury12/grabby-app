@@ -12,28 +12,47 @@ class PickupSelectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      spacing: 12,
-      children: [
-        Expanded(
-          child: _buildPickupCard(
-            context,
-            icon: ImagesConstant.kCarIcon,
-            label: AppStaticStrings.carPickup,
-            isSelected: isCarPickup,
-            onTap: () => onSelectionChanged(true),
+    return Container(
+      padding: AppPadding.getPadding8(context),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(appRadius),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 12,
+        children: [
+          const CustomText(
+            AppStaticStrings.pickupDetails,
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: AppColors.kPrimaryColor,
           ),
-        ),
-        Expanded(
-          child: _buildPickupCard(
-            context,
-            icon: ImagesConstant.kContactPickupIcon,
-            label: AppStaticStrings.counterPickup,
-            isSelected: !isCarPickup,
-            onTap: () => onSelectionChanged(false),
+          Row(
+            spacing: 12,
+            children: [
+              Expanded(
+                child: _buildPickupCard(
+                  context,
+                  icon: ImagesConstant.kCarIcon,
+                  label: AppStaticStrings.carPickup,
+                  isSelected: isCarPickup,
+                  onTap: () => onSelectionChanged(true),
+                ),
+              ),
+              Expanded(
+                child: _buildPickupCard(
+                  context,
+                  icon: ImagesConstant.kContactPickupIcon,
+                  label: AppStaticStrings.counterPickup,
+                  isSelected: !isCarPickup,
+                  onTap: () => onSelectionChanged(false),
+                ),
+              ),
+            ],
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -47,10 +66,10 @@ class PickupSelectionWidget extends StatelessWidget {
     return ButtonTapWidget(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFFA59BF9) : Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isSelected
                 ? Colors.transparent
@@ -70,7 +89,7 @@ class PickupSelectionWidget extends StatelessWidget {
             ),
             CustomText(
               label,
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: isSelected ? Colors.white : const Color(0xFFA59BF9),
             ),

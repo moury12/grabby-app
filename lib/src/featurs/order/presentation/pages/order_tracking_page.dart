@@ -62,34 +62,13 @@ class OrderTrackingPage extends StatelessWidget {
             ),
 
             // Stepper
-            const TrackingStepperWidget(currentStep: 2),
+            const OrderTrackingStepper(currentStep: 0),
 
-            // Map Placeholder
-            Container(
-              height: 150,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 8,
-                children: [
-                  Icon(Icons.location_on, color: Color(0xFFA59BF9), size: 40),
-                  const CustomText(
-                    "Brew & Co - Main Street 0.3 Km away",
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  CustomText(
-                    AppStaticStrings.arrivalNotificationDesc,
-                    fontSize: 12,
-                    color: AppColors.kSecondaryTextColor,
-                  ),
-                ],
-              ),
-            ),
+            // Pickup Info
+            const PickupInfoWidget(),
+
+            // Live Location Sharing
+            const LiveLocationSharingWidget(),
 
             // Action Buttons
             Row(
@@ -97,7 +76,7 @@ class OrderTrackingPage extends StatelessWidget {
               children: [
                 Expanded(
                   child: CustomButton(
-                    text: AppStaticStrings.navigateToCafe,
+                    text: AppStaticStrings.navigateToShop,
                     iconPath: ImagesConstant.kNavigationIcon,
                     onPressed: () {
                       context.push(RoutesPath.orderTrackingMapViewPath);
@@ -132,17 +111,17 @@ class OrderTrackingPage extends StatelessWidget {
                     TrackingOrderItem(
                       quantity: "2x",
                       title: "Caffe Latte",
-                      price: "9.00 AED",
+                      price: "AED 9.00 ",
                     ),
                     TrackingOrderItem(
                       quantity: "1x",
                       title: "Croissant",
-                      price: "3.20 AED",
+                      price: "AED 3.20 ",
                     ),
                     TrackingOrderItem(
                       quantity: "1x",
                       title: "Club Sandwich",
-                      price: "8.90 AED",
+                      price: "AED 8.90 ",
                     ),
                   ],
                 ),
@@ -156,7 +135,7 @@ class OrderTrackingPage extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                     CustomText(
-                      "21.10 AED",
+                      "AED 21.10 ",
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),

@@ -11,7 +11,7 @@ class TrackingStepperWidget extends StatelessWidget {
       children: [
         _buildStep(
           context,
-          title: AppStaticStrings.waitingForCafeConfirmation,
+          title: AppStaticStrings.waitingForShopConfirmation,
           subtitle: "(Auto-Cancels In 5 Minutes)",
           isCompleted: currentStep >= 0,
           isLast: false,

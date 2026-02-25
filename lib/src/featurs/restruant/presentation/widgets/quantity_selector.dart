@@ -14,29 +14,23 @@ class QuantitySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        spacing: 12,
-        children: [
-          _StepButton(
-            Icon(Icons.remove, size: 18, color: Colors.grey.shade600),
-            onTap: onDecrement,
-          ),
-          CustomText(
-            "$quantity",
-            fontSize: ResponsiveTextSizes.getFontSizeDefault(context),
-            fontWeight: FontWeight.bold,
-          ),
-          _StepButton(
-            const Icon(Icons.add, size: 18, color: Color(0xFFADA4F8)),
-            onTap: onIncrement,
-          ),
-        ],
-      ),
+    return Row(
+      spacing: 12,
+      children: [
+        _StepButton(
+          Icon(Icons.remove, size: 18, color: Colors.grey.shade600),
+          onTap: onDecrement,
+        ),
+        CustomText(
+          "$quantity",
+          fontSize: ResponsiveTextSizes.getFontSizeDefault(context),
+          fontWeight: FontWeight.bold,
+        ),
+        _StepButton(
+          const Icon(Icons.add, size: 18, color: Color(0xFFADA4F8)),
+          onTap: onIncrement,
+        ),
+      ],
     );
   }
 }

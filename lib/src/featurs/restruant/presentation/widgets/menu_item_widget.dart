@@ -78,23 +78,6 @@ class MenuItemWidget extends StatelessWidget {
               ),
             ),
             CustomText(price, fontSize: 16, fontWeight: FontWeight.w600),
-            const SizedBox(width: 16),
-            // Add Button
-            ButtonTapWidget(
-              onTap: onAdd,
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: AppColors.kPrimaryColor.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.add,
-                  size: 20,
-                  color: AppColors.kPrimaryColor,
-                ),
-              ),
-            ),
           ],
         ),
       ),

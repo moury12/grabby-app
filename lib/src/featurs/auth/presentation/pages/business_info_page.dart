@@ -30,14 +30,13 @@ class BusinessInfoPage extends StatelessWidget {
                   ),
                   _buildField(
                     context,
-                    label: AppStaticStrings.cafeName,
-                    hint: AppStaticStrings.enterYourCafeName,
+                    label: AppStaticStrings.shopName,
+                    hint: AppStaticStrings.enterYourShopName,
                   ),
                   _buildField(
                     context,
                     label: AppStaticStrings.shopLicenseNumber,
-                    hint: AppStaticStrings
-                        .enterYourCafeName, // Using name hint as per UI image
+                    hint: AppStaticStrings.enterYourShopName,
                   ),
                   _buildField(
                     context,
