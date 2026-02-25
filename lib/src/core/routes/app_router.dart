@@ -288,6 +288,29 @@ class AppRouter {
           return EditItemPage(item: state.extra as Map<String, dynamic>?);
         },
       ),
+      GoRoute(
+        path: RoutesPath.shopOwnerOnboardingPath,
+        name: RoutesPath.shopOwnerOnboardingPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return const ShopOwnerOnboardingPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.marketingCampaignsPath,
+        name: RoutesPath.marketingCampaignsName,
+        builder: (BuildContext context, GoRouterState state) {
+          return const MarketingCampaignsPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.campaignTierDetailPath,
+        name: RoutesPath.campaignTierDetailName,
+        builder: (BuildContext context, GoRouterState state) {
+          return CampaignTierDetailPage(
+            tierData: state.extra as Map<String, dynamic>,
+          );
+        },
+      ),
     ],
   );
 }

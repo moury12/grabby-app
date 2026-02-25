@@ -121,7 +121,11 @@ class OnboardingPage extends StatelessWidget {
       child: BlocListener<OnboardingSplashBloc, OnboardingSplashState>(
         listener: (context, state) {
           if (state is ShowRoleSelection) {
-            context.go(RoutesPath.loginPath);
+            if (isShop) {
+              context.go(RoutesPath.shopOwnerOnboardingPath);
+            } else {
+              context.go(RoutesPath.loginPath);
+            }
           }
         },
         child: PageView.builder(

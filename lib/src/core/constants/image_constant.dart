@@ -49,4 +49,16 @@ class ImagesConstant {
   static const String kSettingsIcon = 'assets/icons/settings_icon.svg';
   static const String kSuccesfullIcon = 'assets/icons/succesfull_icon.svg';
   static const String kGroupIcon = 'assets/icons/customer_icon.svg';
+  static const String kVerifiedIcon = 'assets/icons/verified_icon.svg';
+  static const String kSoundIcon = 'assets/icons/sound_icon.svg';
+  static const String kCallIcon2 = 'assets/icons/call_icon_2.svg';
+  static const String kLoyalityStamps = 'assets/icons/loyality_stamps.svg';
+  static const String kMarketingCampaigns1 =
+      'assets/icons/marketing_campaigns_1.svg';
+  static const String kMarketingCampaigns2 =
+      'assets/icons/marketing_campaigns_2.svg';
+  static const String kMarketingCampaigns3 =
+      'assets/icons/marketing_campaigns_3.svg';
+  static const String kMarketingCampaigns4 =
+      'assets/icons/marketing_campaigns_4.svg';
 }

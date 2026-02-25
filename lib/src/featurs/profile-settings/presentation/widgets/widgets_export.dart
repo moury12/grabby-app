@@ -6,3 +6,4 @@ export 'profile_menu_item.dart';
 export 'branch_card.dart';
 export 'add_branch_bottom_sheet.dart';
 export 'timing_row.dart';
+export 'tier_card_widget.dart';

@@ -251,6 +251,37 @@ class AppStaticStrings {
   static const String viewOrdersLoyalActivity =
       "View orders, loyalty activity, and grow your café with smart tools.";
   static const String onboardYourShop = "Onboard your Shop";
+  static const String whatYourBusinessWillReceive =
+      "What your business will receive:";
+  static const String instantSetup = "Instant Setup";
+  static const String shopExposure = "Shop exposure";
+  static const String onDemandSupport = "On demand Support";
+  static const String customerLoyalty = "Customer Loyalty";
+  static const String feesStructure = "Fees Structure";
+  static const String noSetupFees = "No setup fees";
+  static const String serviceFee10 = "Service fee: 10%";
+  static const String onlinePaymentProcessingFee =
+      "Online payment processing fee : 2.9%";
+  static const String marketingPlanOneOfAny =
+      "Marketing Plan (one of any plans)";
+  static const String agreementNote = "Note: The agreement is the ";
+  static const String tabletDedicatedCheck =
+      "I have an iPad/ Tablet dedicated only for Grabby orders.";
+  static const String frequentlyAskedQuestions = "Frequently Asked Questions";
+  static const String faqQuestion1 =
+      "What do I need to start receiving Grabby orders?";
+  static const String faqAnswer1 =
+      "You need a registered business, a dedicated tablet/iPad, and a stable internet connection.";
+  static const String faqQuestion2 = "How do I get paid?";
+  static const String faqAnswer2 =
+      "Payments are processed weekly and transferred directly to your registered bank account.";
+  static const String faqQuestion3 = "Can I change my menu anytime?";
+  static const String faqAnswer3 =
+      "Yes, you can update your menu, prices, and availability in real-time through the Shop Management dashboard.";
+  static const String faqQuestion4 = "What is the service fee for?";
+  static const String faqAnswer4 =
+      "The 10% service fee covers platform maintenance, customer support, and marketing for your shop.";
+  static const String next = "Next";
   static const String promotions = "Promotions";
   static const String addPromotion = "Add Promotion";
   static const String promotionImage = "Promotion Image";
@@ -405,4 +436,41 @@ class AppStaticStrings {
   static const String required = "Required";
   static const String optional = "Optional";
   static const String addCustomizationCategory = "+ Add Customization Category";
+
+  // Marketing Campaigns
+  static const String allCampaignsInclude = "All Campaigns Include";
+  static const String topListPlacement = "Top List Placement";
+  static const String topListPlacementDesc =
+      "Your shop appears at the top of customer searches";
+  static const String pushNotifications = "Push Notifications";
+  static const String pushNotificationsDesc =
+      "Customers receive 3 notifications per day about your shop";
+  static const String increasedVisibility = "Increased Visibility";
+  static const String increasedVisibilityDesc =
+      "Reach up to 10x more potential customers";
+  static const String chooseYourCampaignTier = "Choose Your Campaign Tier";
+  static const String tier1 = "Tier 1";
+  static const String tier2 = "Tier 2";
+  static const String tier3 = "Tier 3";
+  static const String tier4 = "Tier 4";
+  static const String fiveDaysCampaign = "5 Days Campaign";
+  static const String tenDaysCampaign = "10 Days Campaign";
+  static const String twentyDaysCampaign = "20 Days Campaign";
+  static const String thirtyDaysCampaign = "30 Days Campaign";
+  static const String perDay = "per day";
+  static const String buyNow = "Buy Now";
+  static const String howDoCampaignsWork = "How do campaigns work?";
+  static const String campaignsWorkDesc =
+      "Your shop will appear at the top of search results and customers will receive push notifications about your shop during the campaign period.";
+  static const String canICancelCampaign = "Can I cancel a campaign?";
+  static const String cancelCampaignDesc =
+      "Campaigns are non-refundable once started. However, you can choose not to renew after the campaign period ends.";
+  static const String howManyNotifications =
+      "How many notifications will customers get?";
+  static const String notificationsDesc =
+      "Customers in your area will receive 3 push notifications per day about your shop during the active campaign.";
+  static const String promotedShopsBeginning =
+      "Promoted shops will be at the beginning of the list";
+  static const String newlyAddedShopNotification =
+      "Customers will receive a notification of your newly added shop 3 times per day.";
 }

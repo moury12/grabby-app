@@ -47,4 +47,9 @@ class RoutesPath {
   static const String shopMenuManagementName = "ShopMenuManagementPage";
   static const String editItemPath = "/EditItemPage";
   static const String editItemName = "EditItemPage";
+  static const String shopOwnerOnboardingPath = "/ShopOwnerOnboardingPage";
+  static const String marketingCampaignsPath = "/MarketingCampaignsPage";
+  static const String marketingCampaignsName = "MarketingCampaignsPage";
+  static const String campaignTierDetailPath = "/CampaignTierDetailPage";
+  static const String campaignTierDetailName = "CampaignTierDetailPage";
 }

@@ -38,7 +38,7 @@ class BusinessProfilePage extends StatelessWidget {
             ProfileMenuItem(
               title: AppStaticStrings.marketingCampaigns,
               icon: Icons.campaign_outlined,
-              onTap: () {},
+              onTap: () => context.pushNamed(RoutesPath.marketingCampaignsName),
             ),
             Divider(color: Colors.white, height: 1),
             ProfileMenuItem(
@@ -52,12 +52,12 @@ class BusinessProfilePage extends StatelessWidget {
               icon: Icons.notifications_none_outlined,
               onTap: () => context.pushNamed(RoutesPath.notificationPath),
             ),
-            Divider(color: Colors.white, height: 1),
-            ProfileMenuItem(
-              title: AppStaticStrings.rewardSettings,
-              icon: Icons.card_giftcard_outlined,
-              onTap: () => context.pushNamed(RoutesPath.rewardSettingsName),
-            ),
+            // Divider(color: Colors.white, height: 1),
+            // ProfileMenuItem(
+            //   title: AppStaticStrings.rewardSettings,
+            //   icon: Icons.card_giftcard_outlined,
+            //   onTap: () => context.pushNamed(RoutesPath.rewardSettingsName),
+            // ),
             Divider(color: Colors.white, height: 1),
             ProfileMenuItem(
               title: AppStaticStrings.helpCenter,
