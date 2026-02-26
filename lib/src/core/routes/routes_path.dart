@@ -56,4 +56,6 @@ class RoutesPath {
   static const String businessInfoPath = "/BusinessInfoPage";
   static const String branchLocationsPath = "/BranchLocationsPage";
   static const String requiredDocumentsPath = "/RequiredDocumentsPage";
+  static const String locationSelectionPath = "/LocationSelectionPage";
+  static const String locationSelectionName = "LocationSelectionPage";
 }

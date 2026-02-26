@@ -8,6 +8,14 @@ class AddBranchBottomSheet extends StatefulWidget {
 }
 
 class _AddBranchBottomSheetState extends State<AddBranchBottomSheet> {
+  final TextEditingController _addressController = TextEditingController();
+
+  @override
+  void dispose() {
+    _addressController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -37,19 +45,43 @@ class _AddBranchBottomSheetState extends State<AddBranchBottomSheet> {
             ],
           ),
 
-          _buildFieldLabel(AppStaticStrings.branchName),
-          const CustomTextField(hintText: AppStaticStrings.branchNamePrompt),
-
-          _buildFieldLabel(AppStaticStrings.fullAddress),
+          // _buildFieldLabel(AppStaticStrings.branchName),
           const CustomTextField(
-            hintText: AppStaticStrings.enterCompleteAddress,
+            title: AppStaticStrings.branchName,
+            hintText: AppStaticStrings.branchNamePrompt,
           ),
 
-          _buildFieldLabel(AppStaticStrings.phoneNumber),
-          const CustomTextField(hintText: "+1 (555) 000-0000"),
+          // _buildFieldLabel(AppStaticStrings.fullAddress),
+          ButtonTapWidget(
+            onTap: () async {
+              final result = await context.pushNamed(
+                RoutesPath.locationSelectionName,
+              );
+              if (result != null && result is Map<String, dynamic>) {
+                setState(() {
+                  _addressController.text = result['address'] ?? '';
+                });
+              }
+            },
+            child: CustomTextField(
+              title: AppStaticStrings.fullAddress,
 
-          _buildFieldLabel(AppStaticStrings.operatingHours),
+              textEditingController: _addressController,
+              isEnable: false,
+              hintText: AppStaticStrings.enterCompleteAddress,
+            ),
+          ),
+
+          // _buildFieldLabel(AppStaticStrings.phoneNumber),
           const CustomTextField(
+            title: AppStaticStrings.phoneNumber,
+            hintText: "+1 (555) 000-0000",
+          ),
+
+          // _buildFieldLabel(AppStaticStrings.operatingHours),
+          const CustomTextField(
+            title: AppStaticStrings.operatingHours,
+
             hintText: "e.g., Mon-Fri: 7AM-8PM, Sat-Sun: 8AM-6PM",
           ),
 

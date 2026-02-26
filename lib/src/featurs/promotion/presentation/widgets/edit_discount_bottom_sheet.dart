@@ -99,42 +99,43 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
           _buildFieldLabel(AppStaticStrings.appliedToItem),
           _buildMultiSelectField(),
           if (isDropdownOpen) _buildItemsList(),
+          _buildFieldLabel(AppStaticStrings.discountPercentage),
+          const CustomTextField(hintText: ""),
 
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppColors.kBackgroundColor,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              spacing: 6,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomText(
-                        AppStaticStrings.discountPercentage,
-                        variant: TextVariant.titleSmall,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      CustomText(
-                        AppStaticStrings.makeDiscountActiveRightAway,
-                        variant: TextVariant.labelSmall,
-                        color: AppColors.kSecondaryTextColor,
-                      ),
-                    ],
-                  ),
-                ),
-                Switch(
-                  value: true,
-                  onChanged: (val) {},
-                  activeColor: AppColors.kPrimaryColor,
-                ),
-              ],
-            ),
-          ),
-
+          // Container(
+          //   padding: const EdgeInsets.all(12),
+          //   decoration: BoxDecoration(
+          //     color: AppColors.kBackgroundColor,
+          //     borderRadius: BorderRadius.circular(12),
+          //   ),
+          //   child: Row(
+          //     spacing: 6,
+          //     children: [
+          //       Expanded(
+          //         child: Column(
+          //           crossAxisAlignment: CrossAxisAlignment.start,
+          //           children: [
+          //             CustomText(
+          //               AppStaticStrings.discountPercentage,
+          //               variant: TextVariant.titleSmall,
+          //               fontWeight: FontWeight.bold,
+          //             ),
+          //             CustomText(
+          //               AppStaticStrings.makeDiscountActiveRightAway,
+          //               variant: TextVariant.labelSmall,
+          //               color: AppColors.kSecondaryTextColor,
+          //             ),
+          //           ],
+          //         ),
+          //       ),
+          //       Switch(
+          //         value: true,
+          //         onChanged: (val) {},
+          //         activeColor: AppColors.kPrimaryColor,
+          //       ),
+          //     ],
+          //   ),
+          // ),
           CustomButton(
             text: widget.title != null
                 ? AppStaticStrings.addPromotion

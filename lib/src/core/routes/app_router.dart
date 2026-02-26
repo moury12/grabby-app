@@ -329,6 +329,13 @@ class AppRouter {
           return const RequiredDocumentsPage();
         },
       ),
+      GoRoute(
+        path: RoutesPath.locationSelectionPath,
+        name: RoutesPath.locationSelectionName,
+        builder: (BuildContext context, GoRouterState state) {
+          return const LocationSelectionPage();
+        },
+      ),
     ],
   );
 }

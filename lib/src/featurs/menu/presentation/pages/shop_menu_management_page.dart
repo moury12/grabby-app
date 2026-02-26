@@ -91,11 +91,11 @@ class _ShopMenuManagementPageState extends State<ShopMenuManagementPage> {
                       child: Row(
                         spacing: 8,
                         children: [
-                          CustomNetworkImage(
-                            imageUrl: "",
-                            height: 20,
-                            width: 20,
-                          ),
+                          if (category == AppStaticStrings.hotCoffee)
+                            Image.asset(
+                              "assets/icons/stamp_category_icon.png",
+                              height: 15,
+                            ),
                           CustomText(
                             category,
                             color: isSelected

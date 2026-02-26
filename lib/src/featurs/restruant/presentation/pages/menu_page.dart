@@ -20,9 +20,7 @@ class _MenuPageState extends State<MenuPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         centerTitle: true,
         title: const Text(AppStaticStrings.menu),
         actions: [
@@ -194,15 +192,22 @@ class _MenuPageState extends State<MenuPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.kPrimaryColor : Colors.transparent,
+          color: isSelected ? AppColors.kPrimaryColor : Colors.white,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: CustomText(
-          label,
-          variant: TextVariant.titleMedium,
-          color: isSelected
-              ? AppColors.kWhiteTextColor
-              : AppColors.kSecondaryTextColor,
+        child: Row(
+          spacing: 6,
+          children: [
+            if (label == AppStaticStrings.hotCoffee)
+              Image.asset("assets/icons/stamp_category_icon.png", height: 15),
+            CustomText(
+              label,
+              fontWeight: FontWeight.w600,
+              color: isSelected
+                  ? AppColors.kWhiteTextColor
+                  : AppColors.kPrimaryColor,
+            ),
+          ],
         ),
       ),
     );
