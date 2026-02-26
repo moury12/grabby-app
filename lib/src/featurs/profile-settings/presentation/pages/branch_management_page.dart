@@ -45,7 +45,9 @@ class _BranchManagementPageState extends State<BranchManagementPage> {
               address: "123 Main Street, San Francisco, CA 94102",
               phone: "+1 (555) 123-4567",
               hours: "Mon-Fri: 7AM-8PM, Sat-Sun: 8AM-6PM",
-              onEdit: () {},
+              onEdit: () {
+                _showAddBranch();
+              },
               onDelete: () {},
             ),
             BranchCard(
@@ -53,7 +55,9 @@ class _BranchManagementPageState extends State<BranchManagementPage> {
               address: "123 Main Street, San Francisco, CA 94102",
               phone: "+1 (555) 123-4567",
               hours: "Mon-Fri: 7AM-8PM, Sat-Sun: 8AM-6PM",
-              onEdit: () {},
+              onEdit: () {
+                _showAddBranch();
+              },
               onDelete: () {},
             ),
           ],

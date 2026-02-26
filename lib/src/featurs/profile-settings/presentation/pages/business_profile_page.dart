@@ -159,7 +159,7 @@ class BusinessProfilePage extends StatelessWidget {
         Expanded(
           child: ProfileStatCard(
             label: AppStaticStrings.totalRevenue,
-            value: "12,450AED",
+            value: "AED 12,450",
             icon: Icons.attach_money,
             iconColor: AppColors.kGreenColor,
           ),

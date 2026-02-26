@@ -1,3 +1,4 @@
+import 'dart:io';
 import '../../../../src_export.dart';
 
 class EditDiscountBottomSheet extends StatefulWidget {
@@ -22,6 +23,7 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
 
   final Set<String> selectedItems = {"Cappuccino"};
   bool isDropdownOpen = false;
+  File? _pickedImage;
 
   void toggleSelection(String item) {
     setState(() {
@@ -167,7 +169,14 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
 
   Widget _buildImagePicker() {
     return GestureDetector(
-      onTap: () {},
+      onTap: () async {
+        final File? image = await ImagePickerHelper.pickImage(context);
+        if (image != null) {
+          setState(() {
+            _pickedImage = image;
+          });
+        }
+      },
       child: Container(
         height: 120,
         width: double.infinity,
@@ -178,22 +187,31 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
             color: AppColors.kSecondaryTextColor.withValues(alpha: 0.3),
           ),
         ),
-        child: const Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.add_photo_alternate_outlined,
-              color: AppColors.kPrimaryColor,
-              size: 40,
-            ),
-            SizedBox(height: 8),
-            CustomText(
-              "Click to upload image",
-              variant: TextVariant.labelSmall,
-              color: AppColors.kSecondaryTextColor,
-            ),
-          ],
-        ),
+        child: _pickedImage != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.file(
+                  _pickedImage!,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                ),
+              )
+            : const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add_photo_alternate_outlined,
+                    color: AppColors.kPrimaryColor,
+                    size: 40,
+                  ),
+                  SizedBox(height: 8),
+                  CustomText(
+                    "Click to upload image",
+                    variant: TextVariant.labelSmall,
+                    color: AppColors.kSecondaryTextColor,
+                  ),
+                ],
+              ),
       ),
     );
   }

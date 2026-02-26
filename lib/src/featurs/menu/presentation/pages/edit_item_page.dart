@@ -1,3 +1,4 @@
+import 'dart:io';
 import '../../../../src_export.dart';
 
 class EditItemPage extends StatefulWidget {
@@ -12,6 +13,7 @@ class EditItemPage extends StatefulWidget {
 class _EditItemPageState extends State<EditItemPage> {
   bool giveStamp = true;
   bool availableNow = true;
+  File? _pickedImage;
 
   @override
   Widget build(BuildContext context) {
@@ -63,23 +65,44 @@ class _EditItemPageState extends State<EditItemPage> {
         Container(
           padding: AppPadding.getPadding8(context),
           width: double.infinity,
-          // height: 120,
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey.shade300),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
             children: [
-              const Icon(
-                Icons.file_upload_outlined,
-                color: AppColors.kPrimaryColor,
-              ),
+              if (_pickedImage != null)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.file(
+                    _pickedImage!,
+                    height: 150,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                )
+              else
+                const Icon(
+                  Icons.file_upload_outlined,
+                  color: AppColors.kPrimaryColor,
+                ),
               const SizedBox(height: 8),
               SizedBox(
                 width: MediaQuery.sizeOf(context).width * 0.4,
                 child: CustomButton(
-                  text: AppStaticStrings.uploadImage,
-                  onPressed: () {},
+                  text: _pickedImage != null
+                      ? AppStaticStrings.changeImage
+                      : AppStaticStrings.uploadImage,
+                  onPressed: () async {
+                    final File? image = await ImagePickerHelper.pickImage(
+                      context,
+                    );
+                    if (image != null) {
+                      setState(() {
+                        _pickedImage = image;
+                      });
+                    }
+                  },
                   backgroundColor: AppColors.kPrimaryColor.withValues(
                     alpha: 0.5,
                   ),

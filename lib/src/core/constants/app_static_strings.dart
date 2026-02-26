@@ -427,6 +427,7 @@ class AppStaticStrings {
   static const String editItem = "Edit Item";
   static const String image = "Image";
   static const String uploadImage = "Upload Image";
+  static const String changeImage = "Change Image";
   static const String itemName = "Item Name *";
   static const String enterItemName = "Cappuccino";
   static const String category = "Category *";
