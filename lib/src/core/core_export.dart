@@ -6,3 +6,4 @@ export 'widgets/widgets_export.dart';
 export 'enums/enums_export.dart';
 export 'routes/routes_export.dart';
 export 'di/injection_container.dart';
+export 'services/service_export.dart';
