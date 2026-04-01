@@ -9,6 +9,11 @@ Future<void> init() async {
   // Data sources
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+  
+  // ApiService
+  sl.registerLazySingleton<ApiService>(
+    () => ApiService(baseUrl: ApiEndpoints.baseUrl),
+  );
 
   sl.registerLazySingleton<OnboardingLocalDataSource>(
     () => OnboardingLocalDataSourceImpl(sharedPreferences: sl()),
