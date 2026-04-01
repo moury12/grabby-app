@@ -67,7 +67,7 @@ class LoginPage extends StatelessWidget {
                     ),
                     ButtonTapWidget(
                       onTap: () {
-                        context.pushNamed(RoutesPath.signUpPath);
+                        context.pushNamed(RoutesPath.roleSelectionPath);
                       },
                       child: CustomText(
                         AppStaticStrings.signUp,

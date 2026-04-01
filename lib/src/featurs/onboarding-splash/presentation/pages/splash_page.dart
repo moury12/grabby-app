@@ -13,6 +13,8 @@ class SplashPage extends StatelessWidget {
           if (state is SplashFinished) {
             // Navigate to Onboarding slides
             context.go(RoutesPath.roleSelectionPath);
+          } else if (state is ShowLogin) {
+            context.go(RoutesPath.loginPath);
           }
         },
         child: Scaffold(

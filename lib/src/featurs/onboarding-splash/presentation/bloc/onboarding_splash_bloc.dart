@@ -28,13 +28,18 @@ class OnboardingSplashBloc
     Emitter<OnboardingSplashState> emit,
   ) async {
     await Future.delayed(const Duration(seconds: 3));
-    emit(SplashFinished());
+    if (localDataSource.isFirstTime()) {
+      emit(SplashFinished());
+    } else {
+      emit(ShowLogin());
+    }
   }
 
   Future<void> _onOnboardingCompleted(
     OnboardingCompleted event,
     Emitter<OnboardingSplashState> emit,
   ) async {
+    await localDataSource.setFirstTime(false);
     emit(ShowRoleSelection());
   }
 

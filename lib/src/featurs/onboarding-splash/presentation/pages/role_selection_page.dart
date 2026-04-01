@@ -11,7 +11,12 @@ class RoleSelectionPage extends StatelessWidget {
       child: BlocListener<OnboardingSplashBloc, OnboardingSplashState>(
         listener: (context, state) {
           if (state is RoleSelectionDone) {
-            context.go(RoutesPath.onboardingPath);
+            final isFirstTime = sl<OnboardingLocalDataSource>().isFirstTime();
+            if (isFirstTime) {
+              context.go(RoutesPath.onboardingPath);
+            } else {
+              context.pushNamed(RoutesPath.signUpPath);
+            }
           }
         },
         child: Scaffold(
