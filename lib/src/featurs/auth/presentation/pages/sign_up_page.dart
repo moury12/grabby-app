@@ -8,110 +8,157 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController(text: '+971');
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  bool _termsAccepted = false;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  void _onSignUp(BuildContext context) {
+    context.read<AuthBloc>().add(
+          RegisterCustomerEvent(
+            name: _nameController.text.trim(),
+            email: _emailController.text.trim(),
+            phoneNumber: _phoneController.text.trim(),
+            password: _passwordController.text,
+            confirmPassword: _confirmPasswordController.text,
+            termsAccepted: _termsAccepted,
+          ),
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: AppPadding.getPadding12(context).copyWith(top: 0),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 12,
-              children: [
-                CustomText(
-                  AppStaticStrings.signUp,
-                  variant: TextVariant.headlineLarge,
+    return BlocProvider(
+      create: (_) => sl<AuthBloc>(),
+      child: Scaffold(
+        appBar: AppBar(),
+        body: BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is RegisterSuccess) {
+              // Show success message then navigate to verification
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.message)),
+              );
+              context.pushNamed(RoutesPath.verificationPath);
+            } else if (state is AuthFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Colors.red,
                 ),
+              );
+            }
+          },
+          builder: (context, state) {
+            final isLoading = state is AuthLoading;
 
-                CustomText(
-                  AppStaticStrings.letsGetYouSetUp,
-                  variant: TextVariant.titleSmall,
-                  color: AppColors.kBlueColor,
-                ),
-                space6H,
-                CustomTextField(
-                  title: AppStaticStrings.preferredName,
-                  hintText: AppStaticStrings.preferredName,
-                ),
-                CustomTextField(
-                  title: AppStaticStrings.email,
-                  hintText: AppStaticStrings.email,
-                ),
-                CustomTextField(
-                  title: AppStaticStrings.phoneNumber,
-                  hintText: AppStaticStrings.phoneNumber,
-                  keyboardType: TextInputType.phone,
-                  textEditingController: TextEditingController(text: "+971"),
-                ),
-                CustomTextField(
-                  title: AppStaticStrings.password,
-                  hintText: AppStaticStrings.password,
-                  isPassword: true,
-                ),
-                CustomTextField(
-                  title: AppStaticStrings.confirmPassword,
-                  hintText: AppStaticStrings.confirmPassword,
-                  isPassword: true,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Checkbox(value: true, onChanged: (value) {}),
-                    Expanded(
-                      child: Wrap(
+            return SingleChildScrollView(
+              child: Padding(
+                padding: AppPadding.getPadding12(context).copyWith(top: 0),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 12,
+                    children: [
+                      CustomText(
+                        AppStaticStrings.signUp,
+                        variant: TextVariant.headlineLarge,
+                      ),
+                      CustomText(
+                        AppStaticStrings.letsGetYouSetUp,
+                        variant: TextVariant.titleSmall,
+                        color: AppColors.kBlueColor,
+                      ),
+                      space6H,
+                      CustomTextField(
+                        title: AppStaticStrings.preferredName,
+                        hintText: AppStaticStrings.preferredName,
+                        textEditingController: _nameController,
+                      ),
+                      CustomTextField(
+                        title: AppStaticStrings.email,
+                        hintText: AppStaticStrings.email,
+                        textEditingController: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                      CustomTextField(
+                        title: AppStaticStrings.phoneNumber,
+                        hintText: AppStaticStrings.phoneNumber,
+                        keyboardType: TextInputType.phone,
+                        textEditingController: _phoneController,
+                      ),
+                      CustomTextField(
+                        title: AppStaticStrings.password,
+                        hintText: AppStaticStrings.password,
+                        isPassword: true,
+                        textEditingController: _passwordController,
+                      ),
+                      CustomTextField(
+                        title: AppStaticStrings.confirmPassword,
+                        hintText: AppStaticStrings.confirmPassword,
+                        isPassword: true,
+                        textEditingController: _confirmPasswordController,
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          CustomText(AppStaticStrings.iHaveReadAndAgree),
-                          ButtonTapWidget(
-                            onTap: () {
-                              // TODO: Navigate to Terms and Conditions
-                            },
-                            child: CustomText(
-                              AppStaticStrings.termsAndConditions,
-                              color: AppColors.kPrimaryColor,
-                            ),
+                          Checkbox(
+                            value: _termsAccepted,
+                            onChanged: (value) =>
+                                setState(() => _termsAccepted = value ?? false),
                           ),
-                          CustomText(AppStaticStrings.and),
-                          ButtonTapWidget(
-                            onTap: () {
-                              // TODO: Navigate to Privacy Policy
-                            },
-                            child: CustomText(
-                              AppStaticStrings.privacyPolicy,
-                              color: AppColors.kPrimaryColor,
+                          Expanded(
+                            child: Wrap(
+                              children: [
+                                CustomText(AppStaticStrings.iHaveReadAndAgree),
+                                ButtonTapWidget(
+                                  onTap: () {
+                                    // TODO: Navigate to Terms and Conditions
+                                  },
+                                  child: CustomText(
+                                    AppStaticStrings.termsAndConditions,
+                                    color: AppColors.kPrimaryColor,
+                                  ),
+                                ),
+                                CustomText(AppStaticStrings.and),
+                                ButtonTapWidget(
+                                  onTap: () {
+                                    // TODO: Navigate to Privacy Policy
+                                  },
+                                  child: CustomText(
+                                    AppStaticStrings.privacyPolicy,
+                                    color: AppColors.kPrimaryColor,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
+                      CustomButton(
+                        text: AppStaticStrings.signUp,
+                        isLoading: isLoading,
+                        onPressed: () => _onSignUp(context),
+                      ),
+                    ],
+                  ),
                 ),
-
-                CustomButton(
-                  text: AppStaticStrings.signUp,
-                  onPressed: () {
-                    context.pushNamed(RoutesPath.verificationPath);
-                  },
-                ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   crossAxisAlignment: CrossAxisAlignment.center,
-                //   spacing: 4,
-                //   children: [
-                //     CustomText("don't Have an Account?", variant: TextVariant.labelMedium,),
-                //     ButtonTapWidget(
-                //       onTap: () {
-                //         context.pushNamed(RoutesPath.signUpPath);
-                //       },
-                //       child: CustomText(AppStaticStrings.signUp, color: AppColors.kPrimaryColor, variant: TextVariant.labelMedium,),
-                //     )
-                //   ],
-                // )
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

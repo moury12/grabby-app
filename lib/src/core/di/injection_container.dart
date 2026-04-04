@@ -21,4 +21,21 @@ Future<void> init() async {
 
   // Bloc
   sl.registerLazySingleton(() => OnboardingSplashBloc(localDataSource: sl()));
+
+  // ─── Feature: Auth ─────────────────────────────────────────────────────────
+
+  // Data source
+  sl.registerLazySingleton<AuthRemoteDataSource>(
+    () => AuthRemoteDataSourceImpl(sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(sl()),
+  );
+
+  // BLoC — factory so each page gets a fresh instance
+  sl.registerFactory<AuthBloc>(
+    () => AuthBloc(authRepository: sl()),
+  );
 }
