@@ -19,3 +19,54 @@ class RegisterCustomerEvent extends AuthEvent {
     required this.termsAccepted,
   });
 }
+
+class LoginEvent extends AuthEvent {
+  final String email;
+  final String password;
+
+  LoginEvent({required this.email, required this.password});
+}
+
+class VerifyOtpEvent extends AuthEvent {
+  final String email;
+  final String activationCode;
+
+  VerifyOtpEvent({required this.email, required this.activationCode});
+}
+
+class ResendOtpEvent extends AuthEvent {
+  final String email;
+
+  ResendOtpEvent({required this.email});
+}
+
+class ForgotPasswordEvent extends AuthEvent {
+  final String email;
+
+  ForgotPasswordEvent({required this.email});
+}
+
+class ResendForgotCodeEvent extends AuthEvent {
+  final String email;
+
+  ResendForgotCodeEvent({required this.email});
+}
+
+class VerifyForgotOtpEvent extends AuthEvent {
+  final String email;
+  final String activationCode;
+
+  VerifyForgotOtpEvent({required this.email, required this.activationCode});
+}
+
+class ChangePasswordEvent extends AuthEvent {
+  final String oldPassword;
+  final String newPassword;
+  final String confirmPassword;
+
+  ChangePasswordEvent({
+    required this.oldPassword,
+    required this.newPassword,
+    required this.confirmPassword,
+  });
+}

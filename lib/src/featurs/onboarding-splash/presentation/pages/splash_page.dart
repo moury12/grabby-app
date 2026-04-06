@@ -10,7 +10,9 @@ class SplashPage extends StatelessWidget {
       value: sl<OnboardingSplashBloc>()..add(LoadInitialData()),
       child: BlocListener<OnboardingSplashBloc, OnboardingSplashState>(
         listener: (context, state) {
-          if (state is SplashFinished) {
+          if (state is AuthenticatedCustomer) {
+            context.goNamed(RoutesPath.navigationPath);
+          } else if (state is SplashFinished) {
             // Navigate to Onboarding slides
             context.go(RoutesPath.roleSelectionPath);
           } else if (state is ShowLogin) {

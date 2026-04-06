@@ -2,9 +2,58 @@ import '../../../../src_export.dart';
 
 import 'package:pinput/pinput.dart';
 
-class VerificationPage extends StatelessWidget {
-  final String? extra;
+class VerificationPage extends StatefulWidget {
+  final Map<String, dynamic>? extra;
   const VerificationPage({super.key, this.extra});
+
+  @override
+  State<VerificationPage> createState() => _VerificationPageState();
+}
+
+class _VerificationPageState extends State<VerificationPage> {
+  final _otpController = TextEditingController();
+
+  @override
+  void dispose() {
+    _otpController.dispose();
+    super.dispose();
+  }
+
+  void _onVerify(BuildContext context) {
+    final email = widget.extra?['email'] as String?;
+    final type = widget.extra?['type'] as String?;
+
+    if (email == null || _otpController.text.length < 6) return;
+
+    if (type == 'forgot_password') {
+      context.read<AuthBloc>().add(
+            VerifyForgotOtpEvent(
+              email: email,
+              activationCode: _otpController.text,
+            ),
+          );
+    } else {
+      context.read<AuthBloc>().add(
+            VerifyOtpEvent(
+              email: email,
+              activationCode: _otpController.text,
+            ),
+          );
+    }
+  }
+
+  void _onResend(BuildContext context) {
+    final email = widget.extra?['email'] as String?;
+    final type = widget.extra?['type'] as String?;
+
+    if (email == null) return;
+
+    if (type == 'forgot_password') {
+      context.read<AuthBloc>().add(ResendForgotCodeEvent(email: email));
+    } else {
+      context.read<AuthBloc>().add(ResendOtpEvent(email: email));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,70 +68,89 @@ class VerificationPage extends StatelessWidget {
       ),
     );
 
-    return Scaffold(
-      appBar: AppBar(title: Text(AppStaticStrings.verification)),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: AppPadding.getPadding12(context),
-          child: Column(
-            spacing: 12,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CustomText(
-                AppStaticStrings.verifyYourAccount,
-                variant: TextVariant.headlineLarge,
-              ),
-              CustomText(
-                AppStaticStrings.sentVerificationCode,
-                variant: TextVariant.labelMedium,
-                textAlign: TextAlign.center,
-                color: AppColors.kSecondaryTextColor,
-              ),
+    final email = widget.extra?['email'] as String? ?? '';
+    final type = widget.extra?['type'] as String? ?? 'signup';
 
-              SvgPicture.asset(ImagesConstant.kVerifyAccImg),
+    return BlocProvider(
+      create: (context) => sl<AuthBloc>(),
+      child: Scaffold(
+        appBar: AppBar(title: Text(AppStaticStrings.verification)),
+        body: BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is VerifyOtpSuccess) {
+              CustomSnackbar.show(context, state.message);
+              if (type == 'forgot_password') {
+                context.pushNamed(RoutesPath.resetPasswordPath);
+              } else {
+                context.goNamed(RoutesPath.loginPath);
+              }
+            } else if (state is OtpSentSuccess) {
+              CustomSnackbar.show(context, state.message);
+            } else if (state is AuthFailure) {
+              CustomSnackbar.show(context, state.message, isError: true);
+            }
+          },
+          builder: (context, state) {
+            final isLoading = state is AuthLoading;
 
-              space4H,
-
-              /// 🔹 OTP FIELD
-              Pinput(
-                length: 6,
-                defaultPinTheme: defaultPinTheme,
-
-                focusedPinTheme: defaultPinTheme.copyWith(
-                  decoration: defaultPinTheme.decoration!.copyWith(
-                    border: Border.all(
-                      color: Theme.of(context).primaryColor,
-                      width: 1.5,
+            return SingleChildScrollView(
+              child: Padding(
+                padding: AppPadding.getPadding12(context),
+                child: Column(
+                  spacing: 12,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CustomText(
+                      AppStaticStrings.verifyYourAccount,
+                      variant: TextVariant.headlineLarge,
                     ),
-                    color: Colors.transparent,
-                  ),
-                ),
-                onCompleted: (pin) {
-                  // print("Entered OTP: $pin");
-                },
-              ),
+                    CustomText(
+                      "${AppStaticStrings.sentVerificationCode} to $email",
+                      variant: TextVariant.labelMedium,
+                      textAlign: TextAlign.center,
+                      color: AppColors.kSecondaryTextColor,
+                    ),
 
-              space4H,
+                    SvgPicture.asset(ImagesConstant.kVerifyAccImg),
 
-              CustomButton(
-                text: AppStaticStrings.verifyCode,
-                onPressed: () {
-                  if(extra==RoutesPath.forgotPasswordPath){
-                    context.pushNamed(RoutesPath.resetPasswordPath);
-                  }
-                  else{
-                    context.pushNamed(RoutesPath.locationPath);
-                  }
-                },
-              ),
-              ButtonTapWidget(
-                child: CustomText(
-                  AppStaticStrings.didntGetCode,
-                  variant: TextVariant.labelMedium,
+                    space4H,
+
+                    /// 🔹 OTP FIELD
+                    Pinput(
+                      controller: _otpController,
+                      length: 6,
+                      defaultPinTheme: defaultPinTheme,
+                      focusedPinTheme: defaultPinTheme.copyWith(
+                        decoration: defaultPinTheme.decoration!.copyWith(
+                          border: Border.all(
+                            color: Theme.of(context).primaryColor,
+                            width: 1.5,
+                          ),
+                          color: Colors.transparent,
+                        ),
+                      ),
+                      onCompleted: (pin) => _onVerify(context),
+                    ),
+
+                    space4H,
+
+                    CustomButton(
+                      text: AppStaticStrings.verifyCode,
+                      isLoading: isLoading,
+                      onPressed: () => _onVerify(context),
+                    ),
+                    ButtonTapWidget(
+                      onTap: () => _onResend(context),
+                      child: CustomText(
+                        AppStaticStrings.didntGetCode,
+                        variant: TextVariant.labelMedium,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

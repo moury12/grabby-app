@@ -42,10 +42,12 @@ dependencies:
   cached_network_image: ^3.4.1
   get_it: ^9.2.1
   shared_preferences: ^2.5.2
+  jwt_decoder: ^2.0.1
   geolocator: ^13.0.1
   geocoding: ^3.0.0
   image_picker: ^1.1.2
   dio: ^5.9.2
+  intl: ^0.20.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

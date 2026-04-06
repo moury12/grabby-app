@@ -17,6 +17,7 @@ class AppStaticStrings {
   static const String emailAddressOrPhoneNumber =
       "Email Address Or Phone Number";
   static const String password = "Password";
+  static const String oldPassword = "Old Password";
   static const String confirmLocation = "Confirm Location";
   static const String cancelOrder = "Cancel Order";
   static const String dontHaveAnAccount = "Don't Have an Account?";

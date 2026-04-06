@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../../../src_export.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -8,11 +10,22 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController(text: '+971');
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController(
+    text: kDebugMode ? "Sadia Binte" : "",
+  );
+  final _emailController = TextEditingController(
+    text: kDebugMode ? "xiviho6107@agoalz.com" : "",
+  );
+  final _phoneController = TextEditingController(
+    text: kDebugMode ? "+971501234567" : "+971",
+  );
+  final _passwordController = TextEditingController(
+    text: kDebugMode ? "123456" : "",
+  );
+  final _confirmPasswordController = TextEditingController(
+    text: kDebugMode ? "123456" : "",
+  );
   bool _termsAccepted = false;
 
   @override
@@ -26,16 +39,26 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void _onSignUp(BuildContext context) {
-    context.read<AuthBloc>().add(
-          RegisterCustomerEvent(
-            name: _nameController.text.trim(),
-            email: _emailController.text.trim(),
-            phoneNumber: _phoneController.text.trim(),
-            password: _passwordController.text,
-            confirmPassword: _confirmPasswordController.text,
-            termsAccepted: _termsAccepted,
-          ),
+    if (_formKey.currentState!.validate()) {
+      if (!_termsAccepted) {
+        CustomSnackbar.show(
+          context,
+          'Please accept the terms and conditions',
+          isError: true,
         );
+        return;
+      }
+      context.read<AuthBloc>().add(
+        RegisterCustomerEvent(
+          name: _nameController.text.trim(),
+          email: _emailController.text.trim(),
+          phoneNumber: _phoneController.text.trim(),
+          password: _passwordController.text,
+          confirmPassword: _confirmPasswordController.text,
+          termsAccepted: _termsAccepted,
+        ),
+      );
+    }
   }
 
   @override
@@ -48,17 +71,16 @@ class _SignUpPageState extends State<SignUpPage> {
           listener: (context, state) {
             if (state is RegisterSuccess) {
               // Show success message then navigate to verification
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
+              CustomSnackbar.show(context, state.message);
+              context.pushNamed(
+                RoutesPath.verificationPath,
+                extra: {
+                  'email': _emailController.text.trim(),
+                  'type': 'signup',
+                },
               );
-              context.pushNamed(RoutesPath.verificationPath);
             } else if (state is AuthFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: Colors.red,
-                ),
-              );
+              CustomSnackbar.show(context, state.message, isError: true);
             }
           },
           builder: (context, state) {
@@ -67,93 +89,134 @@ class _SignUpPageState extends State<SignUpPage> {
             return SingleChildScrollView(
               child: Padding(
                 padding: AppPadding.getPadding12(context).copyWith(top: 0),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 12,
-                    children: [
-                      CustomText(
-                        AppStaticStrings.signUp,
-                        variant: TextVariant.headlineLarge,
-                      ),
-                      CustomText(
-                        AppStaticStrings.letsGetYouSetUp,
-                        variant: TextVariant.titleSmall,
-                        color: AppColors.kBlueColor,
-                      ),
-                      space6H,
-                      CustomTextField(
-                        title: AppStaticStrings.preferredName,
-                        hintText: AppStaticStrings.preferredName,
-                        textEditingController: _nameController,
-                      ),
-                      CustomTextField(
-                        title: AppStaticStrings.email,
-                        hintText: AppStaticStrings.email,
-                        textEditingController: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                      ),
-                      CustomTextField(
-                        title: AppStaticStrings.phoneNumber,
-                        hintText: AppStaticStrings.phoneNumber,
-                        keyboardType: TextInputType.phone,
-                        textEditingController: _phoneController,
-                      ),
-                      CustomTextField(
-                        title: AppStaticStrings.password,
-                        hintText: AppStaticStrings.password,
-                        isPassword: true,
-                        textEditingController: _passwordController,
-                      ),
-                      CustomTextField(
-                        title: AppStaticStrings.confirmPassword,
-                        hintText: AppStaticStrings.confirmPassword,
-                        isPassword: true,
-                        textEditingController: _confirmPasswordController,
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Checkbox(
-                            value: _termsAccepted,
-                            onChanged: (value) =>
-                                setState(() => _termsAccepted = value ?? false),
-                          ),
-                          Expanded(
-                            child: Wrap(
-                              children: [
-                                CustomText(AppStaticStrings.iHaveReadAndAgree),
-                                ButtonTapWidget(
-                                  onTap: () {
-                                    // TODO: Navigate to Terms and Conditions
-                                  },
-                                  child: CustomText(
-                                    AppStaticStrings.termsAndConditions,
-                                    color: AppColors.kPrimaryColor,
-                                  ),
-                                ),
-                                CustomText(AppStaticStrings.and),
-                                ButtonTapWidget(
-                                  onTap: () {
-                                    // TODO: Navigate to Privacy Policy
-                                  },
-                                  child: CustomText(
-                                    AppStaticStrings.privacyPolicy,
-                                    color: AppColors.kPrimaryColor,
-                                  ),
-                                ),
-                              ],
+                child: Form(
+                  key: _formKey,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 12,
+                      children: [
+                        CustomText(
+                          AppStaticStrings.signUp,
+                          variant: TextVariant.headlineLarge,
+                        ),
+                        CustomText(
+                          AppStaticStrings.letsGetYouSetUp,
+                          variant: TextVariant.titleSmall,
+                          color: AppColors.kBlueColor,
+                        ),
+                        space6H,
+                        CustomTextField(
+                          title: AppStaticStrings.preferredName,
+                          hintText: AppStaticStrings.preferredName,
+                          textEditingController: _nameController,
+                          isRequired: true,
+                        ),
+                        CustomTextField(
+                          title: AppStaticStrings.email,
+                          hintText: AppStaticStrings.email,
+                          textEditingController: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          isRequired: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return AppStaticStrings.required;
+                            }
+                            final emailRegex = RegExp(
+                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                            );
+                            if (!emailRegex.hasMatch(value)) {
+                              return 'Please enter a valid email address';
+                            }
+                            return null;
+                          },
+                        ),
+                        CustomTextField(
+                          title: AppStaticStrings.phoneNumber,
+                          hintText: AppStaticStrings.phoneNumber,
+                          keyboardType: TextInputType.phone,
+                          textEditingController: _phoneController,
+                          isRequired: true,
+                        ),
+                        CustomTextField(
+                          title: AppStaticStrings.password,
+                          hintText: AppStaticStrings.password,
+                          isPassword: true,
+                          textEditingController: _passwordController,
+                          isRequired: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return AppStaticStrings.required;
+                            }
+                            if (value.length < 6) {
+                              return 'Password must be at least 6 characters';
+                            }
+                            return null;
+                          },
+                        ),
+                        CustomTextField(
+                          title: AppStaticStrings.confirmPassword,
+                          hintText: AppStaticStrings.confirmPassword,
+                          isPassword: true,
+                          textEditingController: _confirmPasswordController,
+                          isRequired: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return AppStaticStrings.required;
+                            }
+                            if (value != _passwordController.text) {
+                              return 'Passwords do not match';
+                            }
+                            return null;
+                          },
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Checkbox(
+                              value: _termsAccepted,
+                              onChanged: (value) => setState(
+                                () => _termsAccepted = value ?? false,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      CustomButton(
-                        text: AppStaticStrings.signUp,
-                        isLoading: isLoading,
-                        onPressed: () => _onSignUp(context),
-                      ),
-                    ],
+                            Expanded(
+                              child: Wrap(
+                                children: [
+                                  CustomText(
+                                    AppStaticStrings.iHaveReadAndAgree,
+                                  ),
+                                  ButtonTapWidget(
+                                    onTap: () {
+                                      // TODO: Navigate to Terms and Conditions
+                                    },
+                                    child: CustomText(
+                                      AppStaticStrings.termsAndConditions,
+                                      color: AppColors.kPrimaryColor,
+                                    ),
+                                  ),
+                                  CustomText(AppStaticStrings.and),
+                                  ButtonTapWidget(
+                                    onTap: () {
+                                      // TODO: Navigate to Privacy Policy
+                                    },
+                                    child: CustomText(
+                                      AppStaticStrings.privacyPolicy,
+                                      color: AppColors.kPrimaryColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        CustomButton(
+                          text: AppStaticStrings.signUp,
+                          isLoading: isLoading,
+                          onPressed: () => _onSignUp(context),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

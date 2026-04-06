@@ -1,16 +1,19 @@
 import 'package:dio/dio.dart';
 import 'api_exception.dart';
 import 'api_response.dart';
+import 'local_storage_service.dart';
 
 class ApiService {
   late final Dio _dio;
+  final LocalStorageService? _localStorageService;
 
   ApiService({
     required String baseUrl,
+    LocalStorageService? localStorageService,
     Duration connectTimeout = const Duration(seconds: 30),
     Duration receiveTimeout = const Duration(seconds: 30),
     List<Interceptor>? interceptors,
-  }) {
+  }) : _localStorageService = localStorageService {
     _dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
@@ -19,6 +22,19 @@ class ApiService {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+        },
+      ),
+    );
+
+    // Add interceptor for Authorization header
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          final token = _localStorageService?.getAccessToken();
+          if (token != null) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          return handler.next(options);
         },
       ),
     );

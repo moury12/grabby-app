@@ -3,17 +3,19 @@ class ApiEndpoints {
 
   // ─── Base URL ──────────────────────────────────────────────────────────────
   // Swap this based on environment (dev / staging / prod)
-  static const String baseUrl = "https://your-api.com/api/v1";
+  static const String baseUrl = "http://10.10.20.50:5000";
 
   // ─── Auth ──────────────────────────────────────────────────────────────────
   static const String customerRegister = "/auth/customer/register";
-  static const String customerLogin    = "/auth/customer/login";
-  static const String verifyOtp        = "/auth/customer/verify-otp";
-  static const String resendOtp        = "/auth/customer/resend-otp";
-  static const String forgotPassword   = "/auth/customer/forgot-password";
-  static const String resetPassword    = "/auth/customer/reset-password";
-  static const String logout           = "/auth/customer/logout";
+  static const String customerLogin = "/auth/login";
+  static const String verifyOtp = "/auth/verify-otp";
+  static const String resendOtp = "/auth/resend-otp";
+  static const String forgotPassword = "/auth/forgot-password";
+  static const String resendForgotCode = "/auth/resend-forgot-code";
+  static const String verifyForgotOtp = "/auth/verify-forgot-otp";
+  static const String changePassword = "/auth/change-password";
+  static const String logout = "/auth/customer/logout";
 
   // ─── Profile ───────────────────────────────────────────────────────────────
-  static const String profile          = "/customer/profile";
+  static const String profile = "/auth/profile";
 }

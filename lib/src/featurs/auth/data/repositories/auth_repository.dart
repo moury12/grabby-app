@@ -9,4 +9,37 @@ abstract class AuthRepository {
     required String confirmPassword,
     required bool termsAccepted,
   });
+
+  Future<ApiResponse<LoginResponseData>> login({
+    required String email,
+    required String password,
+  });
+
+  Future<ApiResponse<void>> verifyOtp({
+    required String email,
+    required String activationCode,
+  });
+
+  Future<ApiResponse<void>> resendOtp({
+    required String email,
+  });
+
+  Future<ApiResponse<void>> forgotPassword({
+    required String email,
+  });
+
+  Future<ApiResponse<void>> resendForgotCode({
+    required String email,
+  });
+
+  Future<ApiResponse<void>> verifyForgotOtp({
+    required String email,
+    required String activationCode,
+  });
+
+  Future<ApiResponse<void>> changePassword({
+    required String oldPassword,
+    required String newPassword,
+    required String confirmPassword,
+  });
 }

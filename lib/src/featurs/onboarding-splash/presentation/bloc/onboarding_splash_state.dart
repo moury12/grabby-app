@@ -22,3 +22,5 @@ class RoleSelectionDone extends OnboardingSplashState {
   final UserRole role;
   RoleSelectionDone(this.role);
 }
+
+class AuthenticatedCustomer extends OnboardingSplashState {}

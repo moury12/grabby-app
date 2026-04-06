@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import '../../../../src_export.dart';
 import 'package:meta/meta.dart';
 
@@ -11,10 +12,13 @@ enum UserRole { customer, shop }
 class OnboardingSplashBloc
     extends Bloc<OnboardingSplashEvent, OnboardingSplashState> {
   final OnboardingLocalDataSource localDataSource;
+  final LocalStorageService localStorageService;
   UserRole selectedRole = UserRole.customer;
 
-  OnboardingSplashBloc({required this.localDataSource})
-    : super(SplashLoading()) {
+  OnboardingSplashBloc({
+    required this.localDataSource,
+    required this.localStorageService,
+  }) : super(SplashLoading()) {
     on<LoadInitialData>(_onLoadInitialData);
     on<OnboardingCompleted>(_onOnboardingCompleted);
     on<RoleSelected>(_onRoleSelected);
@@ -28,6 +32,17 @@ class OnboardingSplashBloc
     Emitter<OnboardingSplashState> emit,
   ) async {
     await Future.delayed(const Duration(seconds: 3));
+
+    final token = localStorageService.getAccessToken();
+    if (token != null && !JwtDecoder.isExpired(token)) {
+      final decodedToken = JwtDecoder.decode(token);
+      final role = decodedToken['role'] as String?;
+      if (role == 'CUSTOMER') {
+        emit(AuthenticatedCustomer());
+        return;
+      }
+    }
+
     if (localDataSource.isFirstTime()) {
       emit(SplashFinished());
     } else {

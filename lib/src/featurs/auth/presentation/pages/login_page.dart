@@ -1,85 +1,161 @@
+import 'package:flutter/foundation.dart';
+
 import '../../../../src_export.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController(
+    text: kDebugMode ? "xiviho6107@agoalz.com" : "",
+  );
+  final _passwordController = TextEditingController(
+    text: kDebugMode ? "123456" : "",
+  );
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _onLogin(BuildContext context) {
+    if (_formKey.currentState!.validate()) {
+      context.read<AuthBloc>().add(
+        LoginEvent(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        ),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(AppStaticStrings.loginAccount)),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: AppPadding.getPadding12(context),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              spacing: 12,
-              children: [
-                SvgPicture.asset(ImagesConstant.kLoginImg),
-                CustomText(
-                  AppStaticStrings.gladToMeetYouAgain,
-                  variant: TextVariant.headlineLarge,
-                ),
-                space6H,
-                CustomTextField(
-                  title: AppStaticStrings.emailAddressOrPhoneNumber,
-                  hintText: AppStaticStrings.emailAddressOrPhoneNumber,
-                ),
-                CustomTextField(
-                  title: AppStaticStrings.password,
-                  hintText: AppStaticStrings.password,
-                  isPassword: true,
-                ),
-                Align(
-                  alignment: AlignmentGeometry.topRight,
-                  child: ButtonTapWidget(
-                    onTap: () {
-                      context.pushNamed(RoutesPath.forgotPasswordPath);
-                    },
-                    child: CustomText(
-                      AppStaticStrings.forgotThePassword,
-                      color: AppColors.kSecondaryColor,
-                      variant: TextVariant.titleSmall,
+    return BlocProvider(
+      create: (context) => sl<AuthBloc>(),
+      child: Scaffold(
+        appBar: AppBar(title: Text(AppStaticStrings.loginAccount)),
+        body: BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) async {
+            if (state is LoginSuccess) {
+              // Save tokens locally
+              final localStorage = sl<LocalStorageService>();
+              await localStorage.saveAccessToken(state.loginData.accessToken);
+              await localStorage.saveRefreshToken(state.loginData.refreshToken);
+
+              if (context.mounted) {
+                CustomSnackbar.show(context, state.message);
+
+                // Navigate based on role
+                final role = sl<OnboardingSplashBloc>().selectedRole;
+                if (role == UserRole.shop) {
+                  context.goNamed(RoutesPath.shopNavigationPath);
+                } else {
+                  context.goNamed(RoutesPath.navigationPath);
+                }
+              }
+            } else if (state is AuthFailure) {
+              CustomSnackbar.show(context, state.message, isError: true);
+            }
+          },
+          builder: (context, state) {
+            final isLoading = state is AuthLoading;
+
+            return SingleChildScrollView(
+              child: Padding(
+                padding: AppPadding.getPadding12(context),
+                child: Form(
+                  key: _formKey,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      spacing: 12,
+                      children: [
+                        SvgPicture.asset(ImagesConstant.kLoginImg),
+                        CustomText(
+                          AppStaticStrings.gladToMeetYouAgain,
+                          variant: TextVariant.headlineLarge,
+                        ),
+                        space6H,
+                        CustomTextField(
+                          title: AppStaticStrings.emailAddressOrPhoneNumber,
+                          hintText: AppStaticStrings.emailAddressOrPhoneNumber,
+                          textEditingController: _emailController,
+                          isRequired: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return AppStaticStrings.required;
+                            }
+                            return null;
+                          },
+                        ),
+                        CustomTextField(
+                          title: AppStaticStrings.password,
+                          hintText: AppStaticStrings.password,
+                          isPassword: true,
+                          textEditingController: _passwordController,
+                          isRequired: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return AppStaticStrings.required;
+                            }
+                            return null;
+                          },
+                        ),
+                        Align(
+                          alignment: AlignmentGeometry.topRight,
+                          child: ButtonTapWidget(
+                            onTap: () {
+                              context.pushNamed(RoutesPath.forgotPasswordPath);
+                            },
+                            child: CustomText(
+                              AppStaticStrings.forgotThePassword,
+                              color: AppColors.kSecondaryColor,
+                              variant: TextVariant.titleSmall,
+                            ),
+                          ),
+                        ),
+                        CustomButton(
+                          text: AppStaticStrings.logIn,
+                          isLoading: isLoading,
+                          onPressed: () => _onLogin(context),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          spacing: 4,
+                          children: [
+                            CustomText(
+                              AppStaticStrings.dontHaveAnAccount,
+                              variant: TextVariant.labelMedium,
+                            ),
+                            ButtonTapWidget(
+                              onTap: () {
+                                context.pushNamed(RoutesPath.roleSelectionPath);
+                              },
+                              child: CustomText(
+                                AppStaticStrings.signUp,
+                                color: AppColors.kPrimaryColor,
+                                variant: TextVariant.labelMedium,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
-
-                CustomButton(
-                  text: AppStaticStrings.logIn,
-                  onPressed: () {
-                    final role = sl<OnboardingSplashBloc>().selectedRole;
-                    if (role == UserRole.shop) {
-                      context.pushNamed(RoutesPath.shopNavigationPath);
-                    } else {
-                      context.pushNamed(RoutesPath.navigationPath);
-                    }
-                  },
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  spacing: 4,
-                  children: [
-                    CustomText(
-                      AppStaticStrings.dontHaveAnAccount,
-                      variant: TextVariant.labelMedium,
-                    ),
-                    ButtonTapWidget(
-                      onTap: () {
-                        context.pushNamed(RoutesPath.roleSelectionPath);
-                      },
-                      child: CustomText(
-                        AppStaticStrings.signUp,
-                        color: AppColors.kPrimaryColor,
-                        variant: TextVariant.labelMedium,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

@@ -54,7 +54,7 @@ class AppRouter {
         path: RoutesPath.verificationPath,
         name: RoutesPath.verificationPath,
         builder: (BuildContext context, GoRouterState state) {
-          return VerificationPage(extra: state.extra as String?);
+          return VerificationPage(extra: state.extra as Map<String, dynamic>?);
         },
       ),
       GoRoute(
