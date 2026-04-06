@@ -1,6 +1,4 @@
 import '../../../../src_export.dart';
-import '../../data/repositories/profile_repository_impl.dart';
-import '../../data/models/profile_response_model.dart';
 
 part 'profile_event.dart';
 part 'profile_state.dart';
@@ -9,8 +7,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ProfileRepository _profileRepository;
 
   ProfileBloc({required ProfileRepository profileRepository})
-      : _profileRepository = profileRepository,
-        super(ProfileInitial()) {
+    : _profileRepository = profileRepository,
+      super(ProfileInitial()) {
     on<GetProfileEvent>(_onGetProfile);
   }
 
@@ -27,8 +25,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         emit(ProfileError(response.message));
       }
     } on ApiException catch (e) {
+      debugPrint("ProfileBloc ApiException: ${e.message}");
       emit(ProfileError(e.message));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint("ProfileBloc catch: $e");
+      debugPrint("ProfileBloc stackTrace: $stackTrace");
       emit(ProfileError('Something went wrong. Please try again.'));
     }
   }

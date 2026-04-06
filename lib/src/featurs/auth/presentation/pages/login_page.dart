@@ -12,7 +12,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController(
-    text: kDebugMode ? "xiviho6107@agoalz.com" : "",
+    text: kDebugMode ? "sayor98367@algarr.com" : "",
   );
   final _passwordController = TextEditingController(
     text: kDebugMode ? "123456" : "",

@@ -2,7 +2,7 @@ import '../../../../src_export.dart';
 import '../models/profile_response_model.dart';
 
 abstract class ProfileRemoteDataSource {
-  Future<ProfileResponseModel> getProfile();
+  Future<ApiResponse<ProfileData>> getProfile();
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
@@ -11,8 +11,10 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   ProfileRemoteDataSourceImpl(this.apiService);
 
   @override
-  Future<ProfileResponseModel> getProfile() async {
-    final response = await apiService.get(ApiEndpoints.profile);
-    return ProfileResponseModel.fromJson(response.data);
+  Future<ApiResponse<ProfileData>> getProfile() async {
+    return await apiService.get<ProfileData>(
+      ApiEndpoints.profile,
+      fromJson: (data) => ProfileData.fromJson(data as Map<String, dynamic>),
+    );
   }
 }

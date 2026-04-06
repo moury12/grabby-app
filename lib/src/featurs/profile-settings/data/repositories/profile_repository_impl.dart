@@ -1,8 +1,9 @@
+import '../../../../src_export.dart';
 import '../datasources/profile_remote_data_source.dart';
 import '../models/profile_response_model.dart';
 
 abstract class ProfileRepository {
-  Future<ProfileResponseModel> getProfile();
+  Future<ApiResponse<ProfileData>> getProfile();
 }
 
 class ProfileRepositoryImpl implements ProfileRepository {
@@ -11,7 +12,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
   ProfileRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<ProfileResponseModel> getProfile() async {
+  Future<ApiResponse<ProfileData>> getProfile() async {
     return await remoteDataSource.getProfile();
   }
 }
