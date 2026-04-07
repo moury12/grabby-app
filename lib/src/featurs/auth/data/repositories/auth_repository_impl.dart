@@ -29,10 +29,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
   }) async {
-    return await _remoteDataSource.login(
-      email: email,
-      password: password,
-    );
+    return await _remoteDataSource.login(email: email, password: password);
   }
 
   @override
@@ -47,30 +44,18 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<ApiResponse<void>> resendOtp({
-    required String email,
-  }) async {
-    return await _remoteDataSource.resendOtp(
-      email: email,
-    );
+  Future<ApiResponse<void>> resendOtp({required String email}) async {
+    return await _remoteDataSource.resendOtp(email: email);
   }
 
   @override
-  Future<ApiResponse<void>> forgotPassword({
-    required String email,
-  }) async {
-    return await _remoteDataSource.forgotPassword(
-      email: email,
-    );
+  Future<ApiResponse<void>> forgotPassword({required String email}) async {
+    return await _remoteDataSource.forgotPassword(email: email);
   }
 
   @override
-  Future<ApiResponse<void>> resendForgotCode({
-    required String email,
-  }) async {
-    return await _remoteDataSource.resendForgotCode(
-      email: email,
-    );
+  Future<ApiResponse<void>> resendForgotCode({required String email}) async {
+    return await _remoteDataSource.resendForgotCode(email: email);
   }
 
   @override
@@ -86,12 +71,16 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<ApiResponse<void>> changePassword({
-    required String oldPassword,
+    String? oldPassword,
+    String? email,
+    String? code,
     required String newPassword,
     required String confirmPassword,
   }) async {
     return await _remoteDataSource.changePassword(
       oldPassword: oldPassword,
+      email: email,
+      code: code,
       newPassword: newPassword,
       confirmPassword: confirmPassword,
     );

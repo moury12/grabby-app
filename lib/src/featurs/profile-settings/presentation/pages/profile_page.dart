@@ -14,28 +14,32 @@ class ProfilePage extends StatelessWidget {
             builder: (context, state) {
               if (state is ProfileLoading) {
                 return const Center(child: CircularProgressIndicator());
-              } else if (state is ProfileError) {
-                return Center(child: Text(state.message));
               } else if (state is ProfileLoaded) {
                 final profile = state.profileData;
                 final memberSince = DateFormat('MMMM yyyy').format(profile.createdAt);
 
-                return SingleChildScrollView(
-                  padding: AppPadding.getPadding12(context),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 12,
-                    children: [
-                      // Header
-                      ProfileHeader(
-                        name: profile.name,
-                        email: profile.email,
-                        phone: profile.phoneNumber,
-                        memberSince: memberSince,
-                        onEditImage: () {
-                          context.pushNamed(RoutesPath.personalInfoPath);
-                        },
-                      ),
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    context.read<ProfileBloc>().add(GetProfileEvent());
+                  },
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: AppPadding.getPadding12(context),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 12,
+                      children: [
+                        // Header
+                        ProfileHeader(
+                          name: profile.name,
+                          email: profile.email,
+                          phone: profile.phoneNumber,
+                          memberSince: memberSince,
+                          imageUrl: profile.profileImage, // Use network image
+                          onEditImage: () {
+                            context.pushNamed(RoutesPath.personalInfoPath);
+                          },
+                        ),
 
                       // Metric Card
                       const ProfileMetricCard(
@@ -104,7 +108,8 @@ class ProfilePage extends StatelessWidget {
                         ],
                       ),
                       space24H,
-                    ],
+                      ],
+                    ),
                   ),
                 );
               }

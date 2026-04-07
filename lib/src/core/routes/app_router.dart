@@ -75,7 +75,7 @@ class AppRouter {
         path: RoutesPath.resetPasswordPath,
         name: RoutesPath.resetPasswordPath,
         builder: (BuildContext context, GoRouterState state) {
-          return const ResetPasswordPage();
+          return ResetPasswordPage(extra: state.extra as Map<String, dynamic>?);
         },
       ),
       GoRoute(

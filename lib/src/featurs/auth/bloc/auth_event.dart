@@ -60,12 +60,16 @@ class VerifyForgotOtpEvent extends AuthEvent {
 }
 
 class ChangePasswordEvent extends AuthEvent {
-  final String oldPassword;
+  final String? oldPassword;
+  final String? email;
+  final String? code;
   final String newPassword;
   final String confirmPassword;
 
   ChangePasswordEvent({
-    required this.oldPassword,
+    this.oldPassword,
+    this.email,
+    this.code,
     required this.newPassword,
     required this.confirmPassword,
   });

@@ -13,9 +13,11 @@ class ApiEndpoints {
   static const String forgotPassword = "/auth/forgot-password";
   static const String resendForgotCode = "/auth/resend-forgot-code";
   static const String verifyForgotOtp = "/auth/verify-forgot-otp";
+  static const String resetPassword = "/auth/reset-password";
   static const String changePassword = "/auth/change-password";
   static const String logout = "/auth/customer/logout";
 
   // ─── Profile ───────────────────────────────────────────────────────────────
   static const String profile = "/auth/profile";
+  static const String updateProfile = "/customers/profile";
 }

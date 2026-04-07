@@ -7,8 +7,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
 
   AuthBloc({required AuthRepository authRepository})
-      : _authRepository = authRepository,
-        super(AuthInitial()) {
+    : _authRepository = authRepository,
+      super(AuthInitial()) {
     on<RegisterCustomerEvent>(_onRegisterCustomer);
     on<LoginEvent>(_onLogin);
     on<VerifyOtpEvent>(_onVerifyOtp);
@@ -46,10 +46,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _onLogin(
-    LoginEvent event,
-    Emitter<AuthState> emit,
-  ) async {
+  Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
       final response = await _authRepository.login(
@@ -58,7 +55,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
 
       if (response.success && response.data != null) {
-        emit(LoginSuccess(loginData: response.data!, message: response.message));
+        emit(
+          LoginSuccess(loginData: response.data!, message: response.message),
+        );
       } else {
         emit(AuthFailure(message: response.message));
       }
@@ -138,7 +137,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(AuthLoading());
     try {
-      final response = await _authRepository.resendForgotCode(email: event.email);
+      final response = await _authRepository.resendForgotCode(
+        email: event.email,
+      );
 
       if (response.success) {
         emit(OtpSentSuccess(message: response.message));
@@ -183,6 +184,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final response = await _authRepository.changePassword(
         oldPassword: event.oldPassword,
+        email: event.email,
+        code: event.code,
         newPassword: event.newPassword,
         confirmPassword: event.confirmPassword,
       );

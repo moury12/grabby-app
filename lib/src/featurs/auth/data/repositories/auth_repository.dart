@@ -20,17 +20,11 @@ abstract class AuthRepository {
     required String activationCode,
   });
 
-  Future<ApiResponse<void>> resendOtp({
-    required String email,
-  });
+  Future<ApiResponse<void>> resendOtp({required String email});
 
-  Future<ApiResponse<void>> forgotPassword({
-    required String email,
-  });
+  Future<ApiResponse<void>> forgotPassword({required String email});
 
-  Future<ApiResponse<void>> resendForgotCode({
-    required String email,
-  });
+  Future<ApiResponse<void>> resendForgotCode({required String email});
 
   Future<ApiResponse<void>> verifyForgotOtp({
     required String email,
@@ -38,7 +32,9 @@ abstract class AuthRepository {
   });
 
   Future<ApiResponse<void>> changePassword({
-    required String oldPassword,
+    String? oldPassword,
+    String? email,
+    String? code,
     required String newPassword,
     required String confirmPassword,
   });

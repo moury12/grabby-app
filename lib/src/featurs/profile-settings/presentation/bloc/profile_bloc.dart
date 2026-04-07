@@ -1,3 +1,4 @@
+import 'dart:io';
 import '../../../../src_export.dart';
 
 part 'profile_event.dart';
@@ -10,6 +11,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     : _profileRepository = profileRepository,
       super(ProfileInitial()) {
     on<GetProfileEvent>(_onGetProfile);
+    on<UpdateProfileEvent>(_onUpdateProfile);
   }
 
   Future<void> _onGetProfile(
@@ -30,6 +32,32 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     } catch (e, stackTrace) {
       debugPrint("ProfileBloc catch: $e");
       debugPrint("ProfileBloc stackTrace: $stackTrace");
+      emit(ProfileError('Something went wrong. Please try again.'));
+    }
+  }
+
+  Future<void> _onUpdateProfile(
+    UpdateProfileEvent event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(ProfileLoading());
+    try {
+      final response = await _profileRepository.updateProfile(
+        name: event.name,
+        addressName: event.addressName,
+        lat: event.lat,
+        lon: event.lon,
+        profileImage: event.profileImage,
+      );
+      if (response.success) {
+        // Refresh profile after update
+        add(GetProfileEvent());
+      } else {
+        emit(ProfileError(response.message));
+      }
+    } on ApiException catch (e) {
+      emit(ProfileError(e.message));
+    } catch (e) {
       emit(ProfileError('Something went wrong. Please try again.'));
     }
   }

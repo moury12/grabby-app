@@ -80,7 +80,10 @@ class _VerificationPageState extends State<VerificationPage> {
             if (state is VerifyOtpSuccess) {
               CustomSnackbar.show(context, state.message);
               if (type == 'forgot_password') {
-                context.pushNamed(RoutesPath.resetPasswordPath);
+                context.pushNamed(
+                  RoutesPath.resetPasswordPath,
+                  extra: {'email': email, 'code': _otpController.text},
+                );
               } else {
                 context.goNamed(RoutesPath.loginPath);
               }

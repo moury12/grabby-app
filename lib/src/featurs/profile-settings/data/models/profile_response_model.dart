@@ -28,6 +28,9 @@ class ProfileData {
   final String email;
   final String phoneNumber;
   final String? profileImage;
+  final String? addressName;
+  final String? lat;
+  final String? lon;
   final String status;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -39,6 +42,9 @@ class ProfileData {
     required this.email,
     required this.phoneNumber,
     this.profileImage,
+    this.addressName,
+    this.lat,
+    this.lon,
     required this.status,
     required this.createdAt,
     required this.updatedAt,
@@ -52,6 +58,9 @@ class ProfileData {
       email: json['email'],
       phoneNumber: json['phone_number'],
       profileImage: json['profile_image'],
+      addressName: json['addressName'],
+      lat: json['lat'],
+      lon: json['lon'],
       status: json['status'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),

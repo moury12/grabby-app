@@ -20,17 +20,11 @@ abstract class AuthRemoteDataSource {
     required String activationCode,
   });
 
-  Future<ApiResponse<void>> resendOtp({
-    required String email,
-  });
+  Future<ApiResponse<void>> resendOtp({required String email});
 
-  Future<ApiResponse<void>> forgotPassword({
-    required String email,
-  });
+  Future<ApiResponse<void>> forgotPassword({required String email});
 
-  Future<ApiResponse<void>> resendForgotCode({
-    required String email,
-  });
+  Future<ApiResponse<void>> resendForgotCode({required String email});
 
   Future<ApiResponse<void>> verifyForgotOtp({
     required String email,
@@ -38,7 +32,9 @@ abstract class AuthRemoteDataSource {
   });
 
   Future<ApiResponse<void>> changePassword({
-    required String oldPassword,
+    String? oldPassword,
+    String? email,
+    String? code,
     required String newPassword,
     required String confirmPassword,
   });
@@ -78,11 +74,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }) async {
     return await _apiService.post<LoginResponseData>(
       ApiEndpoints.customerLogin,
-      data: {
-        "email": email,
-        "password": password,
-      },
-      fromJson: (data) => LoginResponseData.fromJson(data as Map<String, dynamic>),
+      data: {"email": email, "password": password},
+      fromJson: (data) =>
+          LoginResponseData.fromJson(data as Map<String, dynamic>),
     );
   }
 
@@ -93,46 +87,31 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }) async {
     return await _apiService.post<void>(
       ApiEndpoints.verifyOtp,
-      data: {
-        "email": email,
-        "activation_code": activationCode,
-      },
+      data: {"email": email, "activation_code": activationCode},
     );
   }
 
   @override
-  Future<ApiResponse<void>> resendOtp({
-    required String email,
-  }) async {
+  Future<ApiResponse<void>> resendOtp({required String email}) async {
     return await _apiService.post<void>(
       ApiEndpoints.resendOtp,
-      data: {
-        "email": email,
-      },
+      data: {"email": email},
     );
   }
 
   @override
-  Future<ApiResponse<void>> forgotPassword({
-    required String email,
-  }) async {
+  Future<ApiResponse<void>> forgotPassword({required String email}) async {
     return await _apiService.post<void>(
       ApiEndpoints.forgotPassword,
-      data: {
-        "email": email,
-      },
+      data: {"email": email},
     );
   }
 
   @override
-  Future<ApiResponse<void>> resendForgotCode({
-    required String email,
-  }) async {
+  Future<ApiResponse<void>> resendForgotCode({required String email}) async {
     return await _apiService.post<void>(
       ApiEndpoints.resendForgotCode,
-      data: {
-        "email": email,
-      },
+      data: {"email": email},
     );
   }
 
@@ -143,26 +122,29 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }) async {
     return await _apiService.post<void>(
       ApiEndpoints.verifyForgotOtp,
-      data: {
-        "email": email,
-        "activation_code": activationCode,
-      },
+      data: {"email": email, "code": activationCode},
     );
   }
 
   @override
   Future<ApiResponse<void>> changePassword({
-    required String oldPassword,
+    String? oldPassword,
+    String? email,
+    String? code,
     required String newPassword,
     required String confirmPassword,
   }) async {
-    return await _apiService.patch<void>(
-      ApiEndpoints.changePassword,
-      data: {
-        "oldPassword": oldPassword,
-        "newPassword": newPassword,
-        "confirmPassword": confirmPassword,
-      },
+    final isReset = email != null && code != null;
+    return await _apiService.post<void>(
+      isReset ? ApiEndpoints.resetPassword : ApiEndpoints.changePassword,
+      queryParameters: isReset ? {"email": email} : null,
+      data: isReset
+          ? {"newPassword": newPassword, "confirmPassword": confirmPassword}
+          : {
+              "oldPassword": oldPassword,
+              "newPassword": newPassword,
+              "confirmPassword": confirmPassword,
+            },
     );
   }
 }
