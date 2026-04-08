@@ -13,11 +13,15 @@ class OnboardingSplashBloc
     extends Bloc<OnboardingSplashEvent, OnboardingSplashState> {
   final OnboardingLocalDataSource localDataSource;
   final LocalStorageService localStorageService;
+  final ProfileRepository profileRepository;
+  final LocationService locationService;
   UserRole selectedRole = UserRole.customer;
 
   OnboardingSplashBloc({
     required this.localDataSource,
     required this.localStorageService,
+    required this.profileRepository,
+    required this.locationService,
   }) : super(SplashLoading()) {
     on<LoadInitialData>(_onLoadInitialData);
     on<OnboardingCompleted>(_onOnboardingCompleted);
@@ -38,6 +42,25 @@ class OnboardingSplashBloc
       final decodedToken = JwtDecoder.decode(token);
       final role = decodedToken['role'] as String?;
       if (role == 'CUSTOMER') {
+        // Initial location update on app launch
+        print('Initial Location Update - User Token: $token');
+        
+        try {
+          final locationData = await locationService.getLocationData();
+          if (locationData != null) {
+            final response = await profileRepository.updateUserLocation(
+              addressName: locationData.address,
+              lat: locationData.latitude,
+              lon: locationData.longitude,
+            );
+            print('Initial Location Update Response: $response');
+          } else {
+            print('Initial Location Update: Failed to get location data.');
+          }
+        } catch (e) {
+          print('Initial Location Update Error: $e');
+        }
+
         emit(AuthenticatedCustomer());
         return;
       }

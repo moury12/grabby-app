@@ -7,10 +7,12 @@ abstract class ProfileRemoteDataSource {
   Future<ApiResponse<ProfileData>> getProfile();
   Future<ApiResponse<void>> updateProfile({
     required String name,
-    required String addressName,
-    required String lat,
-    required String lon,
     File? profileImage,
+  });
+  Future<ApiResponse<void>> updateUserLocation({
+    required String addressName,
+    required double lat,
+    required double lon,
   });
 }
 
@@ -30,16 +32,10 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   @override
   Future<ApiResponse<void>> updateProfile({
     required String name,
-    required String addressName,
-    required String lat,
-    required String lon,
     File? profileImage,
   }) async {
     final Map<String, dynamic> data = {
       "name": name,
-      "addressName": addressName,
-      "lat": lat,
-      "lon": lon,
     };
 
     if (profileImage != null) {
@@ -47,13 +43,35 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         profileImage.path,
         filename: profileImage.path.split('/').last,
       );
+      
+      final formData = dio.FormData.fromMap(data);
+      return await apiService.patch<void>(
+        ApiEndpoints.updateProfile,
+        data: formData,
+      );
     }
-
-    final formData = dio.FormData.fromMap(data);
 
     return await apiService.patch<void>(
       ApiEndpoints.updateProfile,
-      data: formData,
+      data: data,
+    );
+  }
+
+  @override
+  Future<ApiResponse<void>> updateUserLocation({
+    required String addressName,
+    required double lat,
+    required double lon,
+  }) async {
+    final Map<String, dynamic> data = {
+      "addressName": addressName,
+      "lat": lat,
+      "lon": lon,
+    };
+
+    return await apiService.patch<void>(
+      ApiEndpoints.updateUserLocation,
+      data: data,
     );
   }
 }

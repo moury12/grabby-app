@@ -20,4 +20,5 @@ class ApiEndpoints {
   // ─── Profile ───────────────────────────────────────────────────────────────
   static const String profile = "/auth/profile";
   static const String updateProfile = "/customers/profile";
+  static const String updateUserLocation = "/customers/location";
 }

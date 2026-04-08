@@ -15,6 +15,11 @@ Future<void> init() async {
     () => LocalStorageService(sl()),
   );
   
+  // LocationService
+  sl.registerLazySingleton<LocationService>(
+    () => LocationService(),
+  );
+  
   // ApiService
   sl.registerLazySingleton<ApiService>(
     () => ApiService(
@@ -32,6 +37,8 @@ Future<void> init() async {
     () => OnboardingSplashBloc(
       localDataSource: sl(),
       localStorageService: sl(),
+      profileRepository: sl(),
+      locationService: sl(),
     ),
   );
 
@@ -65,6 +72,9 @@ Future<void> init() async {
 
   // Bloc
   sl.registerFactory<ProfileBloc>(
-    () => ProfileBloc(profileRepository: sl()),
+    () => ProfileBloc(
+      profileRepository: sl(),
+      locationService: sl(),
+    ),
   );
 }

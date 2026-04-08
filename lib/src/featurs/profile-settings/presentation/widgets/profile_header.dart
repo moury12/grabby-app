@@ -31,67 +31,6 @@ class ProfileHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Stack(
-            children: [
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: Colors.white.withValues(alpha: 0.1),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: imageUrl != null && imageUrl!.isNotEmpty
-                      ? CachedNetworkImage(
-                          imageUrl: imageUrl!,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => const Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          ),
-                          errorWidget: (context, url, error) => const Image(
-                            image: AssetImage(ImagesConstant.kOnboard1Img),
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : const Image(
-                          image: AssetImage(ImagesConstant.kOnboard1Img),
-                          fit: BoxFit.cover,
-                        ),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: GestureDetector(
-                  onTap: onEditImage,
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.edit_outlined,
-                      size: 16,
-                      color: AppColors.kPrimaryColor,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          space12H,
           CustomText(
             name,
             fontSize: 24,

@@ -6,10 +6,14 @@ part 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ProfileRepository _profileRepository;
+  final LocationService _locationService;
 
-  ProfileBloc({required ProfileRepository profileRepository})
-    : _profileRepository = profileRepository,
-      super(ProfileInitial()) {
+  ProfileBloc({
+    required ProfileRepository profileRepository,
+    required LocationService locationService,
+  })  : _profileRepository = profileRepository,
+        _locationService = locationService,
+        super(ProfileInitial()) {
     on<GetProfileEvent>(_onGetProfile);
     on<UpdateProfileEvent>(_onUpdateProfile);
   }
@@ -42,13 +46,29 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     emit(ProfileLoading());
     try {
+      // Fetch current location automatically
+      final locationData = await _locationService.getLocationData();
+      
+      if (locationData == null) {
+        emit(ProfileError('Failed to get current location. Please check your permissions.'));
+        return;
+      }
+
+      // First update the location
+      await _profileRepository.updateUserLocation(
+        addressName: locationData.address,
+        lat: locationData.latitude,
+        lon: locationData.longitude,
+      );
+
+      // Then update the profile
       final response = await _profileRepository.updateProfile(
         name: event.name,
-        addressName: event.addressName,
-        lat: event.lat,
-        lon: event.lon,
         profileImage: event.profileImage,
       );
+
+      print('Update Profile Response: $response');
+
       if (response.success) {
         // Refresh profile after update
         add(GetProfileEvent());

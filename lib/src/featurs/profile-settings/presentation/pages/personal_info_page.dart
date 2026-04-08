@@ -14,10 +14,7 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
-  final _addressNameController = TextEditingController();
-  final _latController = TextEditingController();
-  final _lonController = TextEditingController();
-  
+
   File? _imageFile;
 
   @override
@@ -25,9 +22,7 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
-    _addressNameController.dispose();
-    _latController.dispose();
-    _lonController.dispose();
+
     super.dispose();
   }
 
@@ -43,14 +38,8 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
 
   void _onSave(BuildContext context) {
     context.read<ProfileBloc>().add(
-          UpdateProfileEvent(
-            name: _nameController.text,
-            addressName: _addressNameController.text,
-            lat: _latController.text,
-            lon: _lonController.text,
-            profileImage: _imageFile,
-          ),
-        );
+      UpdateProfileEvent(name: _nameController.text, profileImage: _imageFile),
+    );
   }
 
   @override
@@ -65,9 +54,6 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
               _nameController.text = state.profileData.name;
               _emailController.text = state.profileData.email;
               _phoneController.text = state.profileData.phoneNumber;
-              _addressNameController.text = state.profileData.addressName ?? "";
-              _latController.text = state.profileData.lat ?? "";
-              _lonController.text = state.profileData.lon ?? "";
             }
           },
           builder: (context, state) {
@@ -81,7 +67,9 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
                   ? Center(child: Text(state.message))
                   : SingleChildScrollView(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      padding: AppPadding.getPadding12(context).copyWith(top: 0),
+                      padding: AppPadding.getPadding12(
+                        context,
+                      ).copyWith(top: 0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         spacing: 12,
@@ -106,35 +94,47 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
                                 Stack(
                                   clipBehavior: Clip.none,
                                   children: [
-                                    Container(
-                                      width: 100,
-                                      height: 100,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        image: _imageFile != null
-                                            ? DecorationImage(
-                                                image: FileImage(_imageFile!),
-                                                fit: BoxFit.cover,
-                                              )
-                                            : state is ProfileLoaded &&
-                                                    state.profileData
-                                                            .profileImage !=
-                                                        null
-                                                ? DecorationImage(
-                                                    image: NetworkImage(state
-                                                        .profileData
-                                                        .profileImage!),
-                                                    fit: BoxFit.cover,
-                                                  )
-                                                : const DecorationImage(
-                                                    image: AssetImage(
-                                                      ImagesConstant
-                                                          .kOnboard1Img,
-                                                    ),
-                                                    fit: BoxFit.cover,
-                                                  ),
+                                    if (_imageFile != null)
+                                      Container(
+                                        width: 100,
+                                        height: 100,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          image: DecorationImage(
+                                            image: FileImage(_imageFile!),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      )
+                                    else if (state is ProfileLoaded &&
+                                        state.profileData.profileImage != null)
+                                      CustomNetworkImage(
+                                        imageUrl:
+                                            "${ApiEndpoints.baseUrl}${state.profileData.profileImage!}",
+                                        width: 100,
+                                        height: 100,
+                                        radius: 12,
+                                        imageErrorUrl:
+                                            ImagesConstant.kOnboard1Img,
+                                      )
+                                    else
+                                      Container(
+                                        width: 100,
+                                        height: 100,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          image: const DecorationImage(
+                                            image: AssetImage(
+                                              ImagesConstant.kOnboard1Img,
+                                            ),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
                                       ),
-                                    ),
                                     Positioned(
                                       bottom: -10,
                                       right: -10,
@@ -210,47 +210,6 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
                               color: AppColors.kSecondaryTextColor,
                               size: 20,
                             ),
-                          ),
-                          
-                          CustomTextField(
-                            textEditingController: _addressNameController,
-                            title: "Address Name",
-                            hintText: "Enter address name",
-                            prefixIcon: const Icon(
-                              Icons.location_on_outlined,
-                              color: AppColors.kSecondaryTextColor,
-                              size: 20,
-                            ),
-                          ),
-                          
-                          Row(
-                            spacing: 12,
-                            children: [
-                              Expanded(
-                                child: CustomTextField(
-                                  textEditingController: _latController,
-                                  title: "Latitude",
-                                  hintText: "Lat",
-                                  prefixIcon: const Icon(
-                                    Icons.map_outlined,
-                                    color: AppColors.kSecondaryTextColor,
-                                    size: 20,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: CustomTextField(
-                                  textEditingController: _lonController,
-                                  title: "Longitude",
-                                  hintText: "Lon",
-                                  prefixIcon: const Icon(
-                                    Icons.map_outlined,
-                                    color: AppColors.kSecondaryTextColor,
-                                    size: 20,
-                                  ),
-                                ),
-                              ),
-                            ],
                           ),
 
                           CustomButton(

@@ -59,8 +59,9 @@ class ProfileData {
       phoneNumber: json['phone_number'],
       profileImage: json['profile_image'],
       addressName: json['addressName'],
-      lat: json['lat'],
-      lon: json['lon'],
+      // Inside ProfileData.fromJso
+      lat: json['lat']?.toString(),
+      lon: json['lon']?.toString(),
       status: json['status'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
