@@ -7,6 +7,7 @@ class ApiEndpoints {
 
   // ─── Auth ──────────────────────────────────────────────────────────────────
   static const String customerRegister = "/auth/customer/register";
+  static const String shopOwnerRegister = "/auth/shop-owner/register";
   static const String customerLogin = "/auth/login";
   static const String verifyOtp = "/auth/verify-otp";
   static const String resendOtp = "/auth/resend-otp";
@@ -21,4 +22,10 @@ class ApiEndpoints {
   static const String profile = "/auth/profile";
   static const String updateProfile = "/customers/profile";
   static const String updateUserLocation = "/customers/location";
+  static const String updateShopOwnerLocation = "/shop-owner/location";
+
+  // ─── Shop Owner Business ────────────────────────────────────────────────────
+  static const String saveBusinessInfo = "/shop-owner/business/info";
+  static const String saveBranches = "/shop-owner/business/branches";
+  static const String saveBusinessDocuments = "/shop-owner/business/documents";
 }

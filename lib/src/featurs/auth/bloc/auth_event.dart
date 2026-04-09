@@ -20,6 +20,24 @@ class RegisterCustomerEvent extends AuthEvent {
   });
 }
 
+class RegisterShopOwnerEvent extends AuthEvent {
+  final String name;
+  final String email;
+  final String phoneNumber;
+  final String password;
+  final String confirmPassword;
+  final bool termsAccepted;
+
+  RegisterShopOwnerEvent({
+    required this.name,
+    required this.email,
+    required this.phoneNumber,
+    required this.password,
+    required this.confirmPassword,
+    required this.termsAccepted,
+  });
+}
+
 class LoginEvent extends AuthEvent {
   final String email;
   final String password;
@@ -73,4 +91,24 @@ class ChangePasswordEvent extends AuthEvent {
     required this.newPassword,
     required this.confirmPassword,
   });
+}
+
+class SaveBusinessInfoEvent extends AuthEvent {
+  final String shopName;
+  final String shopLicenseNumber;
+  final String contactEmail;
+  final String contactPhone;
+
+  SaveBusinessInfoEvent({
+    required this.shopName,
+    required this.shopLicenseNumber,
+    required this.contactEmail,
+    required this.contactPhone,
+  });
+}
+
+class SaveBranchesEvent extends AuthEvent {
+  final List<BranchModel> branches;
+
+  SaveBranchesEvent({required this.branches});
 }

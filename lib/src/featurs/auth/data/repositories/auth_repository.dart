@@ -10,12 +10,21 @@ abstract class AuthRepository {
     required bool termsAccepted,
   });
 
+  Future<ApiResponse<void>> registerShopOwner({
+    required String name,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required String confirmPassword,
+    required bool termsAccepted,
+  });
+
   Future<ApiResponse<LoginResponseData>> login({
     required String email,
     required String password,
   });
 
-  Future<ApiResponse<void>> verifyOtp({
+  Future<ApiResponse<LoginResponseData>> verifyOtp({
     required String email,
     required String activationCode,
   });
@@ -37,5 +46,16 @@ abstract class AuthRepository {
     String? code,
     required String newPassword,
     required String confirmPassword,
+  });
+
+  Future<ApiResponse<void>> saveBusinessInfo({
+    required String shopName,
+    required String shopLicenseNumber,
+    required String contactEmail,
+    required String contactPhone,
+  });
+
+  Future<ApiResponse<void>> saveBranches({
+    required List<BranchModel> branches,
   });
 }

@@ -40,7 +40,7 @@ class AppRouter {
         path: RoutesPath.signUpPath,
         name: RoutesPath.signUpPath,
         builder: (BuildContext context, GoRouterState state) {
-          return const SignUpPage();
+          return SignUpPage(extra: state.extra as Map<String, dynamic>?);
         },
       ),
       GoRoute(
@@ -313,6 +313,7 @@ class AppRouter {
       ),
       GoRoute(
         path: RoutesPath.businessInfoPath,
+        name: RoutesPath.businessInfoPath,
         builder: (BuildContext context, GoRouterState state) {
           return const BusinessInfoPage();
         },

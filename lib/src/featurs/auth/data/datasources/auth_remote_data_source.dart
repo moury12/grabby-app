@@ -1,7 +1,18 @@
+import 'dart:io';
+import 'package:dio/dio.dart';
 import '../../../../src_export.dart';
 
 abstract class AuthRemoteDataSource {
   Future<ApiResponse<void>> registerCustomer({
+    required String name,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required String confirmPassword,
+    required bool termsAccepted,
+  });
+
+  Future<ApiResponse<void>> registerShopOwner({
     required String name,
     required String email,
     required String phoneNumber,
@@ -15,7 +26,7 @@ abstract class AuthRemoteDataSource {
     required String password,
   });
 
-  Future<ApiResponse<void>> verifyOtp({
+  Future<ApiResponse<LoginResponseData>> verifyOtp({
     required String email,
     required String activationCode,
   });
@@ -37,6 +48,20 @@ abstract class AuthRemoteDataSource {
     String? code,
     required String newPassword,
     required String confirmPassword,
+  });
+
+  Future<ApiResponse<void>> saveBusinessInfo({
+    required String shopName,
+    required String shopLicenseNumber,
+    required String contactEmail,
+    required String contactPhone,
+  });
+
+  Future<ApiResponse<void>> saveBranches({required List<BranchModel> branches});
+
+  Future<ApiResponse<void>> saveBusinessDocuments({
+    required File businessLicense,
+    required File shopLogo,
   });
 }
 
@@ -68,6 +93,28 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
+  Future<ApiResponse<void>> registerShopOwner({
+    required String name,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required String confirmPassword,
+    required bool termsAccepted,
+  }) async {
+    return await _apiService.post<void>(
+      ApiEndpoints.shopOwnerRegister,
+      data: {
+        "name": name,
+        "email": email,
+        "phone_number": phoneNumber,
+        "password": password,
+        "confirmPassword": confirmPassword,
+        "termsAccepted": termsAccepted,
+      },
+    );
+  }
+
+  @override
   Future<ApiResponse<LoginResponseData>> login({
     required String email,
     required String password,
@@ -81,13 +128,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<ApiResponse<void>> verifyOtp({
+  Future<ApiResponse<LoginResponseData>> verifyOtp({
     required String email,
     required String activationCode,
   }) async {
-    return await _apiService.post<void>(
+    return await _apiService.post<LoginResponseData>(
       ApiEndpoints.verifyOtp,
       data: {"email": email, "activation_code": activationCode},
+      fromJson: (data) =>
+          LoginResponseData.fromJson(data as Map<String, dynamic>),
     );
   }
 
@@ -146,5 +195,42 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
               "confirmPassword": confirmPassword,
             },
     );
+  }
+
+  @override
+  Future<ApiResponse<void>> saveBusinessInfo({
+    required String shopName,
+    required String shopLicenseNumber,
+    required String contactEmail,
+    required String contactPhone,
+  }) async {
+    return await _apiService.post<void>(
+      ApiEndpoints.saveBusinessInfo,
+      data: {
+        "shop_name": shopName,
+        "shop_license_number": shopLicenseNumber,
+        "contact_email": contactEmail,
+        "contact_phone": contactPhone,
+      },
+    );
+  }
+
+  @override
+  Future<ApiResponse<void>> saveBranches({
+    required List<BranchModel> branches,
+  }) async {
+    return await _apiService.post<void>(
+      ApiEndpoints.saveBranches,
+      data: {"branches": branches.map((e) => e.toJson()).toList()},
+    );
+  }
+
+  @override
+  Future<ApiResponse<void>> saveBusinessDocuments({
+    required File businessLicense,
+    required File shopLogo,
+  }) {
+    // TODO: implement saveBusinessDocuments
+    throw UnimplementedError();
   }
 }

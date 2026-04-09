@@ -10,6 +10,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     : _authRepository = authRepository,
       super(AuthInitial()) {
     on<RegisterCustomerEvent>(_onRegisterCustomer);
+    on<RegisterShopOwnerEvent>(_onRegisterShopOwner);
     on<LoginEvent>(_onLogin);
     on<VerifyOtpEvent>(_onVerifyOtp);
     on<ResendOtpEvent>(_onResendOtp);
@@ -17,6 +18,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<ResendForgotCodeEvent>(_onResendForgotCode);
     on<VerifyForgotOtpEvent>(_onVerifyForgotOtp);
     on<ChangePasswordEvent>(_onChangePassword);
+    on<SaveBusinessInfoEvent>(_onSaveBusinessInfo);
+    on<SaveBranchesEvent>(_onSaveBranches);
   }
 
   Future<void> _onRegisterCustomer(
@@ -26,6 +29,33 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       final response = await _authRepository.registerCustomer(
+        name: event.name,
+        email: event.email,
+        phoneNumber: event.phoneNumber,
+        password: event.password,
+        confirmPassword: event.confirmPassword,
+        termsAccepted: event.termsAccepted,
+      );
+
+      if (response.success) {
+        emit(RegisterSuccess(message: response.message));
+      } else {
+        emit(AuthFailure(message: response.message));
+      }
+    } on ApiException catch (e) {
+      emit(AuthFailure(message: e.message));
+    } catch (e) {
+      emit(AuthFailure(message: 'Something went wrong. Please try again.'));
+    }
+  }
+
+  Future<void> _onRegisterShopOwner(
+    RegisterShopOwnerEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      final response = await _authRepository.registerShopOwner(
         name: event.name,
         email: event.email,
         phoneNumber: event.phoneNumber,
@@ -80,7 +110,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
 
       if (response.success) {
-        emit(VerifyOtpSuccess(message: response.message));
+        emit(VerifyOtpSuccess(loginData: response.data, message: response.message));
       } else {
         emit(AuthFailure(message: response.message));
       }
@@ -165,7 +195,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
 
       if (response.success) {
-        emit(VerifyOtpSuccess(message: response.message));
+        emit(VerifyOtpSuccess(loginData: null, message: response.message));
       } else {
         emit(AuthFailure(message: response.message));
       }
@@ -192,6 +222,53 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       if (response.success) {
         emit(ChangePasswordSuccess(message: response.message));
+      } else {
+        emit(AuthFailure(message: response.message));
+      }
+    } on ApiException catch (e) {
+      emit(AuthFailure(message: e.message));
+    } catch (e) {
+      emit(AuthFailure(message: 'Something went wrong. Please try again.'));
+    }
+  }
+
+  Future<void> _onSaveBusinessInfo(
+    SaveBusinessInfoEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      final response = await _authRepository.saveBusinessInfo(
+        shopName: event.shopName,
+        shopLicenseNumber: event.shopLicenseNumber,
+        contactEmail: event.contactEmail,
+        contactPhone: event.contactPhone,
+      );
+
+      if (response.success) {
+        emit(BusinessInfoSuccess(message: response.message));
+      } else {
+        emit(AuthFailure(message: response.message));
+      }
+    } on ApiException catch (e) {
+      emit(AuthFailure(message: e.message));
+    } catch (e) {
+      emit(AuthFailure(message: 'Something went wrong. Please try again.'));
+    }
+  }
+
+  Future<void> _onSaveBranches(
+    SaveBranchesEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      final response = await _authRepository.saveBranches(
+        branches: event.branches,
+      );
+
+      if (response.success) {
+        emit(SaveBranchesSuccess(message: response.message));
       } else {
         emit(AuthFailure(message: response.message));
       }

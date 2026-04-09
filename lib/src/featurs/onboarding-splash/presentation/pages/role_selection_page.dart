@@ -15,7 +15,10 @@ class RoleSelectionPage extends StatelessWidget {
             if (isFirstTime) {
               context.go(RoutesPath.onboardingPath);
             } else {
-              context.pushNamed(RoutesPath.signUpPath);
+              context.pushNamed(
+                RoutesPath.signUpPath,
+                extra: {'role': state.role.name},
+              );
             }
           }
         },

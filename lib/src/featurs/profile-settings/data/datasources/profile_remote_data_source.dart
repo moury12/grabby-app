@@ -2,6 +2,7 @@ import 'dart:io';
 import '../../../../src_export.dart';
 import '../models/profile_response_model.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 abstract class ProfileRemoteDataSource {
   Future<ApiResponse<ProfileData>> getProfile();
@@ -18,8 +19,9 @@ abstract class ProfileRemoteDataSource {
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   final ApiService apiService;
+  final LocalStorageService localStorageService;
 
-  ProfileRemoteDataSourceImpl(this.apiService);
+  ProfileRemoteDataSourceImpl(this.apiService, this.localStorageService);
 
   @override
   Future<ApiResponse<ProfileData>> getProfile() async {
@@ -69,8 +71,19 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       "lon": lon,
     };
 
+    String endpoint = ApiEndpoints.updateUserLocation;
+
+    final token = localStorageService.getAccessToken();
+    if (token != null && !JwtDecoder.isExpired(token)) {
+      final decodedToken = JwtDecoder.decode(token);
+      final role = decodedToken['role'] as String?;
+      if (role == 'SHOP_OWNER') {
+        endpoint = ApiEndpoints.updateShopOwnerLocation;
+      }
+    }
+
     return await apiService.patch<void>(
-      ApiEndpoints.updateUserLocation,
+      endpoint,
       data: data,
     );
   }

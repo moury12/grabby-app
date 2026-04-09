@@ -62,7 +62,7 @@ Future<void> init() async {
   // ─── Feature: Profile ──────────────────────────────────────────────────────
   // Data source
   sl.registerLazySingleton<ProfileRemoteDataSource>(
-    () => ProfileRemoteDataSourceImpl(sl()),
+    () => ProfileRemoteDataSourceImpl(sl(), sl()),
   );
 
   // Repository

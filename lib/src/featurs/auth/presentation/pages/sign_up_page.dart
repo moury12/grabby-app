@@ -3,7 +3,8 @@ import 'package:flutter/foundation.dart';
 import '../../../../src_export.dart';
 
 class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key});
+  final Map<String, dynamic>? extra;
+  const SignUpPage({super.key, this.extra});
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
@@ -48,16 +49,30 @@ class _SignUpPageState extends State<SignUpPage> {
         );
         return;
       }
-      context.read<AuthBloc>().add(
-        RegisterCustomerEvent(
-          name: _nameController.text.trim(),
-          email: _emailController.text.trim(),
-          phoneNumber: _phoneController.text.trim(),
-          password: _passwordController.text,
-          confirmPassword: _confirmPasswordController.text,
-          termsAccepted: _termsAccepted,
-        ),
-      );
+      final role = widget.extra?['role'] as String? ?? 'customer';
+      if (role == 'shop') {
+        context.read<AuthBloc>().add(
+          RegisterShopOwnerEvent(
+            name: _nameController.text.trim(),
+            email: _emailController.text.trim(),
+            phoneNumber: _phoneController.text.trim(),
+            password: _passwordController.text,
+            confirmPassword: _confirmPasswordController.text,
+            termsAccepted: _termsAccepted,
+          ),
+        );
+      } else {
+        context.read<AuthBloc>().add(
+          RegisterCustomerEvent(
+            name: _nameController.text.trim(),
+            email: _emailController.text.trim(),
+            phoneNumber: _phoneController.text.trim(),
+            password: _passwordController.text,
+            confirmPassword: _confirmPasswordController.text,
+            termsAccepted: _termsAccepted,
+          ),
+        );
+      }
     }
   }
 
@@ -77,6 +92,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 extra: {
                   'email': _emailController.text.trim(),
                   'type': 'signup',
+                  'role': widget.extra?['role'] ?? 'customer',
                 },
               );
             } else if (state is AuthFailure) {

@@ -79,13 +79,25 @@ class _VerificationPageState extends State<VerificationPage> {
           listener: (context, state) {
             if (state is VerifyOtpSuccess) {
               CustomSnackbar.show(context, state.message);
+              // Save tokens if available
+              if (state.loginData != null) {
+                final localStorage = sl<LocalStorageService>();
+                localStorage.saveAccessToken(state.loginData!.accessToken);
+                localStorage.saveRefreshToken(state.loginData!.refreshToken);
+              }
+              
               if (type == 'forgot_password') {
                 context.pushNamed(
                   RoutesPath.resetPasswordPath,
                   extra: {'email': email, 'code': _otpController.text},
                 );
               } else {
-                context.goNamed(RoutesPath.loginPath);
+                final role = widget.extra?['role'] as String? ?? 'customer';
+                if (role == 'shop') {
+                  context.goNamed(RoutesPath.businessInfoPath);
+                } else {
+                  context.goNamed(RoutesPath.navigationPath);
+                }
               }
             } else if (state is OtpSentSuccess) {
               CustomSnackbar.show(context, state.message);

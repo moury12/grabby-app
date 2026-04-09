@@ -25,6 +25,25 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<ApiResponse<void>> registerShopOwner({
+    required String name,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required String confirmPassword,
+    required bool termsAccepted,
+  }) async {
+    return await _remoteDataSource.registerShopOwner(
+      name: name,
+      email: email,
+      phoneNumber: phoneNumber,
+      password: password,
+      confirmPassword: confirmPassword,
+      termsAccepted: termsAccepted,
+    );
+  }
+
+  @override
   Future<ApiResponse<LoginResponseData>> login({
     required String email,
     required String password,
@@ -33,7 +52,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<ApiResponse<void>> verifyOtp({
+  Future<ApiResponse<LoginResponseData>> verifyOtp({
     required String email,
     required String activationCode,
   }) async {
@@ -84,5 +103,27 @@ class AuthRepositoryImpl implements AuthRepository {
       newPassword: newPassword,
       confirmPassword: confirmPassword,
     );
+  }
+
+  @override
+  Future<ApiResponse<void>> saveBusinessInfo({
+    required String shopName,
+    required String shopLicenseNumber,
+    required String contactEmail,
+    required String contactPhone,
+  }) async {
+    return await _remoteDataSource.saveBusinessInfo(
+      shopName: shopName,
+      shopLicenseNumber: shopLicenseNumber,
+      contactEmail: contactEmail,
+      contactPhone: contactPhone,
+    );
+  }
+
+  @override
+  Future<ApiResponse<void>> saveBranches({
+    required List<BranchModel> branches,
+  }) async {
+    return await _remoteDataSource.saveBranches(branches: branches);
   }
 }

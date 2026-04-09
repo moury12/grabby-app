@@ -28,8 +28,9 @@ class OtpSentSuccess extends AuthState {
 }
 
 class VerifyOtpSuccess extends AuthState {
+  final LoginResponseData? loginData;
   final String message;
-  VerifyOtpSuccess({required this.message});
+  VerifyOtpSuccess({this.loginData, required this.message});
 }
 
 class ForgotPasswordSuccess extends AuthState {
@@ -40,4 +41,14 @@ class ForgotPasswordSuccess extends AuthState {
 class ChangePasswordSuccess extends AuthState {
   final String message;
   ChangePasswordSuccess({required this.message});
+}
+
+class BusinessInfoSuccess extends AuthState {
+  final String message;
+  BusinessInfoSuccess({required this.message});
+}
+
+class SaveBranchesSuccess extends AuthState {
+  final String message;
+  SaveBranchesSuccess({required this.message});
 }
