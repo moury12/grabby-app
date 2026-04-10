@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../../../../src_export.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -125,5 +127,16 @@ class AuthRepositoryImpl implements AuthRepository {
     required List<BranchModel> branches,
   }) async {
     return await _remoteDataSource.saveBranches(branches: branches);
+  }
+
+  @override
+  Future<ApiResponse<void>> saveBusinessDocuments({
+    required File businessLicense,
+    required File shopLogo,
+  }) async {
+    return await _remoteDataSource.saveBusinessDocuments(
+      businessLicense: businessLicense,
+      shopLogo: shopLogo,
+    );
   }
 }

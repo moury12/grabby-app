@@ -19,6 +19,7 @@ class RoleSelectionPage extends StatelessWidget {
                 RoutesPath.signUpPath,
                 extra: {'role': state.role.name},
               );
+              // context.push(RoutesPath.requiredDocumentsPath);
             }
           }
         },

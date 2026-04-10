@@ -31,6 +31,10 @@ class ProfileData {
   final String? addressName;
   final String? lat;
   final String? lon;
+  final String? contactEmail;
+  final String? contactPhone;
+  final String? shopLicenseNumber;
+  final String? shopName;
   final String status;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -45,6 +49,10 @@ class ProfileData {
     this.addressName,
     this.lat,
     this.lon,
+    this.contactEmail,
+    this.contactPhone,
+    this.shopLicenseNumber,
+    this.shopName,
     required this.status,
     required this.createdAt,
     required this.updatedAt,
@@ -62,6 +70,10 @@ class ProfileData {
       // Inside ProfileData.fromJso
       lat: json['lat']?.toString(),
       lon: json['lon']?.toString(),
+      contactEmail: json['contact_email'],
+      contactPhone: json['contact_phone'],
+      shopLicenseNumber: json['shop_license_number'],
+      shopName: json['shop_name'],
       status: json['status'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),

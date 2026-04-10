@@ -12,11 +12,15 @@ class SplashPage extends StatelessWidget {
         listener: (context, state) {
           if (state is AuthenticatedCustomer) {
             context.goNamed(RoutesPath.navigationPath);
+          } else if (state is AuthenticatedShopOwner) {
+            context.goNamed(RoutesPath.shopNavigationPath);
           } else if (state is SplashFinished) {
             // Navigate to Onboarding slides
             context.go(RoutesPath.roleSelectionPath);
           } else if (state is ShowLogin) {
             context.go(RoutesPath.loginPath);
+          } else {
+            context.go(RoutesPath.shopNavigationPath);
           }
         },
         child: Scaffold(

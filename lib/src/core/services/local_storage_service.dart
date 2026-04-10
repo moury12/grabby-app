@@ -1,5 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:jwt_decoder/jwt_decoder.dart';
 class LocalStorageService {
   final SharedPreferences _preferences;
 
@@ -39,5 +39,15 @@ class LocalStorageService {
   /// Check if user is logged in
   bool isLoggedIn() {
     return getAccessToken() != null;
+  }
+
+  /// Get role from decoded token
+  String? getUserRoleFromToken() {
+    final token = getAccessToken();
+    if (token != null && !JwtDecoder.isExpired(token)) {
+      final decodedToken = JwtDecoder.decode(token);
+      return decodedToken['role'] as String?;
+    }
+    return null;
   }
 }

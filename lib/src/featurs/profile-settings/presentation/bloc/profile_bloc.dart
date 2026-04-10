@@ -65,6 +65,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final response = await _profileRepository.updateProfile(
         name: event.name,
         profileImage: event.profileImage,
+        email: event.email,
+        phoneNumber: event.phoneNumber,
+        shopName: event.shopName,
+        shopLicenseNumber: event.shopLicenseNumber,
+        contactEmail: event.contactEmail,
+        contactPhone: event.contactPhone,
       );
 
       print('Update Profile Response: $response');

@@ -21,6 +21,7 @@ class ApiEndpoints {
   // ─── Profile ───────────────────────────────────────────────────────────────
   static const String profile = "/auth/profile";
   static const String updateProfile = "/customers/profile";
+  static const String updateShopOwnerProfile = "/shop-owner/profile";
   static const String updateUserLocation = "/customers/location";
   static const String updateShopOwnerLocation = "/shop-owner/location";
 

@@ -229,8 +229,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<ApiResponse<void>> saveBusinessDocuments({
     required File businessLicense,
     required File shopLogo,
-  }) {
-    // TODO: implement saveBusinessDocuments
-    throw UnimplementedError();
+  }) async {
+    final formData = FormData.fromMap({
+      "business_license": await MultipartFile.fromFile(
+        businessLicense.path,
+        filename: businessLicense.path.split('/').last,
+      ),
+      "shop_logo": await MultipartFile.fromFile(
+        shopLogo.path,
+        filename: shopLogo.path.split('/').last,
+      ),
+    });
+
+    return await _apiService.post<void>(
+      ApiEndpoints.saveBusinessDocuments,
+      data: formData,
+    );
   }
 }

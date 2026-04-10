@@ -112,3 +112,13 @@ class SaveBranchesEvent extends AuthEvent {
 
   SaveBranchesEvent({required this.branches});
 }
+
+class SaveBusinessDocumentsEvent extends AuthEvent {
+  final File businessLicense;
+  final File shopLogo;
+
+  SaveBusinessDocumentsEvent({
+    required this.businessLicense,
+    required this.shopLogo,
+  });
+}

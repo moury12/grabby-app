@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../../../src_export.dart';
 
 part 'auth_event.dart';
@@ -20,6 +22,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<ChangePasswordEvent>(_onChangePassword);
     on<SaveBusinessInfoEvent>(_onSaveBusinessInfo);
     on<SaveBranchesEvent>(_onSaveBranches);
+    on<SaveBusinessDocumentsEvent>(_onSaveBusinessDocuments);
   }
 
   Future<void> _onRegisterCustomer(
@@ -110,7 +113,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
 
       if (response.success) {
-        emit(VerifyOtpSuccess(loginData: response.data, message: response.message));
+        emit(
+          VerifyOtpSuccess(loginData: response.data, message: response.message),
+        );
       } else {
         emit(AuthFailure(message: response.message));
       }
@@ -269,6 +274,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       if (response.success) {
         emit(SaveBranchesSuccess(message: response.message));
+      } else {
+        emit(AuthFailure(message: response.message));
+      }
+    } on ApiException catch (e) {
+      emit(AuthFailure(message: e.message));
+    } catch (e) {
+      emit(AuthFailure(message: 'Something went wrong. Please try again.'));
+    }
+  }
+
+  Future<void> _onSaveBusinessDocuments(
+    SaveBusinessDocumentsEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      final response = await _authRepository.saveBusinessDocuments(
+        businessLicense: event.businessLicense,
+        shopLogo: event.shopLogo,
+      );
+
+      if (response.success) {
+        emit(SaveBusinessDocumentsSuccess(message: response.message));
       } else {
         emit(AuthFailure(message: response.message));
       }

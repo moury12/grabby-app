@@ -9,6 +9,12 @@ abstract class ProfileRemoteDataSource {
   Future<ApiResponse<void>> updateProfile({
     required String name,
     File? profileImage,
+    String? email,
+    String? phoneNumber,
+    String? shopName,
+    String? shopLicenseNumber,
+    String? contactEmail,
+    String? contactPhone,
   });
   Future<ApiResponse<void>> updateUserLocation({
     required String addressName,
@@ -35,28 +41,42 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<ApiResponse<void>> updateProfile({
     required String name,
     File? profileImage,
+    String? email,
+    String? phoneNumber,
+    String? shopName,
+    String? shopLicenseNumber,
+    String? contactEmail,
+    String? contactPhone,
   }) async {
-    final Map<String, dynamic> data = {
-      "name": name,
-    };
+    final Map<String, dynamic> data = {"name": name};
+    final role = localStorageService.getUserRoleFromToken();
+    final endpoint = role == 'SHOP_OWNER'
+        ? ApiEndpoints.updateShopOwnerProfile
+        : ApiEndpoints.updateProfile;
+
+    if (role == 'SHOP_OWNER') {
+      if (email != null) data["email"] = email;
+      if (phoneNumber != null) data["phone_number"] = phoneNumber;
+      if (shopName != null) data["shop_name"] = shopName;
+      if (shopLicenseNumber != null) data["shop_license_number"] = shopLicenseNumber;
+      if (contactEmail != null) data["contact_email"] = contactEmail;
+      if (contactPhone != null) data["contact_phone"] = contactPhone;
+    }
 
     if (profileImage != null) {
       data["profile_image"] = await dio.MultipartFile.fromFile(
         profileImage.path,
         filename: profileImage.path.split('/').last,
       );
-      
+
       final formData = dio.FormData.fromMap(data);
       return await apiService.patch<void>(
-        ApiEndpoints.updateProfile,
+        endpoint,
         data: formData,
       );
     }
 
-    return await apiService.patch<void>(
-      ApiEndpoints.updateProfile,
-      data: data,
-    );
+    return await apiService.patch<void>(endpoint, data: data);
   }
 
   @override
@@ -65,7 +85,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     required double lat,
     required double lon,
   }) async {
-    final Map<String, dynamic> data = {
+    Map<String, dynamic> data = {
       "addressName": addressName,
       "lat": lat,
       "lon": lon,
@@ -73,18 +93,13 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
     String endpoint = ApiEndpoints.updateUserLocation;
 
-    final token = localStorageService.getAccessToken();
-    if (token != null && !JwtDecoder.isExpired(token)) {
-      final decodedToken = JwtDecoder.decode(token);
-      final role = decodedToken['role'] as String?;
-      if (role == 'SHOP_OWNER') {
-        endpoint = ApiEndpoints.updateShopOwnerLocation;
-      }
+    final role = localStorageService.getUserRoleFromToken();
+    if (role == 'SHOP_OWNER') {
+      endpoint = ApiEndpoints.updateShopOwnerLocation;
+      data = {"address": addressName, "lat": lat, "lng": lon};
+      return await apiService.post<void>(endpoint, data: data);
     }
 
-    return await apiService.patch<void>(
-      endpoint,
-      data: data,
-    );
+    return await apiService.patch<void>(endpoint, data: data);
   }
 }

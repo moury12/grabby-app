@@ -38,13 +38,12 @@ class OnboardingSplashBloc
     await Future.delayed(const Duration(seconds: 3));
 
     final token = localStorageService.getAccessToken();
-    if (token != null && !JwtDecoder.isExpired(token)) {
-      final decodedToken = JwtDecoder.decode(token);
-      final role = decodedToken['role'] as String?;
+    if (token != null) {
+      final role = localStorageService.getUserRoleFromToken();
       if (role == 'CUSTOMER') {
         // Initial location update on app launch
         print('Initial Location Update - User Token: $token');
-        
+
         try {
           final locationData = await locationService.getLocationData();
           if (locationData != null) {
@@ -62,6 +61,26 @@ class OnboardingSplashBloc
         }
 
         emit(AuthenticatedCustomer());
+        return;
+      } else if (role == 'SHOP_OWNER') {
+        print('Initial Location Update - User Token: $token');
+
+        try {
+          final locationData = await locationService.getLocationData();
+          if (locationData != null) {
+            final response = await profileRepository.updateUserLocation(
+              addressName: locationData.address,
+              lat: locationData.latitude,
+              lon: locationData.longitude,
+            );
+            print('Initial Location Update Response: $response');
+          } else {
+            print('Initial Location Update: Failed to get location data.');
+          }
+        } catch (e) {
+          print('Initial Location Update Error: $e');
+        }
+        emit(AuthenticatedShopOwner());
         return;
       }
     }

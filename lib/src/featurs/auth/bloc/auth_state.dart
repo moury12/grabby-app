@@ -52,3 +52,8 @@ class SaveBranchesSuccess extends AuthState {
   final String message;
   SaveBranchesSuccess({required this.message});
 }
+
+class SaveBusinessDocumentsSuccess extends AuthState {
+  final String message;
+  SaveBusinessDocumentsSuccess({required this.message});
+}

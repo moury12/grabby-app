@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../../../../src_export.dart';
 
 abstract class AuthRepository {
@@ -55,7 +57,9 @@ abstract class AuthRepository {
     required String contactPhone,
   });
 
-  Future<ApiResponse<void>> saveBranches({
-    required List<BranchModel> branches,
+  Future<ApiResponse<void>> saveBranches({required List<BranchModel> branches});
+  Future<ApiResponse<void>> saveBusinessDocuments({
+    required File businessLicense,
+    required File shopLogo,
   });
 }

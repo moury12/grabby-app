@@ -14,6 +14,10 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _shopNameController = TextEditingController();
+  final _shopLicenseController = TextEditingController();
+  final _contactEmailController = TextEditingController();
+  final _contactPhoneController = TextEditingController();
 
   File? _imageFile;
 
@@ -22,6 +26,10 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    _shopNameController.dispose();
+    _shopLicenseController.dispose();
+    _contactEmailController.dispose();
+    _contactPhoneController.dispose();
 
     super.dispose();
   }
@@ -38,7 +46,16 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
 
   void _onSave(BuildContext context) {
     context.read<ProfileBloc>().add(
-      UpdateProfileEvent(name: _nameController.text, profileImage: _imageFile),
+      UpdateProfileEvent(
+        name: _nameController.text,
+        profileImage: _imageFile,
+        email: _emailController.text,
+        phoneNumber: _phoneController.text,
+        shopName: _shopNameController.text,
+        shopLicenseNumber: _shopLicenseController.text,
+        contactEmail: _contactEmailController.text,
+        contactPhone: _contactPhoneController.text,
+      ),
     );
   }
 
@@ -51,9 +68,16 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
         body: BlocConsumer<ProfileBloc, ProfileState>(
           listener: (context, state) {
             if (state is ProfileLoaded) {
-              _nameController.text = state.profileData.name;
-              _emailController.text = state.profileData.email;
-              _phoneController.text = state.profileData.phoneNumber;
+              _nameController.text = state.profileData.authId.name;
+              _emailController.text = state.profileData.authId.email;
+              _phoneController.text = state.profileData.authId.phoneNumber;
+              _shopNameController.text = state.profileData.shopName ?? '';
+              _shopLicenseController.text =
+                  state.profileData.shopLicenseNumber ?? '';
+              _contactEmailController.text =
+                  state.profileData.contactEmail ?? '';
+              _contactPhoneController.text =
+                  state.profileData.contactPhone ?? '';
             }
           },
           builder: (context, state) {
@@ -177,6 +201,31 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
                             color: AppColors.kSecondaryTextColor,
                           ),
 
+                          if (state is ProfileLoaded &&
+                              state.profileData.authId.role ==
+                                  'SHOP_OWNER') ...[
+                            CustomTextField(
+                              textEditingController: _shopNameController,
+                              title: AppStaticStrings.shopName,
+                              hintText: AppStaticStrings.shopName,
+                              prefixIcon: const Icon(
+                                Icons.store_outlined,
+                                color: AppColors.kSecondaryTextColor,
+                                size: 20,
+                              ),
+                            ),
+                            CustomTextField(
+                              textEditingController: _shopLicenseController,
+                              title: AppStaticStrings.shopLicenseNumber,
+                              hintText: AppStaticStrings.shopLicenseNumber,
+                              prefixIcon: const Icon(
+                                Icons.article_outlined,
+                                color: AppColors.kSecondaryTextColor,
+                                size: 20,
+                              ),
+                            ),
+                          ],
+
                           CustomTextField(
                             textEditingController: _nameController,
                             title: AppStaticStrings.name,
@@ -192,7 +241,9 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
                             textEditingController: _emailController,
                             title: AppStaticStrings.emailAddress,
                             hintText: AppStaticStrings.emailAddress,
-                            isEnable: false, // Email usually read-only
+                            isEnable:
+                                state is ProfileLoaded &&
+                                state.profileData.authId.role == 'SHOP_OWNER',
                             prefixIcon: const Icon(
                               Icons.email_outlined,
                               color: AppColors.kSecondaryTextColor,
@@ -204,13 +255,40 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
                             textEditingController: _phoneController,
                             title: AppStaticStrings.phoneNumber,
                             hintText: AppStaticStrings.phoneNumber,
-                            isEnable: false, // Phone usually read-only
+                            isEnable:
+                                state is ProfileLoaded &&
+                                state.profileData.authId.role == 'SHOP_OWNER',
                             prefixIcon: const Icon(
                               Icons.call_outlined,
                               color: AppColors.kSecondaryTextColor,
                               size: 20,
                             ),
                           ),
+
+                          if (state is ProfileLoaded &&
+                              state.profileData.authId.role ==
+                                  'SHOP_OWNER') ...[
+                            CustomTextField(
+                              textEditingController: _contactEmailController,
+                              title: AppStaticStrings.emailAddress,
+                              hintText: AppStaticStrings.emailAddress,
+                              prefixIcon: const Icon(
+                                Icons.contact_mail_outlined,
+                                color: AppColors.kSecondaryTextColor,
+                                size: 20,
+                              ),
+                            ),
+                            CustomTextField(
+                              textEditingController: _contactPhoneController,
+                              title: AppStaticStrings.contactPhone,
+                              hintText: AppStaticStrings.contactPhone,
+                              prefixIcon: const Icon(
+                                Icons.contact_phone_outlined,
+                                color: AppColors.kSecondaryTextColor,
+                                size: 20,
+                              ),
+                            ),
+                          ],
 
                           CustomButton(
                             text: AppStaticStrings.saveChange,

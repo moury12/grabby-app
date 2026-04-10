@@ -24,3 +24,5 @@ class RoleSelectionDone extends OnboardingSplashState {
 }
 
 class AuthenticatedCustomer extends OnboardingSplashState {}
+
+class AuthenticatedShopOwner extends OnboardingSplashState {}
