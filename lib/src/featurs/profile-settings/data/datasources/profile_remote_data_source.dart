@@ -58,7 +58,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       if (email != null) data["email"] = email;
       if (phoneNumber != null) data["phone_number"] = phoneNumber;
       if (shopName != null) data["shop_name"] = shopName;
-      if (shopLicenseNumber != null) data["shop_license_number"] = shopLicenseNumber;
+      if (shopLicenseNumber != null)
+        data["shop_license_number"] = shopLicenseNumber;
       if (contactEmail != null) data["contact_email"] = contactEmail;
       if (contactPhone != null) data["contact_phone"] = contactPhone;
     }
@@ -70,10 +71,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       );
 
       final formData = dio.FormData.fromMap(data);
-      return await apiService.patch<void>(
-        endpoint,
-        data: formData,
-      );
+      return await apiService.patch<void>(endpoint, data: formData);
     }
 
     return await apiService.patch<void>(endpoint, data: data);

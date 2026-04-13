@@ -1,0 +1,51 @@
+part of 'menu_bloc.dart';
+
+abstract class MenuEvent {}
+
+class GetMenuCategoriesEvent extends MenuEvent {}
+
+class CreateMenuCategoryEvent extends MenuEvent {
+  final String name;
+  CreateMenuCategoryEvent(this.name);
+}
+
+class DeleteMenuCategoryEvent extends MenuEvent {
+  final String id;
+  DeleteMenuCategoryEvent(this.id);
+}
+
+class GetMenuItemsEvent extends MenuEvent {
+  final int page;
+  final int limit;
+  final String? searchTerm;
+  final String? categoryId;
+
+  GetMenuItemsEvent({
+    this.page = 1,
+    this.limit = 10,
+    this.searchTerm,
+    this.categoryId,
+  });
+}
+
+class CreateMenuItemEvent extends MenuEvent {
+  final String itemName;
+  final String categoryId;
+  final double price;
+  final String description;
+  final int stamp;
+  final bool isAvailable;
+  final List<CustomizationGroupModel> additionalItems;
+  final File? image;
+
+  CreateMenuItemEvent({
+    required this.itemName,
+    required this.categoryId,
+    required this.price,
+    required this.description,
+    required this.stamp,
+    required this.isAvailable,
+    required this.additionalItems,
+    this.image,
+  });
+}

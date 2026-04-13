@@ -29,4 +29,11 @@ class ApiEndpoints {
   static const String saveBusinessInfo = "/shop-owner/business/info";
   static const String saveBranches = "/shop-owner/business/branches";
   static const String saveBusinessDocuments = "/shop-owner/business/documents";
+
+  // ─── Menu ───────────────────────────────────────────────────────────────────
+  static const String createMenuCategory = "/menu-category/create";
+  static const String getMenuCategories = "/menu-category/shop";
+  static String deleteMenuCategory(String id) => "/menu-category/$id";
+  static const String createMenu = "/menu/create";
+  static const String getShopMenuItems = "/menu/shop";
 }

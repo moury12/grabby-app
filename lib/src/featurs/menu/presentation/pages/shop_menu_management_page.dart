@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../../../../src_export.dart';
 
 class ShopMenuManagementPage extends StatefulWidget {
@@ -8,155 +10,274 @@ class ShopMenuManagementPage extends StatefulWidget {
 }
 
 class _ShopMenuManagementPageState extends State<ShopMenuManagementPage> {
-  String _selectedCategory = AppStaticStrings.allItems;
+  MenuCategoryModel? _selectedCategory;
   final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
 
-  final List<String> _categories = [
-    AppStaticStrings.allItems,
-    AppStaticStrings.matcha,
-    AppStaticStrings.hotCoffee,
-    AppStaticStrings.coldCoffee,
-  ];
+  @override
+  void initState() {
+    super.initState();
+    // Removed _fetchInitialData() from here because BlocProvider hasn't been created yet.
+    // The initial fetch is now handled in the BlocProvider's create block.
+  }
+
+  void _fetchInitialData(BuildContext context) {
+    context.read<MenuBloc>().add(GetMenuCategoriesEvent());
+    context.read<MenuBloc>().add(GetMenuItemsEvent());
+  }
+
+  void _onSearchChanged(BuildContext context, String query) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      context.read<MenuBloc>().add(
+        GetMenuItemsEvent(searchTerm: query, categoryId: _selectedCategory?.id),
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _onRefresh(BuildContext context) async {
+    context.read<MenuBloc>().add(GetMenuCategoriesEvent());
+    context.read<MenuBloc>().add(
+      GetMenuItemsEvent(
+        categoryId: _selectedCategory?.id,
+        searchTerm: _searchController.text,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Colors.black,
-        title: const CustomText(
-          AppStaticStrings.menuManagement,
-          variant: TextVariant.titleLarge,
-        ),
-        centerTitle: false,
-        actions: [
-          GestureDetector(
-            onTap: () {
-              context.pushNamed(RoutesPath.editItemName);
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              margin: const EdgeInsets.only(right: 16),
-              decoration: BoxDecoration(
-                color: AppColors.kPrimaryColor,
-                borderRadius: BorderRadius.circular(appRadius),
+    return BlocProvider(
+      create: (context) => sl<MenuBloc>()
+        ..add(GetMenuCategoriesEvent())
+        ..add(GetMenuItemsEvent()),
+      child: Builder(
+        builder: (context) {
+          return Scaffold(
+            appBar: AppBar(
+              foregroundColor: Colors.black,
+              title: const CustomText(
+                AppStaticStrings.menuManagement,
+                variant: TextVariant.titleLarge,
               ),
-              child: Row(
-                children: [
-                  Icon(Icons.add, color: Colors.white, size: 15),
-                  CustomText(AppStaticStrings.addItem, color: Colors.white),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          spacing: 8,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Search Bar
-            CustomTextField(
-              textEditingController: _searchController,
-              hintText: AppStaticStrings.searchMenuItems,
-              prefixIcon: const Icon(
-                Icons.search,
-                color: AppColors.kSecondaryTextColor,
-              ),
-              fillColor: Colors.white,
-              borderRadius: 16,
-            ),
-
-            // Category Chips
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                spacing: 12,
-                children: _categories.map((category) {
-                  final isSelected = _selectedCategory == category;
-                  return ButtonTapWidget(
-                    onTap: () => setState(() => _selectedCategory = category),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppColors.kPrimaryColor
-                            : Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        spacing: 8,
-                        children: [
-                          if (category == AppStaticStrings.hotCoffee)
-                            Image.asset(
-                              "assets/icons/stamp_category_icon.png",
-                              height: 15,
-                            ),
-                          CustomText(
-                            category,
-                            color: isSelected
-                                ? Colors.white
-                                : AppColors.kSecondaryTextColor,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ],
-                      ),
+              centerTitle: false,
+              actions: [
+                GestureDetector(
+                  onTap: () async {
+                    final result = await context.pushNamed(
+                      RoutesPath.editItemName,
+                    );
+                    if (result == true) {
+                      if (context.mounted) {
+                        _fetchInitialData(context);
+                      }
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 6,
                     ),
-                  );
-                }).toList(),
-              ),
-            ),
-
-            // Summary Stats
-            Row(
-              spacing: 12,
-              children: [
-                _buildStatText(AppStaticStrings.totalItems, "7"),
-                _buildStatText(
-                  AppStaticStrings.available,
-                  "6",
-                  valueColor: AppColors.kPrimaryColor,
-                ),
-                _buildStatText(
-                  AppStaticStrings.outOfStock,
-                  "1",
-                  valueColor: Colors.red,
+                    margin: const EdgeInsets.only(right: 16),
+                    decoration: BoxDecoration(
+                      color: AppColors.kPrimaryColor,
+                      borderRadius: BorderRadius.circular(appRadius),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.add, color: Colors.white, size: 15),
+                        CustomText(
+                          AppStaticStrings.addItem,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
+            body: BlocConsumer<MenuBloc, MenuState>(
+              listener: (context, state) {
+                if (state.status == MenuStatus.error &&
+                    state.errorMessage != null &&
+                    state.items.isNotEmpty) {
+                  CustomSnackbar.show(
+                    context,
+                    state.errorMessage!,
+                    isError: true,
+                  );
+                }
+              },
+              builder: (context, state) {
+                final categories = state.categories;
+                final items = state.items;
+                final meta = state.meta;
+                final isLoading = state.status == MenuStatus.loading;
 
-            // Items List
-            ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: 3,
-              separatorBuilder: (context, index) => const SizedBox(height: 8),
-              itemBuilder: (context, index) {
-                return MenuManagementItemCard(
-                  title: "Cappuccino",
-                  description: "Classic Italian coffee with steamed milk",
-                  price: "AED 5.50",
-                  image: index == 0
-                      ? "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=2033&auto=format&fit=crop"
-                      : "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop",
-                  category: "Coffee",
-                  isAvailable: index != 2,
-                  outOfStockCount: index == 2 ? "50" : null,
-                  isVisible: index != 0,
-                  onEdit: () => context.pushNamed(RoutesPath.editItemName),
-                  onDelete: () {},
-                  onToggleVisibility: () {},
+                return RefreshIndicator(
+                  onRefresh: () => _onRefresh(context),
+                  color: AppColors.kPrimaryColor,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      spacing: 8,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Search Bar
+                        CustomTextField(
+                          textEditingController: _searchController,
+                          hintText: AppStaticStrings.searchMenuItems,
+                          onChanged: (val) => _onSearchChanged(context, val),
+                          prefixIcon: const Icon(
+                            Icons.search,
+                            color: AppColors.kSecondaryTextColor,
+                          ),
+                          fillColor: Colors.white,
+                          borderRadius: 16,
+                        ),
+
+                        // Category Chips
+                        _buildCategoryChips(context, categories),
+
+                        // Summary Stats
+                        _buildSummaryStats(items, meta),
+
+                        // Items List
+                        if (isLoading && items.isEmpty)
+                          const Center(child: CircularProgressIndicator())
+                        else if (items.isEmpty)
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.5,
+                            child: const Center(
+                              child: CustomText("No items found"),
+                            ),
+                          )
+                        else
+                          ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: items.length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 8),
+                            itemBuilder: (context, index) {
+                              final item = items[index];
+                              return MenuManagementItemCard(
+                                title: item.itemName,
+                                description: item.description,
+                                price: "AED ${item.price}",
+                                image: item.image ?? "",
+                                category: item.categoryName,
+                                isAvailable: item.isAvailable,
+                                onEdit: () async {
+                                  final result = await context.pushNamed(
+                                    RoutesPath.editItemName,
+                                    extra: item,
+                                  );
+                                  if (result == true) {
+                                    if (context.mounted) {
+                                      _fetchInitialData(context);
+                                    }
+                                  }
+                                },
+                                onDelete: () {
+                                  // Implement delete
+                                },
+                                onToggleVisibility: () {
+                                  // Implement visibility toggle
+                                },
+                              );
+                            },
+                          ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
                 );
               },
             ),
-            const SizedBox(height: 20),
-          ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildCategoryChips(
+    BuildContext context,
+    List<MenuCategoryModel> categories,
+  ) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        spacing: 12,
+        children: [
+          _buildCategoryChip(context, null, AppStaticStrings.allItems),
+          ...categories.map(
+            (category) => _buildCategoryChip(context, category, category.name),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryChip(
+    BuildContext context,
+    MenuCategoryModel? category,
+    String label,
+  ) {
+    final isSelected = _selectedCategory?.id == category?.id;
+    return ButtonTapWidget(
+      onTap: () {
+        setState(() => _selectedCategory = category);
+        context.read<MenuBloc>().add(
+          GetMenuItemsEvent(
+            categoryId: category?.id,
+            searchTerm: _searchController.text,
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.kPrimaryColor : Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: CustomText(
+          label,
+          color: isSelected ? Colors.white : AppColors.kSecondaryTextColor,
+          fontWeight: FontWeight.w600,
         ),
       ),
+    );
+  }
+
+  Widget _buildSummaryStats(List<MenuItemModel> items, PaginationMeta? meta) {
+    final total = meta?.total ?? items.length;
+    final available = items.where((i) => i.isAvailable).length;
+    final outOfStock = total - available; // Simplified calculation
+
+    return Row(
+      spacing: 12,
+      children: [
+        _buildStatText(AppStaticStrings.totalItems, total.toString()),
+        _buildStatText(
+          AppStaticStrings.available,
+          available.toString(),
+          valueColor: AppColors.kPrimaryColor,
+        ),
+        _buildStatText(
+          AppStaticStrings.outOfStock,
+          outOfStock.toString(),
+          valueColor: Colors.red,
+        ),
+      ],
     );
   }
 

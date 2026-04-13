@@ -19,8 +19,8 @@ class ApiResponse<T> {
       statusCode: json['statusCode'] as int,
       success: json['success'] as bool,
       message: json['message'] as String,
-      data: json['data'] != null && fromJsonT != null
-          ? fromJsonT(json['data'])
+      data: fromJsonT != null
+          ? fromJsonT(json)
           : null,
     );
   }

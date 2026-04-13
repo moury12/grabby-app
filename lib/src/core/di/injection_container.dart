@@ -9,23 +9,18 @@ Future<void> init() async {
   // Data sources
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
-  
+
   // LocalStorageService
   sl.registerLazySingleton<LocalStorageService>(
     () => LocalStorageService(sl()),
   );
-  
+
   // LocationService
-  sl.registerLazySingleton<LocationService>(
-    () => LocationService(),
-  );
-  
+  sl.registerLazySingleton<LocationService>(() => LocationService());
+
   // ApiService
   sl.registerLazySingleton<ApiService>(
-    () => ApiService(
-      baseUrl: ApiEndpoints.baseUrl,
-      localStorageService: sl(),
-    ),
+    () => ApiService(baseUrl: ApiEndpoints.baseUrl, localStorageService: sl()),
   );
 
   sl.registerLazySingleton<OnboardingLocalDataSource>(
@@ -50,14 +45,10 @@ Future<void> init() async {
   );
 
   // Repository
-  sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(sl()),
-  );
+  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()));
 
   // BLoC — factory so each page gets a fresh instance
-  sl.registerFactory<AuthBloc>(
-    () => AuthBloc(authRepository: sl()),
-  );
+  sl.registerFactory<AuthBloc>(() => AuthBloc(authRepository: sl()));
 
   // ─── Feature: Profile ──────────────────────────────────────────────────────
   // Data source
@@ -72,9 +63,18 @@ Future<void> init() async {
 
   // Bloc
   sl.registerFactory<ProfileBloc>(
-    () => ProfileBloc(
-      profileRepository: sl(),
-      locationService: sl(),
-    ),
+    () => ProfileBloc(profileRepository: sl(), locationService: sl()),
   );
+
+  // ─── Feature: Menu ─────────────────────────────────────────────────────────
+  // Data source
+  sl.registerLazySingleton<MenuRemoteDataSource>(
+    () => MenuRemoteDataSourceImpl(sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<MenuRepository>(() => MenuRepositoryImpl(sl()));
+
+  // Bloc
+  sl.registerFactory<MenuBloc>(() => MenuBloc(sl()));
 }

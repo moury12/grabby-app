@@ -1,4 +1,7 @@
+import 'dart:developer';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
+
 import '../../../../src_export.dart';
 
 class EditItemPage extends StatefulWidget {
@@ -15,43 +18,93 @@ class _EditItemPageState extends State<EditItemPage> {
   bool availableNow = true;
   File? _pickedImage;
 
+  final TextEditingController _nameController = TextEditingController(
+    text: kDebugMode ? "Matcha" : "",
+  );
+  final TextEditingController _priceController = TextEditingController(
+    text: kDebugMode ? "12" : "",
+  );
+  final TextEditingController _descriptionController = TextEditingController(
+    text: kDebugMode ? "Description" : "",
+  );
+  final TextEditingController _loyaltyController = TextEditingController(
+    text: kDebugMode ? "10" : "",
+  );
+  MenuCategoryModel? _selectedCategory;
+  final List<CustomizationGroupModel> _customizationGroups = [];
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _priceController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: false,
-        title: const CustomText(
-          AppStaticStrings.editItem,
-          variant: TextVariant.titleLarge,
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: AppPadding.getPadding12(context).copyWith(top: 0),
-        child: Column(
-          spacing: 8,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildImageUpload(),
-            _buildTextField(
-              AppStaticStrings.itemName,
-              AppStaticStrings.enterItemName,
+    return BlocProvider(
+      create: (context) => sl<MenuBloc>()..add(GetMenuCategoriesEvent()),
+      child: BlocConsumer<MenuBloc, MenuState>(
+        listener: (context, state) {
+          if (state.status == MenuStatus.error && state.errorMessage != null) {
+            log(state.errorMessage!);
+            CustomSnackbar.show(context, state.errorMessage!, isError: true);
+          }
+          if (state.successMessage != null) {
+            CustomSnackbar.show(context, state.successMessage!);
+            context.pop(true); // Return true to indicate refresh needed
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AppBar(
+              centerTitle: false,
+              title: const CustomText(
+                AppStaticStrings.editItem,
+                variant: TextVariant.titleLarge,
+              ),
             ),
-            _buildCategorySelection(),
-            _buildTextField(AppStaticStrings.priceAED, "5.5"),
-            _buildTextField(
-              AppStaticStrings.description,
-              AppStaticStrings.describeYourItem,
-              maxLines: 3,
+            body: SingleChildScrollView(
+              padding: AppPadding.getPadding12(context).copyWith(top: 0),
+              child: Column(
+                spacing: 8,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildImageUpload(),
+                  _buildTextField(
+                    AppStaticStrings.itemName,
+                    AppStaticStrings.enterItemName,
+                    textEditingController: _nameController,
+                  ),
+                  _buildCategorySelection(context, state),
+                  _buildTextField(
+                    AppStaticStrings.priceAED,
+                    "5.5",
+                    textEditingController: _priceController,
+                    keyboardType: TextInputType.number,
+                  ),
+                  _buildTextField(
+                    AppStaticStrings.description,
+                    AppStaticStrings.describeYourItem,
+                    textEditingController: _descriptionController,
+                    maxLines: 3,
+                  ),
+                  _buildAddCustomizationButton(context),
+                  _buildCustomizationGroups(),
+                  CustomTextField(
+                    title: AppStaticStrings.loyalty,
+                    textEditingController: _loyaltyController,
+                    keyboardType: TextInputType.number,
+                  ),
+                  _buildAvailableNowSection(),
+                  _buildActionButtons(context, state),
+                  const SizedBox(height: 40),
+                ],
+              ),
             ),
-            _buildAddCustomizationButton(),
-            _buildCustomizationGroups(),
-            _buildLoyaltySection(),
-            _buildAvailableNowSection(),
-            // const SizedBox(height: 16),
-            _buildActionButtons(),
-            const SizedBox(height: 40),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -116,15 +169,23 @@ class _EditItemPageState extends State<EditItemPage> {
     );
   }
 
-  Widget _buildTextField(String title, String hint, {int maxLines = 1}) {
+  Widget _buildTextField(
+    String title,
+    String hint, {
+    int maxLines = 1,
+    TextEditingController? textEditingController,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 8,
       children: [
         CustomText(title, fontWeight: FontWeight.bold),
         CustomTextField(
+          textEditingController: textEditingController,
           hintText: hint,
           maxLines: maxLines,
+          keyboardType: keyboardType,
           fillColor: Colors.white,
           borderRadius: 12,
         ),
@@ -132,7 +193,9 @@ class _EditItemPageState extends State<EditItemPage> {
     );
   }
 
-  Widget _buildCategorySelection() {
+  Widget _buildCategorySelection(BuildContext context, MenuState state) {
+    final categories = state.categories;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 8,
@@ -149,26 +212,35 @@ class _EditItemPageState extends State<EditItemPage> {
             border: Border.all(color: Colors.grey[300]!),
           ),
           child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
+            child: DropdownButton<MenuCategoryModel>(
               isExpanded: true,
-              value: "Option 1",
-              items: ["Option 1", "Matcha", "Coffee"].map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
+              hint: const Text("Select Category"),
+              value: _selectedCategory,
+              items: categories.map((MenuCategoryModel cat) {
+                return DropdownMenuItem<MenuCategoryModel>(
+                  value: cat,
+                  child: Text(cat.name),
                 );
               }).toList(),
-              onChanged: (_) {},
+              onChanged: (val) {
+                setState(() {
+                  _selectedCategory = val;
+                });
+              },
             ),
           ),
         ),
         ButtonTapWidget(
-          onTap: () {
-            showModalBottomSheet(
+          onTap: () async {
+            await showModalBottomSheet(
               context: context,
               isScrollControlled: true,
-              builder: (context) => const CategoriesManagementBottomSheet(),
+              builder: (ctx) => const CategoriesManagementBottomSheet(),
             );
+            // Refresh categories after closing management sheet
+            if (context.mounted) {
+              context.read<MenuBloc>().add(GetMenuCategoriesEvent());
+            }
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -188,14 +260,20 @@ class _EditItemPageState extends State<EditItemPage> {
     );
   }
 
-  Widget _buildAddCustomizationButton() {
+  Widget _buildAddCustomizationButton(BuildContext context) {
     return ButtonTapWidget(
-      onTap: () {
-        showModalBottomSheet(
+      onTap: () async {
+        final result = await showModalBottomSheet<CustomizationGroupModel>(
           context: context,
           isScrollControlled: true,
           builder: (context) => const AddCustomizeGroupBottomSheet(),
         );
+
+        if (result != null) {
+          setState(() {
+            _customizationGroups.add(result);
+          });
+        }
       },
       child: Container(
         width: double.infinity,
@@ -220,25 +298,13 @@ class _EditItemPageState extends State<EditItemPage> {
   Widget _buildCustomizationGroups() {
     return Column(
       spacing: 12,
-      children: [
-        _buildCustomizationGroup("Choice Of Milk", [
-          {"name": "Oat Milk", "price": "+0 AED"},
-          {"name": "Full Fat Milk", "price": "+0 AED"},
-          {"name": "Skimmed Milk", "price": "+0 AED"},
-        ]),
-        _buildCustomizationGroup("Sugar", [
-          {"name": "Less Sugar", "price": "+0 AED"},
-          {"name": "Normal Sugar", "price": "+0 AED"},
-          {"name": "Extra Sugar", "price": "+0 AED"},
-        ]),
-      ],
+      children: _customizationGroups.asMap().entries.map((entry) {
+        return _buildCustomizationGroup(entry.key, entry.value);
+      }).toList(),
     );
   }
 
-  Widget _buildCustomizationGroup(
-    String title,
-    List<Map<String, String>> items,
-  ) {
+  Widget _buildCustomizationGroup(int index, CustomizationGroupModel group) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -252,25 +318,32 @@ class _EditItemPageState extends State<EditItemPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CustomText(title, fontWeight: FontWeight.bold),
-                const CustomText(
-                  AppStaticStrings.deleteGroup,
-                  color: Colors.red,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
+                CustomText(group.groupName, fontWeight: FontWeight.bold),
+                ButtonTapWidget(
+                  onTap: () {
+                    setState(() {
+                      _customizationGroups.removeAt(index);
+                    });
+                  },
+                  child: const CustomText(
+                    AppStaticStrings.deleteGroup,
+                    color: Colors.red,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
           ),
           const Divider(height: 1),
-          ...items.map(
+          ...group.items.map(
             (item) => Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Row(
                 children: [
                   const Icon(Icons.menu, size: 20, color: Colors.grey),
                   const SizedBox(width: 8),
-                  Expanded(child: CustomText(item["name"]!)),
+                  Expanded(child: CustomText(item.name)),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
@@ -281,52 +354,18 @@ class _EditItemPageState extends State<EditItemPage> {
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: CustomText(
-                      item["price"]! == "+0 AED" ? "Free" : item["price"]!,
+                      item.price == 0 ? "Free" : "+${item.price} AED",
                       fontSize: 10,
                       color: AppColors.kPrimaryColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  const Icon(Icons.delete_outline, size: 20, color: Colors.red),
                 ],
               ),
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildLoyaltySection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 8,
-      children: [
-        const CustomText(AppStaticStrings.loyalty, fontWeight: FontWeight.bold),
-        Container(
-          // padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              Checkbox(
-                value: giveStamp,
-                onChanged: (val) => setState(() => giveStamp = val ?? false),
-                activeColor: AppColors.kPrimaryColor,
-              ),
-              const Expanded(
-                child: CustomText(
-                  AppStaticStrings.giveStampForItem,
-                  fontSize: 13,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 
@@ -339,7 +378,6 @@ class _EditItemPageState extends State<EditItemPage> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -367,13 +405,33 @@ class _EditItemPageState extends State<EditItemPage> {
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildActionButtons(BuildContext context, MenuState state) {
     return Column(
-      // spacing: 12,
       children: [
         CustomButton(
           text: AppStaticStrings.saveChanges,
-          onPressed: () => context.pop(),
+          isLoading: state.status == MenuStatus.loading,
+          onPressed: () {
+            if (_nameController.text.isEmpty ||
+                _selectedCategory == null ||
+                _priceController.text.isEmpty) {
+              CustomSnackbar.show(context, "Please fill all required fields");
+              return;
+            }
+
+            context.read<MenuBloc>().add(
+              CreateMenuItemEvent(
+                itemName: _nameController.text,
+                categoryId: _selectedCategory!.id,
+                price: double.tryParse(_priceController.text) ?? 0.0,
+                description: _descriptionController.text,
+                stamp: int.tryParse(_loyaltyController.text) ?? 0,
+                isAvailable: availableNow,
+                additionalItems: _customizationGroups,
+                image: _pickedImage,
+              ),
+            );
+          },
           backgroundColor: AppColors.kPrimaryColor,
         ),
         SizedBox(

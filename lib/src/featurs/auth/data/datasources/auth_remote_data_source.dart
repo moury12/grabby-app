@@ -122,8 +122,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     return await _apiService.post<LoginResponseData>(
       ApiEndpoints.customerLogin,
       data: {"email": email, "password": password},
-      fromJson: (data) =>
-          LoginResponseData.fromJson(data as Map<String, dynamic>),
+      fromJson: (json) =>
+          LoginResponseData.fromJson(json['data'] as Map<String, dynamic>),
     );
   }
 
@@ -135,8 +135,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     return await _apiService.post<LoginResponseData>(
       ApiEndpoints.verifyOtp,
       data: {"email": email, "activation_code": activationCode},
-      fromJson: (data) =>
-          LoginResponseData.fromJson(data as Map<String, dynamic>),
+      fromJson: (json) =>
+          LoginResponseData.fromJson(json['data'] as Map<String, dynamic>),
     );
   }
 
