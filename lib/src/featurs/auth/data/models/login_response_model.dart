@@ -28,6 +28,9 @@ class UserModel {
   final String phoneNumber;
   final String? profileImage;
   final String status;
+  final String? addressName;
+  final double? lat;
+  final double? lon;
 
   UserModel({
     required this.id,
@@ -37,6 +40,9 @@ class UserModel {
     required this.phoneNumber,
     this.profileImage,
     required this.status,
+    this.addressName,
+    this.lat,
+    this.lon,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -50,28 +56,31 @@ class UserModel {
       phoneNumber: json['phone_number'] as String,
       profileImage: json['profile_image'] as String?,
       status: json['status'] as String,
+      addressName: json['addressName'] as String?,
+      lat: (json['lat'] as num?)?.toDouble(),
+      lon: (json['lon'] as num?)?.toDouble(),
     );
   }
 }
 
 class AuthIdModel {
   final String id;
-  final String name;
-  final String email;
+  final String? name;
+  final String? email;
   final String role;
-  
+
   AuthIdModel({
     required this.id,
-    required this.name,
-    required this.email,
+    this.name,
+    this.email,
     required this.role,
   });
 
   factory AuthIdModel.fromJson(Map<String, dynamic> json) {
     return AuthIdModel(
       id: json['_id'] as String,
-      name: json['name'] as String,
-      email: json['email'] as String,
+      name: json['name'] as String?,
+      email: json['email'] as String?,
       role: json['role'] as String,
     );
   }

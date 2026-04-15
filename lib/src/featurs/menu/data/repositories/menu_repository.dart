@@ -21,6 +21,18 @@ abstract class MenuRepository {
     required List<CustomizationGroupModel> additionalItems,
     File? image,
   });
+  Future<ApiResponse<void>> updateMenu({
+    required String menuId,
+    String? itemName,
+    String? categoryId,
+    double? price,
+    String? description,
+    int? stamp,
+    bool? isAvailable,
+    List<CustomizationGroupModel>? additionalItems,
+    File? image,
+  });
+  Future<ApiResponse<void>> deleteMenu(String id);
 }
 
 class MenuRepositoryImpl implements MenuRepository {
@@ -79,5 +91,35 @@ class MenuRepositoryImpl implements MenuRepository {
       additionalItems: additionalItems,
       image: image,
     );
+  }
+
+  @override
+  Future<ApiResponse<void>> updateMenu({
+    required String menuId,
+    String? itemName,
+    String? categoryId,
+    double? price,
+    String? description,
+    int? stamp,
+    bool? isAvailable,
+    List<CustomizationGroupModel>? additionalItems,
+    File? image,
+  }) {
+    return remoteDataSource.updateMenu(
+      menuId: menuId,
+      itemName: itemName,
+      categoryId: categoryId,
+      price: price,
+      description: description,
+      stamp: stamp,
+      isAvailable: isAvailable,
+      additionalItems: additionalItems,
+      image: image,
+    );
+  }
+
+  @override
+  Future<ApiResponse<void>> deleteMenu(String id) {
+    return remoteDataSource.deleteMenu(id);
   }
 }

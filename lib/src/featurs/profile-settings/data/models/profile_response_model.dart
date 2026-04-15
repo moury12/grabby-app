@@ -29,8 +29,8 @@ class ProfileData {
   final String phoneNumber;
   final String? profileImage;
   final String? addressName;
-  final String? lat;
-  final String? lon;
+  final double? lat;
+  final double? lon;
   final String? contactEmail;
   final String? contactPhone;
   final String? shopLicenseNumber;
@@ -60,76 +60,39 @@ class ProfileData {
 
   factory ProfileData.fromJson(Map<String, dynamic> json) {
     return ProfileData(
-      id: json['_id'],
-      authId: AuthId.fromJson(json['authId']),
-      name: json['name'],
-      email: json['email'],
-      phoneNumber: json['phone_number'],
+      id: json['_id'] ?? '',
+      authId: json['authId'] != null 
+          ? AuthId.fromJson(json['authId']) 
+          : AuthId(id: '', role: 'CUSTOMER'),
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      phoneNumber: json['phone_number'] ?? '',
       profileImage: json['profile_image'],
       addressName: json['addressName'],
-      // Inside ProfileData.fromJso
-      lat: json['lat']?.toString(),
-      lon: json['lon']?.toString(),
+      lat: (json['lat'] as num?)?.toDouble(),
+      lon: (json['lon'] as num?)?.toDouble(),
       contactEmail: json['contact_email'],
       contactPhone: json['contact_phone'],
       shopLicenseNumber: json['shop_license_number'],
       shopName: json['shop_name'],
-      status: json['status'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      status: json['status'] ?? 'inactive',
+      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now(),
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : DateTime.now(),
     );
   }
 }
 
 class AuthId {
   final String id;
-  final String name;
-  final String email;
-  final String phoneNumber;
   final String role;
-  final String? profileImage;
-  final bool termsAccepted;
-  final String? activationCode;
-  final String? expirationTime;
-  final bool codeVerify;
-  final bool isBlock;
-  final bool isActive;
-  final DateTime createdAt;
-  final DateTime updatedAt;
 
-  AuthId({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.phoneNumber,
-    required this.role,
-    this.profileImage,
-    required this.termsAccepted,
-    this.activationCode,
-    this.expirationTime,
-    required this.codeVerify,
-    required this.isBlock,
-    required this.isActive,
-    required this.createdAt,
-    required this.updatedAt,
-  });
+  AuthId({required this.id, required this.role});
 
-  factory AuthId.fromJson(Map<String, dynamic> json) {
+  factory AuthId.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return AuthId(id: '', role: 'CUSTOMER');
     return AuthId(
-      id: json['_id'],
-      name: json['name'],
-      email: json['email'],
-      phoneNumber: json['phone_number'],
-      role: json['role'],
-      profileImage: json['profile_image'],
-      termsAccepted: json['termsAccepted'] ?? false,
-      activationCode: json['activationCode'],
-      expirationTime: json['expirationTime'],
-      codeVerify: json['codeVerify'] ?? false,
-      isBlock: json['is_block'] ?? false,
-      isActive: json['isActive'] ?? true,
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      id: json['_id'] ?? '',
+      role: json['role'] ?? 'CUSTOMER',
     );
   }
 }

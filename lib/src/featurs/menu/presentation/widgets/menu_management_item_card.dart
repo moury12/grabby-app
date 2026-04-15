@@ -43,7 +43,7 @@ class MenuManagementItemCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: CustomNetworkImage(
-              imageUrl: image,
+              imageUrl: "${ApiEndpoints.baseUrl}/$image",
               height: 100,
               width: 100,
               fit: BoxFit.cover,

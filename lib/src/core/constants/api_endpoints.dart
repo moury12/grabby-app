@@ -36,4 +36,6 @@ class ApiEndpoints {
   static String deleteMenuCategory(String id) => "/menu-category/$id";
   static const String createMenu = "/menu/create";
   static const String getShopMenuItems = "/menu/shop";
+  static String updateMenu(String id) => "/menu/$id";
+  static String deleteMenu(String id) => "/menu/$id";
 }

@@ -108,4 +108,8 @@ class OnboardingSplashBloc
     await localDataSource.saveUserRole(selectedRole);
     emit(RoleSelectionDone(selectedRole));
   }
+
+  void updateSelectedRole(UserRole role) {
+    selectedRole = role;
+  }
 }

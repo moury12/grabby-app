@@ -112,6 +112,21 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
                 );
+              } else if (state is ProfileError) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(state.message),
+                      ElevatedButton(
+                        onPressed: () {
+                          context.read<ProfileBloc>().add(GetProfileEvent());
+                        },
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                );
               }
               return const SizedBox();
             },

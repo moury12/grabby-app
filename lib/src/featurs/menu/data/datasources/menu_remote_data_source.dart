@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart' as dio;
 import '../../../../src_export.dart';
@@ -23,6 +24,18 @@ abstract class MenuRemoteDataSource {
     required List<CustomizationGroupModel> additionalItems,
     File? image,
   });
+  Future<ApiResponse<void>> updateMenu({
+    required String menuId,
+    String? itemName,
+    String? categoryId,
+    double? price,
+    String? description,
+    int? stamp,
+    bool? isAvailable,
+    List<CustomizationGroupModel>? additionalItems,
+    File? image,
+  });
+  Future<ApiResponse<void>> deleteMenu(String id);
 }
 
 class MenuRemoteDataSourceImpl implements MenuRemoteDataSource {
@@ -98,10 +111,12 @@ class MenuRemoteDataSourceImpl implements MenuRemoteDataSource {
       "description": description,
       "stamp": stamp,
       "isAvailable": isAvailable,
-      "additionalitems": jsonEncode(
+      "additionalItems": jsonEncode(
         additionalItems.map((e) => e.toJson()).toList(),
       ),
     };
+
+    log("Create Menu Request Body: $data");
 
     if (image != null) {
       data["image"] = await dio.MultipartFile.fromFile(
@@ -113,5 +128,53 @@ class MenuRemoteDataSourceImpl implements MenuRemoteDataSource {
     final formData = dio.FormData.fromMap(data);
 
     return await apiService.post<void>(ApiEndpoints.createMenu, data: formData);
+  }
+
+  @override
+  Future<ApiResponse<void>> updateMenu({
+    required String menuId,
+    String? itemName,
+    String? categoryId,
+    double? price,
+    String? description,
+    int? stamp,
+    bool? isAvailable,
+    List<CustomizationGroupModel>? additionalItems,
+    File? image,
+  }) async {
+    final Map<String, dynamic> data = {};
+
+    if (itemName != null) data["itemName"] = itemName;
+    if (categoryId != null) data["category"] = categoryId;
+    if (price != null) data["price"] = price;
+    if (description != null) data["description"] = description;
+    if (stamp != null) data["stamp"] = stamp;
+    if (isAvailable != null) data["isAvailable"] = isAvailable;
+    if (additionalItems != null) {
+      data["additionalItems"] = jsonEncode(
+        additionalItems.map((e) => e.toJson()).toList(),
+      );
+    }
+
+    log("Update Menu Request Body: $data");
+
+    if (image != null) {
+      data["image"] = await dio.MultipartFile.fromFile(
+        image.path,
+        filename: image.path.split('/').last,
+      );
+    }
+
+    final formData = dio.FormData.fromMap(data);
+
+    return await apiService.patch<void>(
+      ApiEndpoints.updateMenu(menuId),
+      data: formData,
+    );
+  }
+
+  @override
+  Future<ApiResponse<void>> deleteMenu(String id) async {
+    return await apiService.delete<void>(ApiEndpoints.deleteMenu(id));
   }
 }

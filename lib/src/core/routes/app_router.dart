@@ -285,7 +285,7 @@ class AppRouter {
         path: RoutesPath.editItemPath,
         name: RoutesPath.editItemName,
         builder: (BuildContext context, GoRouterState state) {
-          return EditItemPage(item: state.extra as Map<String, dynamic>?);
+          return EditItemPage(item: state.extra as MenuItemModel?);
         },
       ),
       GoRoute(

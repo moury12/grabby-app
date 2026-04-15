@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import '../../../../src_export.dart';
 
 class EditItemPage extends StatefulWidget {
-  final Map<String, dynamic>? item;
+  final MenuItemModel? item;
 
   const EditItemPage({super.key, this.item});
 
@@ -18,20 +18,36 @@ class _EditItemPageState extends State<EditItemPage> {
   bool availableNow = true;
   File? _pickedImage;
 
-  final TextEditingController _nameController = TextEditingController(
-    text: kDebugMode ? "Matcha" : "",
-  );
-  final TextEditingController _priceController = TextEditingController(
-    text: kDebugMode ? "12" : "",
-  );
-  final TextEditingController _descriptionController = TextEditingController(
-    text: kDebugMode ? "Description" : "",
-  );
-  final TextEditingController _loyaltyController = TextEditingController(
-    text: kDebugMode ? "10" : "",
-  );
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _loyaltyController = TextEditingController();
   MenuCategoryModel? _selectedCategory;
   final List<CustomizationGroupModel> _customizationGroups = [];
+
+  bool get isEditing => widget.item != null;
+
+  @override
+  void initState() {
+    super.initState();
+    if (isEditing) {
+      final item = widget.item!;
+      _nameController.text = item.itemName;
+      _priceController.text = item.price.toString();
+      _descriptionController.text = item.description;
+      _loyaltyController.text = item.stamp.toString();
+      availableNow = item.isAvailable;
+      _customizationGroups.addAll(item.additionalItems);
+      log(
+        "Loaded ${item.additionalItems.length} - ${_customizationGroups.length} customizations for editing.",
+      );
+    } else if (kDebugMode) {
+      _nameController.text = "Matcha";
+      _priceController.text = "12";
+      _descriptionController.text = "Description";
+      _loyaltyController.text = "10";
+    }
+  }
 
   @override
   void dispose() {
@@ -60,8 +76,10 @@ class _EditItemPageState extends State<EditItemPage> {
           return Scaffold(
             appBar: AppBar(
               centerTitle: false,
-              title: const CustomText(
-                AppStaticStrings.editItem,
+              title: CustomText(
+                isEditing
+                    ? AppStaticStrings.editItem
+                    : AppStaticStrings.addItem,
                 variant: TextVariant.titleLarge,
               ),
             ),
@@ -195,6 +213,14 @@ class _EditItemPageState extends State<EditItemPage> {
 
   Widget _buildCategorySelection(BuildContext context, MenuState state) {
     final categories = state.categories;
+
+    // Pre-select category if editing and not yet set
+    if (isEditing && _selectedCategory == null && categories.isNotEmpty) {
+      _selectedCategory = categories.firstWhere(
+        (cat) => cat.id == widget.item!.categoryId,
+        orElse: () => categories.first,
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -419,18 +445,34 @@ class _EditItemPageState extends State<EditItemPage> {
               return;
             }
 
-            context.read<MenuBloc>().add(
-              CreateMenuItemEvent(
-                itemName: _nameController.text,
-                categoryId: _selectedCategory!.id,
-                price: double.tryParse(_priceController.text) ?? 0.0,
-                description: _descriptionController.text,
-                stamp: int.tryParse(_loyaltyController.text) ?? 0,
-                isAvailable: availableNow,
-                additionalItems: _customizationGroups,
-                image: _pickedImage,
-              ),
-            );
+            if (isEditing) {
+              context.read<MenuBloc>().add(
+                UpdateMenuItemEvent(
+                  menuId: widget.item!.id!,
+                  itemName: _nameController.text,
+                  categoryId: _selectedCategory!.id,
+                  price: double.tryParse(_priceController.text),
+                  description: _descriptionController.text,
+                  stamp: int.tryParse(_loyaltyController.text),
+                  isAvailable: availableNow,
+                  additionalItems: _customizationGroups,
+                  image: _pickedImage,
+                ),
+              );
+            } else {
+              context.read<MenuBloc>().add(
+                CreateMenuItemEvent(
+                  itemName: _nameController.text,
+                  categoryId: _selectedCategory!.id,
+                  price: double.tryParse(_priceController.text) ?? 0.0,
+                  description: _descriptionController.text,
+                  stamp: int.tryParse(_loyaltyController.text) ?? 0,
+                  isAvailable: availableNow,
+                  additionalItems: _customizationGroups,
+                  image: _pickedImage,
+                ),
+              );
+            }
           },
           backgroundColor: AppColors.kPrimaryColor,
         ),

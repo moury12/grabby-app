@@ -92,8 +92,15 @@ class _VerificationPageState extends State<VerificationPage> {
                   extra: {'email': email, 'code': _otpController.text},
                 );
               } else {
-                final role = widget.extra?['role'] as String? ?? 'customer';
-                if (role == 'shop') {
+                // Determine and persist role
+                final roleStr = widget.extra?['role'] as String? ?? 'customer';
+                UserRole userRole = roleStr == 'shop' ? UserRole.shop : UserRole.customer;
+                
+                // Update storage and bloc state
+                sl<OnboardingLocalDataSource>().saveUserRole(userRole);
+                sl<OnboardingSplashBloc>().updateSelectedRole(userRole);
+
+                if (userRole == UserRole.shop) {
                   context.goNamed(RoutesPath.businessInfoPath);
                 } else {
                   context.goNamed(RoutesPath.navigationPath);

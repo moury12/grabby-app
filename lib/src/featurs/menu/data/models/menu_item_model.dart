@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class MenuShopResponseModel {
   final List<MenuItemModel> data;
   final PaginationMeta? meta;
@@ -79,14 +81,33 @@ class MenuItemModel {
       description: json['description'] ?? '',
       stamp: json['stamp'] ?? 0,
       isAvailable: json['isAvailable'] ?? true,
-      additionalItems:
-          ((json['additionalItems'] ?? json['additionalitems']) as List?)
-              ?.map(
+      additionalItems: () {
+        final rawAdditionalItems =
+            json['additionalItems'] ?? json['additionalitems'];
+        if (rawAdditionalItems is String) {
+          try {
+            final decoded = jsonDecode(rawAdditionalItems) as List;
+            return decoded
+                .map(
+                  (e) => CustomizationGroupModel.fromJson(
+                    e as Map<String, dynamic>,
+                  ),
+                )
+                .toList();
+          } catch (_) {
+            return <CustomizationGroupModel>[];
+          }
+        }
+        if (rawAdditionalItems is List) {
+          return rawAdditionalItems
+              .map(
                 (e) =>
                     CustomizationGroupModel.fromJson(e as Map<String, dynamic>),
               )
-              .toList() ??
-          [],
+              .toList();
+        }
+        return <CustomizationGroupModel>[];
+      }(),
       image: json['image'],
       shopOwnerId: json['shopOwnerId'] is Map<String, dynamic>
           ? ShopOwnerInfo.fromJson(json['shopOwnerId'])
@@ -103,8 +124,8 @@ class MenuItemModel {
       'price': price,
       'description': description,
       'stamp': stamp,
-      'isAvailable': isAvailable,
-      'additionalitems': additionalItems.map((e) => e.toJson()).toList(),
+      "isAvailable": isAvailable,
+      "additionalItems": additionalItems.map((e) => e.toJson()).toList(),
     };
   }
 }

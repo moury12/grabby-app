@@ -68,16 +68,16 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
         body: BlocConsumer<ProfileBloc, ProfileState>(
           listener: (context, state) {
             if (state is ProfileLoaded) {
-              _nameController.text = state.profileData.authId.name;
-              _emailController.text = state.profileData.authId.email;
-              _phoneController.text = state.profileData.authId.phoneNumber;
-              _shopNameController.text = state.profileData.shopName ?? '';
-              _shopLicenseController.text =
-                  state.profileData.shopLicenseNumber ?? '';
-              _contactEmailController.text =
-                  state.profileData.contactEmail ?? '';
-              _contactPhoneController.text =
-                  state.profileData.contactPhone ?? '';
+              _nameController.text = state.profileData.name;
+              _emailController.text = state.profileData.email;
+              _phoneController.text = state.profileData.phoneNumber;
+              // _shopNameController.text = state.profileData.shopName ?? '';
+              // _shopLicenseController.text =
+              //     state.profileData.shopLicenseNumber ?? '';
+              // _contactEmailController.text =
+              //     state.profileData.contactEmail ?? '';
+              // _contactPhoneController.text =
+              //     state.profileData.contactPhone ?? '';
             }
           },
           builder: (context, state) {

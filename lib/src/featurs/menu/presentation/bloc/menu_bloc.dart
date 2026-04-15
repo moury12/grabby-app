@@ -13,6 +13,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     on<DeleteMenuCategoryEvent>(_onDeleteMenuCategory);
     on<GetMenuItemsEvent>(_onGetMenuItems);
     on<CreateMenuItemEvent>(_onCreateMenuItem);
+    on<UpdateMenuItemEvent>(_onUpdateMenuItem);
+    on<DeleteMenuItemEvent>(_onDeleteMenuItem);
   }
 
   Future<void> _onGetMenuItems(
@@ -129,6 +131,66 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
       );
       if (response.success) {
         // Refresh items list
+        final updatedItems = await _menuRepository.getMenuItems();
+        emit(state.copyWith(
+          status: MenuStatus.success,
+          successMessage: response.message,
+          items: updatedItems.data?.data ?? state.items,
+          meta: updatedItems.data?.meta ?? state.meta,
+        ));
+      } else {
+        emit(state.copyWith(status: MenuStatus.error, errorMessage: response.message));
+      }
+    } on ApiException catch (e) {
+      emit(state.copyWith(status: MenuStatus.error, errorMessage: e.message));
+    } catch (e) {
+      emit(state.copyWith(status: MenuStatus.error, errorMessage: 'Something went wrong.'));
+    }
+  }
+
+  Future<void> _onUpdateMenuItem(
+    UpdateMenuItemEvent event,
+    Emitter<MenuState> emit,
+  ) async {
+    emit(state.copyWith(status: MenuStatus.loading));
+    try {
+      final response = await _menuRepository.updateMenu(
+        menuId: event.menuId,
+        itemName: event.itemName,
+        categoryId: event.categoryId,
+        price: event.price,
+        description: event.description,
+        stamp: event.stamp,
+        isAvailable: event.isAvailable,
+        additionalItems: event.additionalItems,
+        image: event.image,
+      );
+      if (response.success) {
+        final updatedItems = await _menuRepository.getMenuItems();
+        emit(state.copyWith(
+          status: MenuStatus.success,
+          successMessage: response.message,
+          items: updatedItems.data?.data ?? state.items,
+          meta: updatedItems.data?.meta ?? state.meta,
+        ));
+      } else {
+        emit(state.copyWith(status: MenuStatus.error, errorMessage: response.message));
+      }
+    } on ApiException catch (e) {
+      emit(state.copyWith(status: MenuStatus.error, errorMessage: e.message));
+    } catch (e) {
+      emit(state.copyWith(status: MenuStatus.error, errorMessage: 'Something went wrong.'));
+    }
+  }
+
+  Future<void> _onDeleteMenuItem(
+    DeleteMenuItemEvent event,
+    Emitter<MenuState> emit,
+  ) async {
+    emit(state.copyWith(status: MenuStatus.loading));
+    try {
+      final response = await _menuRepository.deleteMenu(event.id);
+      if (response.success) {
         final updatedItems = await _menuRepository.getMenuItems();
         emit(state.copyWith(
           status: MenuStatus.success,

@@ -11,12 +11,12 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController(
-    text: kDebugMode ? "sayor98367@algarr.com" : "",
-  );
-  //   final _emailController = TextEditingController(
-  //   text: kDebugMode ? "lolini5440@bpotogo.com" : "",
+  // final _emailController = TextEditingController(
+  //   text: kDebugMode ? "sayor98367@algarr.com" : "",
   // );
+  final _emailController = TextEditingController(
+    text: kDebugMode ? "lolini5440@bpotogo.com" : "",
+  );
 
   final _passwordController = TextEditingController(
     text: kDebugMode ? "123456" : "",
@@ -54,12 +54,27 @@ class _LoginPageState extends State<LoginPage> {
               await localStorage.saveAccessToken(state.loginData.accessToken);
               await localStorage.saveRefreshToken(state.loginData.refreshToken);
 
+              // Extract and persist the actual role from the token
+              final roleStr = localStorage.getUserRoleFromToken();
+              UserRole userRole = UserRole.customer;
+              
+              if (roleStr == 'SHOP_OWNER') {
+                userRole = UserRole.shop;
+              } else {
+                userRole = UserRole.customer;
+              }
+
+              // Update data source so the role is remembered on app restart
+              await sl<OnboardingLocalDataSource>().saveUserRole(userRole);
+              
+              // Update the bloc's current selection state
+              sl<OnboardingSplashBloc>().selectedRole = userRole;
+
               if (context.mounted) {
                 CustomSnackbar.show(context, state.message);
 
-                // Navigate based on role
-                final role = sl<OnboardingSplashBloc>().selectedRole;
-                if (role == UserRole.shop) {
+                // Navigate based on the actual verified role
+                if (userRole == UserRole.shop) {
                   context.goNamed(RoutesPath.shopNavigationPath);
                 } else {
                   context.goNamed(RoutesPath.navigationPath);

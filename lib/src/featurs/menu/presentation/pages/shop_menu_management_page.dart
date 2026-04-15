@@ -52,6 +52,34 @@ class _ShopMenuManagementPageState extends State<ShopMenuManagementPage> {
     );
   }
 
+  void _showDeleteConfirmation(BuildContext context, String itemId) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: CustomText(
+          AppStaticStrings.deleteMenuItem,
+          variant: TextVariant.titleMedium,
+        ),
+        content: const CustomText(
+          "Are you sure you want to delete this menu item?",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const CustomText(AppStaticStrings.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.read<MenuBloc>().add(DeleteMenuItemEvent(itemId));
+            },
+            child: const CustomText(AppStaticStrings.delete, color: Colors.red),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -113,6 +141,9 @@ class _ShopMenuManagementPageState extends State<ShopMenuManagementPage> {
                     state.errorMessage!,
                     isError: true,
                   );
+                } else if (state.status == MenuStatus.success &&
+                    state.successMessage != null) {
+                  CustomSnackbar.show(context, state.successMessage!);
                 }
               },
               builder: (context, state) {
@@ -187,11 +218,10 @@ class _ShopMenuManagementPageState extends State<ShopMenuManagementPage> {
                                     }
                                   }
                                 },
-                                onDelete: () {
-                                  // Implement delete
-                                },
+                                onDelete: () =>
+                                    _showDeleteConfirmation(context, item.id!),
                                 onToggleVisibility: () {
-                                  // Implement visibility toggle
+                                  // Implement visibility toggle if needed
                                 },
                               );
                             },

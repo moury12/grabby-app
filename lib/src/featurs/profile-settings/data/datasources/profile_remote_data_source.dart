@@ -33,7 +33,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<ApiResponse<ProfileData>> getProfile() async {
     return await apiService.get<ProfileData>(
       ApiEndpoints.profile,
-      fromJson: (data) => ProfileData.fromJson(data as Map<String, dynamic>),
+      fromJson: (json) => ProfileData.fromJson(json['data'] as Map<String, dynamic>),
     );
   }
 
