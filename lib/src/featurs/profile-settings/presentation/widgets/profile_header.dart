@@ -7,6 +7,7 @@ class ProfileHeader extends StatelessWidget {
   final String phone;
   final String memberSince;
   final String? imageUrl;
+  final String? shopName;
   final VoidCallback onEditImage;
 
   const ProfileHeader({
@@ -16,6 +17,7 @@ class ProfileHeader extends StatelessWidget {
     required this.phone,
     required this.memberSince,
     this.imageUrl,
+    this.shopName,
     required this.onEditImage,
   });
 
@@ -31,10 +33,17 @@ class ProfileHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (shopName != null && shopName!.isNotEmpty)
+            CustomText(
+              shopName!,
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           CustomText(
             name,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
+            fontSize: shopName != null && shopName!.isNotEmpty ? 18 : 24,
+            fontWeight: shopName != null && shopName!.isNotEmpty ? FontWeight.w600 : FontWeight.bold,
             color: Colors.white,
           ),
 

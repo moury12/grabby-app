@@ -14,6 +14,8 @@ class AppStaticStrings {
 
   static const String gladToMeetYouAgain = "Glad to meet you again!";
   static const String loginAccount = "Login Account";
+  static const String shopContactPhone = "Shop Contact Phone";
+  static const String shopContactEmail = "Shop Contact Email";
   static const String emailAddressOrPhoneNumber =
       "Email Address Or Phone Number";
   static const String password = "Password";

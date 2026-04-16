@@ -28,6 +28,10 @@ class ProfileData {
   final String email;
   final String phoneNumber;
   final String? profileImage;
+  final String? businessLicense;
+  final String? shopLogo;
+  final int? registrationStep;
+  final String? approvalStatus;
   final String? addressName;
   final double? lat;
   final double? lon;
@@ -46,6 +50,10 @@ class ProfileData {
     required this.email,
     required this.phoneNumber,
     this.profileImage,
+    this.businessLicense,
+    this.shopLogo,
+    this.registrationStep,
+    this.approvalStatus,
     this.addressName,
     this.lat,
     this.lon,
@@ -59,6 +67,7 @@ class ProfileData {
   });
 
   factory ProfileData.fromJson(Map<String, dynamic> json) {
+    final location = json['location'] as Map<String, dynamic>?;
     return ProfileData(
       id: json['_id'] ?? '',
       authId: json['authId'] != null 
@@ -68,9 +77,13 @@ class ProfileData {
       email: json['email'] ?? '',
       phoneNumber: json['phone_number'] ?? '',
       profileImage: json['profile_image'],
-      addressName: json['addressName'],
-      lat: (json['lat'] as num?)?.toDouble(),
-      lon: (json['lon'] as num?)?.toDouble(),
+      businessLicense: json['business_license'],
+      shopLogo: json['shop_logo'],
+      registrationStep: json['registration_step'],
+      approvalStatus: json['approval_status'],
+      addressName: location?['address'] ?? json['addressName'],
+      lat: (location?['lat'] as num?)?.toDouble() ?? (json['lat'] as num?)?.toDouble(),
+      lon: (location?['lng'] as num?)?.toDouble() ?? (json['lon'] as num?)?.toDouble(),
       contactEmail: json['contact_email'],
       contactPhone: json['contact_phone'],
       shopLicenseNumber: json['shop_license_number'],

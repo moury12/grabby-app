@@ -76,6 +76,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       print('Update Profile Response: $response');
 
       if (response.success) {
+        emit(ProfileUpdateSuccess());
         // Refresh profile after update
         add(GetProfileEvent());
       } else {

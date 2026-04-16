@@ -35,7 +35,8 @@ class ProfilePage extends StatelessWidget {
                           email: profile.email,
                           phone: profile.phoneNumber,
                           memberSince: memberSince,
-                          imageUrl: profile.profileImage, // Use network image
+                          imageUrl: profile.profileImage,
+                          shopName: profile.authId.role == 'SHOP_OWNER' ? profile.shopName : null,
                           onEditImage: () {
                             context.pushNamed(RoutesPath.personalInfoPath);
                           },
