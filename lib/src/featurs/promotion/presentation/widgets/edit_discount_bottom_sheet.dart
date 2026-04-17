@@ -3,7 +3,8 @@ import '../../../../src_export.dart';
 
 class EditDiscountBottomSheet extends StatefulWidget {
   final String? title;
-  const EditDiscountBottomSheet({super.key, this.title});
+  final PromotionModel? promotion; // For edit mode
+  const EditDiscountBottomSheet({super.key, this.title, this.promotion});
 
   @override
   State<EditDiscountBottomSheet> createState() =>
@@ -11,19 +12,48 @@ class EditDiscountBottomSheet extends StatefulWidget {
 }
 
 class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
-  final List<String> menuItems = [
-    "Cappuccino",
-    "Latte",
-    "Americano",
-    "Croissant",
-    "Muffin",
-    "Espresso",
-    "Flat White",
-  ];
-
-  final Set<String> selectedItems = {"Cappuccino"};
+  final Set<String> selectedItems = {};
   bool isDropdownOpen = false;
   File? _pickedImage;
+
+  // Form controllers
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _occasionController = TextEditingController();
+  final TextEditingController _startDateController = TextEditingController();
+  final TextEditingController _endDateController = TextEditingController();
+  final TextEditingController _discountController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize form with existing promotion data if editing
+    if (widget.promotion != null) {
+      _nameController.text = widget.promotion!.discountName;
+      _occasionController.text = widget.promotion!.eventName ?? '';
+      _startDateController.text = widget.promotion!.startDate.toString().split('T')[0];
+      _endDateController.text = widget.promotion!.endDate.toString().split('T')[0];
+      _discountController.text = widget.promotion!.discountValue.toString();
+      selectedItems.addAll(widget.promotion!.specificItems.map((item) => item.itemName));
+    }
+
+    // Load menu items if not already loaded
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final menuState = context.read<MenuBloc>().state;
+      if (menuState.items.isEmpty && menuState.status != MenuStatus.loading) {
+        context.read<MenuBloc>().add(GetMenuItemsEvent());
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _occasionController.dispose();
+    _startDateController.dispose();
+    _endDateController.dispose();
+    _discountController.dispose();
+    super.dispose();
+  }
 
   void toggleSelection(String item) {
     setState(() {
@@ -35,123 +65,135 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
     });
   }
 
+  void _submitForm() {
+    if (_nameController.text.isEmpty ||
+        _startDateController.text.isEmpty ||
+        _endDateController.text.isEmpty ||
+        _discountController.text.isEmpty ||
+        selectedItems.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all required fields')),
+      );
+      return;
+    }
+
+    final data = {
+      'name': _nameController.text,
+      'eventOccasion': _occasionController.text.isNotEmpty ? _occasionController.text : null,
+      'startDate': _startDateController.text,
+      'endDate': _endDateController.text,
+      'discountPercentage': int.parse(_discountController.text),
+      'specificItems': selectedItems.map((item) => {'name': item}).toList(),
+      if (_pickedImage != null) 'image': _pickedImage!.path,
+    };
+
+    final bloc = context.read<PromotionBloc>();
+    if (widget.promotion != null) {
+      // Edit mode
+      bloc.add(UpdatePromotionEvent(widget.promotion!.id, data));
+    } else {
+      // Create mode
+      bloc.add(CreatePromotionEvent(data));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: AppPadding.getPadding16(context),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        spacing: 8,
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            spacing: 6,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CustomText(
-                widget.title ?? AppStaticStrings.editDiscount,
-                variant: TextVariant.headlineSmall,
-                fontWeight: FontWeight.bold,
-              ),
-              IconButton(
-                onPressed: () => context.pop(),
-                icon: const Icon(Icons.close),
-              ),
-            ],
-          ),
-
-          _buildFieldLabel(AppStaticStrings.promotionImage),
-          _buildImagePicker(),
-
-          _buildFieldLabel(AppStaticStrings.discountName),
-          const CustomTextField(hintText: "Cappuccino"),
-
-          _buildFieldLabel(AppStaticStrings.eventOccasionOptional),
-          const CustomTextField(hintText: ""),
-
-          Row(
-            spacing: 6,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildFieldLabel(AppStaticStrings.startDate),
-                    const CustomTextField(hintText: ""),
-                  ],
+    return BlocListener<PromotionBloc, PromotionState>(
+      listener: (context, state) {
+        if (state is PromotionOperationSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+          context.pop();
+        } else if (state is PromotionError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        }
+      },
+      child: Container(
+        padding: AppPadding.getPadding16(context),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          spacing: 8,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              spacing: 6,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CustomText(
+                  widget.title ?? AppStaticStrings.editDiscount,
+                  variant: TextVariant.headlineSmall,
+                  fontWeight: FontWeight.bold,
                 ),
-              ),
-
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildFieldLabel(AppStaticStrings.endDate),
-                    const CustomTextField(hintText: ""),
-                  ],
+                IconButton(
+                  onPressed: () => context.pop(),
+                  icon: const Icon(Icons.close),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
 
-          _buildFieldLabel(AppStaticStrings.appliedToItem),
-          _buildMultiSelectField(),
-          if (isDropdownOpen) _buildItemsList(),
-          _buildFieldLabel(AppStaticStrings.discountPercentage),
-          const CustomTextField(hintText: ""),
+            _buildFieldLabel(AppStaticStrings.promotionImage),
+            _buildImagePicker(),
 
-          // Container(
-          //   padding: const EdgeInsets.all(12),
-          //   decoration: BoxDecoration(
-          //     color: AppColors.kBackgroundColor,
-          //     borderRadius: BorderRadius.circular(12),
-          //   ),
-          //   child: Row(
-          //     spacing: 6,
-          //     children: [
-          //       Expanded(
-          //         child: Column(
-          //           crossAxisAlignment: CrossAxisAlignment.start,
-          //           children: [
-          //             CustomText(
-          //               AppStaticStrings.discountPercentage,
-          //               variant: TextVariant.titleSmall,
-          //               fontWeight: FontWeight.bold,
-          //             ),
-          //             CustomText(
-          //               AppStaticStrings.makeDiscountActiveRightAway,
-          //               variant: TextVariant.labelSmall,
-          //               color: AppColors.kSecondaryTextColor,
-          //             ),
-          //           ],
-          //         ),
-          //       ),
-          //       Switch(
-          //         value: true,
-          //         onChanged: (val) {},
-          //         activeColor: AppColors.kPrimaryColor,
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          CustomButton(
-            text: widget.title != null
-                ? AppStaticStrings.addPromotion
-                : AppStaticStrings.saveChanges,
-            onPressed: () => context.pop(),
-          ),
+            _buildFieldLabel(AppStaticStrings.discountName),
+            CustomTextField(textEditingController: _nameController, hintText: "Cappuccino"),
 
-          CustomButton(
-            text: AppStaticStrings.cancel,
-            onPressed: () => context.pop(),
-            isOutlined: true,
-          ),
-          const SizedBox(height: 10),
-        ],
+            _buildFieldLabel(AppStaticStrings.eventOccasionOptional),
+            CustomTextField(textEditingController: _occasionController, hintText: ""),
+
+            Row(
+              spacing: 6,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildFieldLabel(AppStaticStrings.startDate),
+                      CustomTextField(textEditingController: _startDateController, hintText: ""),
+                    ],
+                  ),
+                ),
+
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildFieldLabel(AppStaticStrings.endDate),
+                      CustomTextField(textEditingController: _endDateController, hintText: ""),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+
+            _buildFieldLabel(AppStaticStrings.appliedToItem),
+            _buildMultiSelectField(),
+            if (isDropdownOpen) _buildItemsList(),
+            _buildFieldLabel(AppStaticStrings.discountPercentage),
+            CustomTextField(textEditingController: _discountController, hintText: ""),
+
+            CustomButton(
+              text: widget.title != null
+                  ? AppStaticStrings.addPromotion
+                  : AppStaticStrings.saveChanges,
+              onPressed: _submitForm,
+            ),
+
+            CustomButton(
+              text: AppStaticStrings.cancel,
+              onPressed: () => context.pop(),
+              isOutlined: true,
+            ),
+            const SizedBox(height: 10),
+          ],
+        ),
       ),
     );
   }
@@ -289,41 +331,46 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
   }
 
   Widget _buildItemsList() {
-    return Container(
-      constraints: const BoxConstraints(maxHeight: 200),
-      margin: const EdgeInsets.only(top: 4),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(
-          color: AppColors.kSecondaryTextColor.withValues(alpha: 0.3),
-        ),
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: menuItems.length,
-        itemBuilder: (context, index) {
-          final item = menuItems[index];
-          final isSelected = selectedItems.contains(item);
-          return ListTile(
-            dense: true,
-            title: CustomText(item, variant: TextVariant.labelMedium),
-            trailing: Checkbox(
-              value: isSelected,
-              onChanged: (_) => toggleSelection(item),
-              activeColor: AppColors.kPrimaryColor,
+    return BlocBuilder<MenuBloc, MenuState>(
+      builder: (context, menuState) {
+        final menuItems = menuState.items;
+        return Container(
+          constraints: const BoxConstraints(maxHeight: 200),
+          margin: const EdgeInsets.only(top: 4),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(
+              color: AppColors.kSecondaryTextColor.withValues(alpha: 0.3),
             ),
-            onTap: () => toggleSelection(item),
-          );
-        },
-      ),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: menuItems.length,
+            itemBuilder: (context, index) {
+              final item = menuItems[index];
+              final isSelected = selectedItems.contains(item.itemName);
+              return ListTile(
+                dense: true,
+                title: CustomText(item.itemName, variant: TextVariant.labelMedium),
+                trailing: Checkbox(
+                  value: isSelected,
+                  onChanged: (_) => toggleSelection(item.itemName),
+                  activeColor: AppColors.kPrimaryColor,
+                ),
+                onTap: () => toggleSelection(item.itemName),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

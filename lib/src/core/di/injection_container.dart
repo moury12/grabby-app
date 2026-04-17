@@ -1,8 +1,12 @@
 import 'package:get_it/get_it.dart';
 import 'package:grabby_app/src/featurs/profile-settings/data/services/branch_service.dart';
 import 'package:grabby_app/src/featurs/profile-settings/presentation/bloc/branch/branch_bloc.dart';
+import 'package:grabby_app/src/featurs/promotion/data/datasources/promotion_remote_data_source.dart';
+import 'package:grabby_app/src/featurs/promotion/data/repositories/promotion_repository_impl.dart';
+import 'package:grabby_app/src/featurs/promotion/domain/repositories/promotion_repository.dart';
+import 'package:grabby_app/src/featurs/promotion/presentation/bloc/promotion_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../src_export.dart';
+import '../../src_export.dart' ;
 
 final sl = GetIt.instance;
 
@@ -86,4 +90,18 @@ Future<void> init() async {
 
   // Bloc
   sl.registerFactory<MenuBloc>(() => MenuBloc(sl()));
+
+  // ─── Feature: Promotion ────────────────────────────────────────────────────
+  // Data source
+  sl.registerLazySingleton<PromotionRemoteDataSource>(
+    () => PromotionRemoteDataSourceImpl(sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<PromotionRepository>(
+    () => PromotionRepositoryImpl(sl()),
+  );
+
+  // Bloc
+  sl.registerFactory<PromotionBloc>(() => PromotionBloc(sl()));
 }
