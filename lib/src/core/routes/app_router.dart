@@ -1,3 +1,5 @@
+import 'package:grabby_app/src/featurs/profile-settings/presentation/bloc/branch/branch_bloc.dart';
+
 import '../../src_export.dart';
 
 class AppRouter {
@@ -257,14 +259,20 @@ class AppRouter {
         path: RoutesPath.branchManagementPath,
         name: RoutesPath.branchManagementName,
         builder: (BuildContext context, GoRouterState state) {
-          return const BranchManagementPage();
+          return BlocProvider(
+            create: (_) => sl<BranchBloc>()..add(GetBranchesEvent()),
+            child: const BranchManagementPage(),
+          );
         },
       ),
       GoRoute(
         path: RoutesPath.branchTimingsPath,
         name: RoutesPath.branchTimingsName,
         builder: (BuildContext context, GoRouterState state) {
-          return const BranchTimingsPage();
+          return BlocProvider(
+            create: (_) => sl<BranchBloc>()..add(GetBranchesEvent()),
+            child: const BranchTimingsPage(),
+          );
         },
       ),
       GoRoute(

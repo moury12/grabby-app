@@ -159,20 +159,20 @@ class MenuManagementItemCard extends StatelessWidget {
                         iconColor: Colors.red,
                       ),
                     ),
-                    Expanded(
-                      child: _buildActionButton(
-                        icon: isVisible
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                        label: isVisible
-                            ? AppStaticStrings.hide
-                            : AppStaticStrings.show,
-                        onTap: onToggleVisibility,
-                        color: const Color(0xffF5F5F5),
-                        textColor: AppColors.kSecondaryTextColor,
-                        iconColor: AppColors.kSecondaryTextColor,
-                      ),
-                    ),
+                    // Expanded(
+                    //   child: _buildActionButton(
+                    //     icon: isVisible
+                    //         ? Icons.visibility_off_outlined
+                    //         : Icons.visibility_outlined,
+                    //     label: isVisible
+                    //         ? AppStaticStrings.hide
+                    //         : AppStaticStrings.show,
+                    //     onTap: onToggleVisibility,
+                    //     color: const Color(0xffF5F5F5),
+                    //     textColor: AppColors.kSecondaryTextColor,
+                    //     iconColor: AppColors.kSecondaryTextColor,
+                    //   ),
+                    // ),
                   ],
                 ),
               ],

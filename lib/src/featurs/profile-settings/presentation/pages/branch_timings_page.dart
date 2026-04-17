@@ -1,3 +1,5 @@
+import 'package:grabby_app/src/featurs/profile-settings/data/models/branch_model.dart';
+import 'package:grabby_app/src/featurs/profile-settings/presentation/bloc/branch/branch_bloc.dart';
 import '../../../../src_export.dart';
 
 class BranchTimingsPage extends StatefulWidget {
@@ -8,22 +10,36 @@ class BranchTimingsPage extends StatefulWidget {
 }
 
 class _BranchTimingsPageState extends State<BranchTimingsPage> {
-  String selectedBranch = AppStaticStrings.mainBranch;
-  final List<String> branches = [
-    AppStaticStrings.mainBranch,
-    "Downtown Branch",
-    "Marina District",
-  ];
+  ShopBranchModel? _selectedBranch;
 
   final Map<String, Map<String, dynamic>> _timings = {
-    "Monday": {"isOpen": true, "open": "7:00 AM", "close": "10:00 PM"},
-    "Tuesday": {"isOpen": true, "open": "7:00 AM", "close": "10:00 PM"},
-    "Wednesday": {"isOpen": true, "open": "7:00 AM", "close": "10:00 PM"},
-    "Thursday": {"isOpen": true, "open": "7:00 AM", "close": "10:00 PM"},
-    "Friday": {"isOpen": true, "open": "7:00 AM", "close": "10:00 PM"},
-    "Saturday": {"isOpen": true, "open": "7:00 AM", "close": "10:00 PM"},
-    "Sunday": {"isOpen": true, "open": "7:00 AM", "close": "10:00 PM"},
+    "Monday": {"isOpen": true, "open": "8:00 AM", "close": "10:00 PM"},
+    "Tuesday": {"isOpen": true, "open": "8:00 AM", "close": "10:00 PM"},
+    "Wednesday": {"isOpen": true, "open": "8:00 AM", "close": "10:00 PM"},
+    "Thursday": {"isOpen": true, "open": "8:00 AM", "close": "10:00 PM"},
+    "Friday": {"isOpen": true, "open": "8:00 AM", "close": "10:00 PM"},
+    "Saturday": {"isOpen": true, "open": "8:00 AM", "close": "10:00 PM"},
+    "Sunday": {"isOpen": true, "open": "8:00 AM", "close": "10:00 PM"},
   };
+
+  void _updateTimingsFromBranch(ShopBranchModel branch) {
+    if (branch.availability.isNotEmpty) {
+      for (var a in branch.availability) {
+        if (_timings.containsKey(a.day)) {
+          _timings[a.day] = {
+            "isOpen": !a.isClosed,
+            "open": a.open,
+            "close": a.close,
+          };
+        }
+      }
+    } else {
+      // reset to default if empty
+      _timings.forEach((key, value) {
+        _timings[key] = {"isOpen": true, "open": "8:00 AM", "close": "10:00 PM"};
+      });
+    }
+  }
 
   Future<void> _selectTime(String day, bool isOpening) async {
     final TimeOfDay? picked = await showTimePicker(
@@ -42,44 +58,91 @@ class _BranchTimingsPageState extends State<BranchTimingsPage> {
     }
   }
 
+  void _saveTimings() {
+    if (_selectedBranch == null) return;
+    List<Map<String, dynamic>> availability = [];
+    _timings.forEach((day, data) {
+      availability.add({
+        "day": day,
+        "open": data["open"],
+        "close": data["close"],
+        "isClosed": !(data["isOpen"] as bool),
+      });
+    });
+    context.read<BranchBloc>().add(UpdateBranchAvailabilityEvent(_selectedBranch!.id, availability));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: false,
-        title: CustomText(
-          AppStaticStrings.perBranch,
-          variant: TextVariant.titleLarge,
-        ),
-        actions: [_buildBranchDropdown()],
-      ),
-      body: SingleChildScrollView(
-        padding: AppPadding.getPadding12H(context),
-        child: Column(
-          spacing: 8,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ..._timings.entries.map((entry) {
-              return TimingRow(
-                day: entry.key,
-                isOpen: entry.value["isOpen"],
-                openingTime: entry.value["open"],
-                closingTime: entry.value["close"],
-                onOpeningTimeTap: () => _selectTime(entry.key, true),
-                onClosingTimeTap: () => _selectTime(entry.key, false),
-              );
-            }),
+    return BlocConsumer<BranchBloc, BranchState>(
+      listener: (context, state) {
+        if (state is BranchOperationSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+        } else if (state is BranchError) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message), backgroundColor: Colors.red));
+        }
+      },
+      buildWhen: (previous, current) => current is BranchesLoaded || current is BranchLoading || current is BranchInitial,
+      builder: (context, state) {
+        List<ShopBranchModel> branches = [];
+        if (state is BranchesLoaded) {
+          branches = state.branches;
+          if (branches.isNotEmpty && _selectedBranch == null) {
+            _selectedBranch = branches.first;
+            _updateTimingsFromBranch(_selectedBranch!);
+          }
+        }
 
-            _buildHoursSummaryBox(context),
-
-            _buildImportantNotes(context),
-          ],
-        ),
-      ),
+        return Scaffold(
+          appBar: AppBar(
+            centerTitle: false,
+            title: CustomText(
+              AppStaticStrings.perBranch,
+              variant: TextVariant.titleLarge,
+            ),
+            actions: [_buildBranchDropdown(branches)],
+          ),
+          body: (state is BranchLoading && branches.isEmpty)
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                  padding: AppPadding.getPadding12H(context),
+                  child: Column(
+                    spacing: 8,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ..._timings.entries.map((entry) {
+                        return TimingRow(
+                          day: entry.key,
+                          isOpen: entry.value["isOpen"],
+                          openingTime: entry.value["open"],
+                          closingTime: entry.value["close"],
+                          onOpeningTimeTap: () => _selectTime(entry.key, true),
+                          onClosingTimeTap: () => _selectTime(entry.key, false),
+                          onToggle: (val) {
+                            setState(() {
+                              _timings[entry.key]!["isOpen"] = val;
+                            });
+                          },
+                        );
+                      }),
+                      _buildHoursSummaryBox(context),
+                      _buildImportantNotes(context),
+                      space2H,
+                      CustomButton(
+                        text: "Save Timings",
+                        onPressed: _selectedBranch != null ? _saveTimings : () {},
+                      ),
+                      space4H,
+                    ],
+                  ),
+                ),
+        );
+      },
     );
   }
 
-  Widget _buildBranchDropdown() {
+  Widget _buildBranchDropdown(List<ShopBranchModel> branches) {
+    if (branches.isEmpty) return const SizedBox();
     return Container(
       height: 40,
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -88,22 +151,19 @@ class _BranchTimingsPageState extends State<BranchTimingsPage> {
         borderRadius: BorderRadius.circular(appRadius),
       ),
       child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: selectedBranch,
-          icon: const Icon(
-            Icons.keyboard_arrow_down,
-            size: 20,
-            color: AppColors.kPrimaryColor,
-          ),
-          style: const TextStyle(
-            color: AppColors.kPrimaryColor,
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-          ),
-          onChanged: (val) => setState(() => selectedBranch = val!),
-          items: branches
-              .map((b) => DropdownMenuItem(value: b, child: Text(b)))
-              .toList(),
+        child: DropdownButton<ShopBranchModel>(
+          value: _selectedBranch,
+          icon: const Icon(Icons.keyboard_arrow_down, size: 20, color: AppColors.kPrimaryColor),
+          style: const TextStyle(color: AppColors.kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 12),
+          onChanged: (val) {
+            if (val != null) {
+              setState(() {
+                _selectedBranch = val;
+                _updateTimingsFromBranch(val);
+              });
+            }
+          },
+          items: branches.map((b) => DropdownMenuItem(value: b, child: Text(b.branchName.isNotEmpty ? b.branchName : "Unnamed Branch"))).toList(),
         ),
       ),
     );

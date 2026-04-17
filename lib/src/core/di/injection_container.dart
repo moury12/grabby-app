@@ -1,4 +1,6 @@
 import 'package:get_it/get_it.dart';
+import 'package:grabby_app/src/featurs/profile-settings/data/services/branch_service.dart';
+import 'package:grabby_app/src/featurs/profile-settings/presentation/bloc/branch/branch_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../src_export.dart';
 
@@ -65,6 +67,13 @@ Future<void> init() async {
   sl.registerFactory<ProfileBloc>(
     () => ProfileBloc(profileRepository: sl(), locationService: sl()),
   );
+
+  // ─── Feature: Branch ───────────────────────────────────────────────────────
+  // Service
+  sl.registerLazySingleton<BranchService>(() => BranchService(sl()));
+
+  // Bloc
+  sl.registerFactory<BranchBloc>(() => BranchBloc(branchService: sl()));
 
   // ─── Feature: Menu ─────────────────────────────────────────────────────────
   // Data source

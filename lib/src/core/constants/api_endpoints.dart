@@ -38,4 +38,10 @@ class ApiEndpoints {
   static const String getShopMenuItems = "/menu/shop";
   static String updateMenu(String id) => "/menu/$id";
   static String deleteMenu(String id) => "/menu/$id";
+
+  // ─── Branch Management ──────────────────────────────────────────────────────
+  static const String branchBase = "/shop-owner/branch";
+  static String branchUpdate(String id) => "/shop-owner/branch/$id";
+  static String branchDelete(String id) => "/shop-owner/branch/$id";
+  static String branchAvailability(String id) => "/shop-owner/branch/$id/availability";
 }

@@ -1,3 +1,5 @@
+import 'package:grabby_app/src/featurs/profile-settings/data/models/branch_model.dart';
+import 'package:grabby_app/src/featurs/profile-settings/presentation/bloc/branch/branch_bloc.dart';
 import '../../../../src_export.dart';
 
 class BranchManagementPage extends StatefulWidget {
@@ -9,82 +11,104 @@ class BranchManagementPage extends StatefulWidget {
 
 class _BranchManagementPageState extends State<BranchManagementPage> {
   void _showAddBranch() {
+    final bloc = context.read<BranchBloc>();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => const AddBranchBottomSheet(),
+      builder: (context) => BlocProvider.value(
+        value: bloc,
+        child: const AddBranchBottomSheet(),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: CustomText(
-          AppStaticStrings.branchManagement,
-          variant: TextVariant.headlineSmall,
-          // fontWeight: FontWeight.bold,
-        ),
-        actions: [
-          FloatingActionButton.small(
-            onPressed: _showAddBranch,
-            child: Icon(Icons.add),
+    return BlocListener<BranchBloc, BranchState>(
+      listener: (context, state) {
+        if (state is BranchOperationSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        } else if (state is BranchError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message, style: const TextStyle(color: Colors.white))),
+            // backgroundColor: Colors.red,
+          );
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: CustomText(
+            AppStaticStrings.branchManagement,
+            variant: TextVariant.headlineSmall,
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: AppPadding.getPadding12H(context),
-        child: Column(
-          children: [
-            _buildSummaryCard(context),
-            space2H,
-            BranchCard(
-              name: "Downtown Branch",
-              isDefault: true,
-              address: "123 Main Street, San Francisco, CA 94102",
-              phone: "+1 (555) 123-4567",
-              hours: "Mon-Fri: 7AM-8PM, Sat-Sun: 8AM-6PM",
-              onEdit: () {
-                _showAddBranch();
-              },
-              onDelete: () {},
-            ),
-            BranchCard(
-              name: "Marina District",
-              address: "123 Main Street, San Francisco, CA 94102",
-              phone: "+1 (555) 123-4567",
-              hours: "Mon-Fri: 7AM-8PM, Sat-Sun: 8AM-6PM",
-              onEdit: () {
-                _showAddBranch();
-              },
-              onDelete: () {},
+          actions: [
+            FloatingActionButton.small(
+              onPressed: _showAddBranch,
+              child: const Icon(Icons.add),
             ),
           ],
+        ),
+        body: BlocBuilder<BranchBloc, BranchState>(
+          buildWhen: (previous, current) => current is BranchesLoaded || current is BranchLoading || current is BranchInitial,
+          builder: (context, state) {
+            if (state is BranchLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is BranchesLoaded) {
+              final branches = state.branches;
+              if (branches.isEmpty) {
+                return const Center(child: Text("No branches found."));
+              }
+              return SingleChildScrollView(
+                padding: AppPadding.getPadding12H(context),
+                child: Column(
+                  children: [
+                    _buildSummaryCard(context, branches),
+                    space2H,
+                    ...branches.map((branch) => BranchCard(
+                      name: branch.branchName.isNotEmpty ? branch.branchName : "Unnamed Branch",
+                      address: branch.address,
+                      phone: branch.phoneNumber,
+                      hours: branch.availability.isNotEmpty ? "Custom Hours" : "Not Set",
+                      onEdit: () {
+                        // TODO: Implement Edit
+                      },
+                      onDelete: () {
+                        context.read<BranchBloc>().add(DeleteBranchEvent(branch.id));
+                      },
+                    )),
+                  ],
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          },
         ),
       ),
     );
   }
 
-  Widget _buildSummaryCard(BuildContext context) {
+  Widget _buildSummaryCard(BuildContext context, List<ShopBranchModel> branches) {
     return Padding(
       padding: AppPadding.getPadding12(context),
-      child: const Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _SummaryItem(
             label: AppStaticStrings.totalBranches,
-            value: "3",
+            value: "${branches.length}",
             color: AppColors.kPrimaryColor,
           ),
           _SummaryItem(
             label: AppStaticStrings.active,
-            value: "2",
+            value: "${branches.length}",
             color: AppColors.kGreenColor,
           ),
-          _SummaryItem(
+          const _SummaryItem(
             label: AppStaticStrings.inactive,
-            value: "1",
+            value: "0",
             color: AppColors.kSecondaryTextColor,
           ),
         ],

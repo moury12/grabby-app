@@ -1,7 +1,5 @@
 import 'dart:io';
 import '../../../../src_export.dart';
-import '../datasources/profile_remote_data_source.dart';
-import '../models/profile_response_model.dart';
 
 abstract class ProfileRepository {
   Future<ApiResponse<ProfileData>> getProfile();

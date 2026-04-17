@@ -1,8 +1,6 @@
 import 'dart:io';
 import '../../../../src_export.dart';
-import '../models/profile_response_model.dart';
 import 'package:dio/dio.dart' as dio;
-import 'package:jwt_decoder/jwt_decoder.dart';
 
 abstract class ProfileRemoteDataSource {
   Future<ApiResponse<ProfileData>> getProfile();
@@ -33,7 +31,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<ApiResponse<ProfileData>> getProfile() async {
     return await apiService.get<ProfileData>(
       ApiEndpoints.profile,
-      fromJson: (json) => ProfileData.fromJson(json['data'] as Map<String, dynamic>),
+      fromJson: (json) =>
+          ProfileData.fromJson(json['data'] as Map<String, dynamic>),
     );
   }
 
