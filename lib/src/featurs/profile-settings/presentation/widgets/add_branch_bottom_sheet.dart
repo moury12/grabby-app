@@ -1,9 +1,13 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:grabby_app/src/featurs/profile-settings/data/models/branch_model.dart';
 import 'package:grabby_app/src/featurs/profile-settings/presentation/bloc/branch/branch_bloc.dart';
 
 import '../../../../src_export.dart';
 
 class AddBranchBottomSheet extends StatefulWidget {
-  const AddBranchBottomSheet({super.key});
+  final ShopBranchModel? branch;
+
+  const AddBranchBottomSheet({super.key, this.branch});
 
   @override
   State<AddBranchBottomSheet> createState() => _AddBranchBottomSheetState();
@@ -16,6 +20,20 @@ class _AddBranchBottomSheetState extends State<AddBranchBottomSheet> {
   double _lat = 0.0;
   double _lng = 0.0;
   bool _applyMenuForAll = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.branch != null) {
+      final branch = widget.branch!;
+      _nameController.text = branch.branchName;
+      _addressController.text = branch.address;
+      _phoneController.text = branch.phoneNumber;
+      _lat = branch.lat;
+      _lng = branch.lng;
+      _applyMenuForAll = branch.applyMenuForAll;
+    }
+  }
 
   @override
   void dispose() {
@@ -42,7 +60,14 @@ class _AddBranchBottomSheetState extends State<AddBranchBottomSheet> {
       "applyMenuForAll": _applyMenuForAll,
     };
 
-    context.read<BranchBloc>().add(CreateBranchEvent(data));
+    if (widget.branch != null) {
+      context.read<BranchBloc>().add(
+        UpdateBranchEvent(widget.branch!.id, data),
+      );
+    } else {
+      context.read<BranchBloc>().add(CreateBranchEvent(data));
+    }
+
     context.pop();
   }
 
@@ -69,7 +94,7 @@ class _AddBranchBottomSheetState extends State<AddBranchBottomSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CustomText(
-                  AppStaticStrings.addNewBranch,
+                  widget.branch != null ? 'Edit Branch' : AppStaticStrings.addNewBranch,
                   variant: TextVariant.headlineSmall,
                   fontWeight: FontWeight.bold,
                 ),
@@ -90,13 +115,15 @@ class _AddBranchBottomSheetState extends State<AddBranchBottomSheet> {
                   RoutesPath.locationSelectionName,
                 );
                 if (result != null && result is Map<String, dynamic>) {
+                  final position = result['position'] as LatLng?;
                   setState(() {
                     _addressController.text = result['address'] ?? '';
-                    _lat = result['lat'] as double? ?? 0.0;
-                    _lng = result['lng'] as double? ?? 0.0;
+                    _lat = position?.latitude ?? 0.0;
+                    _lng = position?.longitude ?? 0.0;
                   });
                 }
               },
+
               child: CustomTextField(
                 title: AppStaticStrings.fullAddress,
                 textEditingController: _addressController,
@@ -147,7 +174,7 @@ class _AddBranchBottomSheetState extends State<AddBranchBottomSheet> {
               ),
             ),
             CustomButton(
-              text: AppStaticStrings.addBranch,
+              text: widget.branch != null ? 'Update Branch' : AppStaticStrings.addBranch,
               onPressed: _submit,
             ),
             CustomButton(
@@ -158,17 +185,6 @@ class _AddBranchBottomSheetState extends State<AddBranchBottomSheet> {
             const SizedBox(height: 10),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildFieldLabel(String label) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: CustomText(
-        label,
-        variant: TextVariant.labelMedium,
-        fontWeight: FontWeight.bold,
       ),
     );
   }

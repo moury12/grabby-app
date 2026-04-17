@@ -19,6 +19,7 @@ class BranchBloc extends Bloc<BranchEvent, BranchState> {
     on<DeleteBranchEvent>(_onDeleteBranch);
     on<GetBranchAvailabilityEvent>(_onGetBranchAvailability);
     on<UpdateBranchAvailabilityEvent>(_onUpdateBranchAvailability);
+    on<GetBranchDetailsEvent>(_onGetBranchDetails);
   }
 
   Future<void> _onGetBranches(
@@ -136,6 +137,24 @@ class BranchBloc extends Bloc<BranchEvent, BranchState> {
       emit(BranchError(e.message));
     } catch (e) {
       emit(BranchError('Failed to update branch availability.'));
+    }
+  }
+  Future<void> _onGetBranchDetails(
+    GetBranchDetailsEvent event,
+    Emitter<BranchState> emit,
+  ) async {
+    emit(BranchLoading());
+    try {
+      final response = await _branchService.getBranchDetails(event.branchId);
+      if (response.success && response.data != null) {
+        emit(BranchDetailsLoaded(response.data!));
+      } else {
+        emit(BranchError(response.message));
+      }
+    } on ApiException catch (e) {
+      emit(BranchError(e.message));
+    } catch (e) {
+      emit(BranchError('Failed to load branch details.'));
     }
   }
 }

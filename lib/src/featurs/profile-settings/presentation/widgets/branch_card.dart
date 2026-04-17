@@ -9,6 +9,7 @@ class BranchCard extends StatelessWidget {
   final String hours;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final VoidCallback? onTap;
 
   const BranchCard({
     super.key,
@@ -20,11 +21,14 @@ class BranchCard extends StatelessWidget {
     required this.hours,
     required this.onEdit,
     required this.onDelete,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
@@ -128,8 +132,9 @@ class BranchCard extends StatelessWidget {
         ),
         // const SizedBox(height: 24),
       ],
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildInfoRow(IconData icon, String text) {
     return Padding(

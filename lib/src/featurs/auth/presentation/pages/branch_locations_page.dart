@@ -1,3 +1,4 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../src_export.dart';
 
 class BranchLocationsPage extends StatefulWidget {
@@ -135,8 +136,8 @@ class _BranchLocationsPageState extends State<BranchLocationsPage> {
                                 branchName: b.nameController.text,
                                 address: b.addressController.text,
                                 phoneNumber: b.phoneController.text,
-                                lat: 0.0, // Default for now
-                                lng: 0.0, // Default for now
+                                lat: b.lat,
+                                lng: b.lng,
                                 applyMenuForAll: _applyMenuForAll,
                               );
                             }).toList();
@@ -183,9 +184,25 @@ class _BranchLocationsPageState extends State<BranchLocationsPage> {
           hintText: AppStaticStrings.branchNameHint,
         ),
         space8H,
-        CustomTextField(
-          textEditingController: _branches[index].addressController,
-          hintText: AppStaticStrings.fullAddress,
+        ButtonTapWidget(
+          onTap: () async {
+            final result = await context.pushNamed(
+              RoutesPath.locationSelectionName,
+            );
+            if (result != null && result is Map<String, dynamic>) {
+              final position = result['position'] as LatLng?;
+              setState(() {
+                _branches[index].addressController.text = result['address'] ?? '';
+                _branches[index].lat = position?.latitude ?? 0.0;
+                _branches[index].lng = position?.longitude ?? 0.0;
+              });
+            }
+          },
+          child: CustomTextField(
+            textEditingController: _branches[index].addressController,
+            hintText: AppStaticStrings.fullAddress,
+            isEnable: false,
+          ),
         ),
         space8H,
         CustomTextField(
@@ -201,6 +218,8 @@ class BranchInputControllers {
   final nameController = TextEditingController();
   final addressController = TextEditingController();
   final phoneController = TextEditingController();
+  double lat = 0.0;
+  double lng = 0.0;
 
   void dispose() {
     nameController.dispose();

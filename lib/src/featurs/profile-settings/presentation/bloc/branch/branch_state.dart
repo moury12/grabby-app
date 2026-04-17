@@ -36,3 +36,9 @@ class BranchError extends BranchState {
   const BranchError(this.message);
 
 }
+
+class BranchDetailsLoaded extends BranchState {
+  final ShopBranchModel branch;
+
+  const BranchDetailsLoaded(this.branch);
+}

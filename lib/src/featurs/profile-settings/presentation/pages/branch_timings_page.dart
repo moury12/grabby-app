@@ -80,9 +80,18 @@ class _BranchTimingsPageState extends State<BranchTimingsPage> {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
         } else if (state is BranchError) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message), backgroundColor: Colors.red));
+        } else if (state is BranchDetailsLoaded) {
+          setState(() {
+            _selectedBranch = state.branch;
+            _updateTimingsFromBranch(state.branch);
+          });
         }
       },
-      buildWhen: (previous, current) => current is BranchesLoaded || current is BranchLoading || current is BranchInitial,
+      buildWhen: (previous, current) =>
+          current is BranchesLoaded ||
+          current is BranchLoading ||
+          current is BranchInitial ||
+          current is BranchDetailsLoaded,
       builder: (context, state) {
         List<ShopBranchModel> branches = [];
         if (state is BranchesLoaded) {
@@ -157,10 +166,7 @@ class _BranchTimingsPageState extends State<BranchTimingsPage> {
           style: const TextStyle(color: AppColors.kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 12),
           onChanged: (val) {
             if (val != null) {
-              setState(() {
-                _selectedBranch = val;
-                _updateTimingsFromBranch(val);
-              });
+              context.read<BranchBloc>().add(GetBranchDetailsEvent(val.id));
             }
           },
           items: branches.map((b) => DropdownMenuItem(value: b, child: Text(b.branchName.isNotEmpty ? b.branchName : "Unnamed Branch"))).toList(),

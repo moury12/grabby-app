@@ -43,6 +43,13 @@ class BranchService {
     );
   }
 
+  Future<ApiResponse<ShopBranchModel>> getBranchDetails(String branchId) async {
+    return await apiService.get<ShopBranchModel>(
+      ApiEndpoints.branchUpdate(branchId),
+      fromJson: (json) => ShopBranchModel.fromJson(json['data'] as Map<String, dynamic>),
+    );
+  }
+
   Future<ApiResponse<ShopBranchModel>> getBranchAvailability(String branchId) async {
     return await apiService.get<ShopBranchModel>(
       ApiEndpoints.branchAvailability(branchId),

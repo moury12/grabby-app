@@ -43,3 +43,9 @@ class UpdateBranchAvailabilityEvent extends BranchEvent {
   const UpdateBranchAvailabilityEvent(this.branchId, this.availability);
 
 }
+
+class GetBranchDetailsEvent extends BranchEvent {
+  final String branchId;
+
+  const GetBranchDetailsEvent(this.branchId);
+}
