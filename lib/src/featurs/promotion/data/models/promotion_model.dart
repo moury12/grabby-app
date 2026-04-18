@@ -32,17 +32,25 @@ class PromotionModel {
   });
 
   factory PromotionModel.fromJson(Map<String, dynamic> json) {
+    final subscription = json['subscription'] as Map<String, dynamic>?;
+
+    // Safely extract the raw list from either location
+    final List<dynamic> specificItemsRaw =
+        (subscription?['specificItems'] ?? json['specificItems'] ?? []) as List<dynamic>;
+
     return PromotionModel(
       id: json['_id'] ?? '',
       discountName: json['discountName'] ?? '',
       eventName: json['eventName'],
       startDate: DateTime.parse(json['startDate']),
       endDate: DateTime.parse(json['endDate']),
-      appliedOn: json['appliedOn'] ?? 'all',
-      specificItems: (json['specificItems'] as List<dynamic>?)
-              ?.map((e) => SpecificItem.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
+      appliedOn: subscription?['appliedOn'] ?? json['appliedOn'] ?? 'all',
+      specificItems: specificItemsRaw.map((e) {
+        if (e is String) {
+          return SpecificItem(id: e, itemName: '', price: 0);
+        }
+        return SpecificItem.fromJson(e as Map<String, dynamic>);
+      }).toList(),
       discountType: json['discountType'] ?? 'percentage',
       discountValue: (json['discountValue'] ?? 0).toDouble(),
       isActive: json['isActive'] ?? false,
@@ -59,8 +67,8 @@ class PromotionModel {
     return {
       'discountName': discountName,
       'eventName': eventName,
-      'startDate': startDate.toIso8601String(),
-      'endDate': endDate.toIso8601String(),
+      'startDate': startDate.toIso8601String().split('T')[0],
+      'endDate': endDate.toIso8601String().split('T')[0],
       'appliedOn': appliedOn,
       'specificItems': specificItems.map((e) => e.id).toList(),
       'discountType': discountType,

@@ -20,6 +20,8 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
   final _contactPhoneController = TextEditingController();
 
   File? _imageFile;
+  bool _isShopOwner = false;
+  ProfileData? _profileData;
 
   @override
   void dispose() {
@@ -68,16 +70,21 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
         body: BlocConsumer<ProfileBloc, ProfileState>(
           listener: (context, state) {
             if (state is ProfileLoaded) {
-              _nameController.text = state.profileData.name;
-              _emailController.text = state.profileData.email;
-              _phoneController.text = state.profileData.phoneNumber;
-              _shopNameController.text = state.profileData.shopName ?? '';
-              _shopLicenseController.text =
-                  state.profileData.shopLicenseNumber ?? '';
-              _contactEmailController.text =
-                  state.profileData.contactEmail ?? '';
-              _contactPhoneController.text =
-                  state.profileData.contactPhone ?? '';
+              setState(() {
+                _profileData = state.profileData;
+                _isShopOwner = state.profileData.authId.role == 'SHOP_OWNER';
+                
+                _nameController.text = state.profileData.name;
+                _emailController.text = state.profileData.email;
+                _phoneController.text = state.profileData.phoneNumber;
+                _shopNameController.text = state.profileData.shopName ?? '';
+                _shopLicenseController.text =
+                    state.profileData.shopLicenseNumber ?? '';
+                _contactEmailController.text =
+                    state.profileData.contactEmail ?? '';
+                _contactPhoneController.text =
+                    state.profileData.contactPhone ?? '';
+              });
             } else if (state is ProfileUpdateSuccess) {
               CustomSnackbar.show(context, state.message);
               context.pop();
@@ -131,11 +138,10 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
                                     ),
                                   ),
                                 )
-                              else if (state is ProfileLoaded &&
-                                  state.profileData.profileImage != null)
+                              else if (_profileData?.profileImage != null)
                                 CustomNetworkImage(
                                   imageUrl:
-                                      "${ApiEndpoints.baseUrl}${state.profileData.profileImage!}",
+                                      "${ApiEndpoints.baseUrl}${_profileData!.profileImage!}",
                                   width: 100,
                                   height: 100,
                                   radius: 12,
@@ -197,8 +203,7 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
                       color: AppColors.kSecondaryTextColor,
                     ),
 
-                    if (state is ProfileLoaded &&
-                        state.profileData.authId.role == 'SHOP_OWNER') ...[
+                    if (_isShopOwner) ...[
                       CustomTextField(
                         textEditingController: _shopNameController,
                         title: AppStaticStrings.shopName,
@@ -236,9 +241,7 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
                       textEditingController: _emailController,
                       title: AppStaticStrings.emailAddress,
                       hintText: AppStaticStrings.emailAddress,
-                      isEnable:
-                          state is ProfileLoaded &&
-                          state.profileData.authId.role == 'SHOP_OWNER',
+                      isEnable: _isShopOwner,
                       prefixIcon: const Icon(
                         Icons.email_outlined,
                         color: AppColors.kSecondaryTextColor,
@@ -250,9 +253,7 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
                       textEditingController: _phoneController,
                       title: AppStaticStrings.phoneNumber,
                       hintText: AppStaticStrings.phoneNumber,
-                      isEnable:
-                          state is ProfileLoaded &&
-                          state.profileData.authId.role == 'SHOP_OWNER',
+                      isEnable: _isShopOwner,
                       prefixIcon: const Icon(
                         Icons.call_outlined,
                         color: AppColors.kSecondaryTextColor,
@@ -260,8 +261,7 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
                       ),
                     ),
 
-                    if (state is ProfileLoaded &&
-                        state.profileData.authId.role == 'SHOP_OWNER') ...[
+                    if (_isShopOwner) ...[
                       const CustomText(
                         AppStaticStrings.businessInformation,
                         fontSize: 14,
@@ -279,8 +279,8 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           spacing: 12,
                           children: [
-                            if (state.profileData.shopLogo != null &&
-                                state.profileData.shopLogo!.isNotEmpty) ...[
+                            if (_profileData?.shopLogo != null &&
+                                _profileData!.shopLogo!.isNotEmpty) ...[
                               const CustomText(
                                 AppStaticStrings.shopLogo,
                                 fontSize: 14,
@@ -289,16 +289,15 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
                               ),
                               CustomNetworkImage(
                                 imageUrl:
-                                    "${ApiEndpoints.baseUrl}${state.profileData.shopLogo!}",
+                                    "${ApiEndpoints.baseUrl}${_profileData!.shopLogo!}",
                                 width: 80,
                                 height: 80,
                                 radius: 8,
                                 imageErrorUrl: ImagesConstant.kOnboard1Img,
                               ),
                             ],
-                            if (state.profileData.businessLicense != null &&
-                                state
-                                    .profileData
+                            if (_profileData?.businessLicense != null &&
+                                _profileData!
                                     .businessLicense!
                                     .isNotEmpty) ...[
                               const CustomText(
@@ -327,7 +326,7 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
                                     const SizedBox(width: 8),
                                     Expanded(
                                       child: CustomText(
-                                        state.profileData.businessLicense!
+                                        _profileData!.businessLicense!
                                             .split('/')
                                             .last,
                                         fontSize: 12,

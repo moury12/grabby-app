@@ -12,9 +12,10 @@ class EditDiscountBottomSheet extends StatefulWidget {
 }
 
 class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
-  final Set<String> selectedItems = {};
+  final Map<String, String> selectedItemsMap = {}; // Maps Item Name to ID
   bool isDropdownOpen = false;
-  File? _pickedImage;
+  String _appliedOn = 'all'; // 'all' or 'specific'
+  final List<String> _appliedOnOptions = ['all', 'specific'];
 
   // Form controllers
   final TextEditingController _nameController = TextEditingController();
@@ -30,19 +31,14 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
     if (widget.promotion != null) {
       _nameController.text = widget.promotion!.discountName;
       _occasionController.text = widget.promotion!.eventName ?? '';
-      _startDateController.text = widget.promotion!.startDate.toString().split('T')[0];
-      _endDateController.text = widget.promotion!.endDate.toString().split('T')[0];
-      _discountController.text = widget.promotion!.discountValue.toString();
-      selectedItems.addAll(widget.promotion!.specificItems.map((item) => item.itemName));
-    }
-
-    // Load menu items if not already loaded
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final menuState = context.read<MenuBloc>().state;
-      if (menuState.items.isEmpty && menuState.status != MenuStatus.loading) {
-        context.read<MenuBloc>().add(GetMenuItemsEvent());
+      _startDateController.text = widget.promotion!.startDate.toString().split(' ').first;
+      _endDateController.text = widget.promotion!.endDate.toString().split(' ').first;
+      _discountController.text = widget.promotion!.discountValue.toInt().toString();
+      _appliedOn = widget.promotion!.appliedOn;
+      for (var item in widget.promotion!.specificItems) {
+        selectedItemsMap[item.itemName] = item.id;
       }
-    });
+    }
   }
 
   @override
@@ -55,14 +51,28 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
     super.dispose();
   }
 
-  void toggleSelection(String item) {
+  void toggleSelection(String itemName, String itemId) {
     setState(() {
-      if (selectedItems.contains(item)) {
-        selectedItems.remove(item);
+      if (selectedItemsMap.containsKey(itemName)) {
+        selectedItemsMap.remove(itemName);
       } else {
-        selectedItems.add(item);
+        selectedItemsMap[itemName] = itemId;
       }
     });
+  }
+
+  Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      setState(() {
+        controller.text = picked.toString().split(' ').first;
+      });
+    }
   }
 
   void _submitForm() {
@@ -70,7 +80,7 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
         _startDateController.text.isEmpty ||
         _endDateController.text.isEmpty ||
         _discountController.text.isEmpty ||
-        selectedItems.isEmpty) {
+        (_appliedOn == 'specific' && selectedItemsMap.isEmpty)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill all required fields')),
       );
@@ -78,13 +88,15 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
     }
 
     final data = {
-      'name': _nameController.text,
-      'eventOccasion': _occasionController.text.isNotEmpty ? _occasionController.text : null,
+      'discountName': _nameController.text,
+      'eventName': _occasionController.text.isNotEmpty ? _occasionController.text : null,
       'startDate': _startDateController.text,
       'endDate': _endDateController.text,
-      'discountPercentage': int.parse(_discountController.text),
-      'specificItems': selectedItems.map((item) => {'name': item}).toList(),
-      if (_pickedImage != null) 'image': _pickedImage!.path,
+      'discountType': 'percentage',
+      'discountValue': int.parse(_discountController.text),
+      'appliedOn': _appliedOn,
+      'specificItems': _appliedOn == 'specific' ? selectedItemsMap.values.toList() : [],
+      'isActive': true,
     };
 
     final bloc = context.read<PromotionBloc>();
@@ -118,81 +130,113 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
-        child: Column(
-          spacing: 8,
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              spacing: 6,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CustomText(
-                  widget.title ?? AppStaticStrings.editDiscount,
-                  variant: TextVariant.headlineSmall,
-                  fontWeight: FontWeight.bold,
-                ),
-                IconButton(
-                  onPressed: () => context.pop(),
-                  icon: const Icon(Icons.close),
-                ),
-              ],
-            ),
-
-            _buildFieldLabel(AppStaticStrings.promotionImage),
-            _buildImagePicker(),
-
-            _buildFieldLabel(AppStaticStrings.discountName),
-            CustomTextField(textEditingController: _nameController, hintText: "Cappuccino"),
-
-            _buildFieldLabel(AppStaticStrings.eventOccasionOptional),
-            CustomTextField(textEditingController: _occasionController, hintText: ""),
-
-            Row(
-              spacing: 6,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildFieldLabel(AppStaticStrings.startDate),
-                      CustomTextField(textEditingController: _startDateController, hintText: ""),
-                    ],
+        child: SingleChildScrollView(
+          child: Column(
+            spacing: 8,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                spacing: 6,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CustomText(
+                    widget.title ?? AppStaticStrings.editDiscount,
+                    variant: TextVariant.headlineSmall,
+                    fontWeight: FontWeight.bold,
                   ),
-                ),
-
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildFieldLabel(AppStaticStrings.endDate),
-                      CustomTextField(textEditingController: _endDateController, hintText: ""),
-                    ],
+                  IconButton(
+                    onPressed: () => context.pop(),
+                    icon: const Icon(Icons.close),
                   ),
-                ),
+                ],
+              ),
+
+              // Image section commented out as requested
+              /*
+              _buildFieldLabel(AppStaticStrings.promotionImage),
+              _buildImagePicker(),
+              */
+
+              _buildFieldLabel(AppStaticStrings.discountName),
+              CustomTextField(textEditingController: _nameController, hintText: "Cappuccino"),
+
+              _buildFieldLabel(AppStaticStrings.eventOccasionOptional),
+              CustomTextField(textEditingController: _occasionController, hintText: ""),
+
+              Row(
+                spacing: 6,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildFieldLabel(AppStaticStrings.startDate),
+                        GestureDetector(
+                          onTap: () => _selectDate(context, _startDateController),
+                          child: AbsorbPointer(
+                            child: CustomTextField(
+                              textEditingController: _startDateController,
+                              hintText: "YYYY-MM-DD",
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildFieldLabel(AppStaticStrings.endDate),
+                        GestureDetector(
+                          onTap: () => _selectDate(context, _endDateController),
+                          child: AbsorbPointer(
+                            child: CustomTextField(
+                              textEditingController: _endDateController,
+                              hintText: "YYYY-MM-DD",
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              _buildFieldLabel("Applied On"),
+              _buildAppliedOnDropdown(),
+
+              if (_appliedOn == 'specific') ...[
+                _buildFieldLabel(AppStaticStrings.appliedToItem),
+                _buildMultiSelectField(),
+                if (isDropdownOpen) _buildItemsList(),
               ],
-            ),
 
-            _buildFieldLabel(AppStaticStrings.appliedToItem),
-            _buildMultiSelectField(),
-            if (isDropdownOpen) _buildItemsList(),
-            _buildFieldLabel(AppStaticStrings.discountPercentage),
-            CustomTextField(textEditingController: _discountController, hintText: ""),
+              _buildFieldLabel(AppStaticStrings.discountPercentage),
+              CustomTextField(
+                textEditingController: _discountController,
+                hintText: "15",
+                keyboardType: TextInputType.number,
+              ),
 
-            CustomButton(
-              text: widget.title != null
-                  ? AppStaticStrings.addPromotion
-                  : AppStaticStrings.saveChanges,
-              onPressed: _submitForm,
-            ),
+              const SizedBox(height: 16),
+              CustomButton(
+                text: widget.promotion != null
+                    ? AppStaticStrings.saveChanges
+                    : AppStaticStrings.addPromotion,
+                onPressed: _submitForm,
+              ),
 
-            CustomButton(
-              text: AppStaticStrings.cancel,
-              onPressed: () => context.pop(),
-              isOutlined: true,
-            ),
-            const SizedBox(height: 10),
-          ],
+              CustomButton(
+                text: AppStaticStrings.cancel,
+                onPressed: () => context.pop(),
+                isOutlined: true,
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
         ),
       ),
     );
@@ -209,51 +253,38 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
     );
   }
 
-  Widget _buildImagePicker() {
-    return GestureDetector(
-      onTap: () async {
-        final File? image = await ImagePickerHelper.pickImage(context);
-        if (image != null) {
-          setState(() {
-            _pickedImage = image;
-          });
-        }
-      },
-      child: Container(
-        height: 120,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: AppColors.kBackgroundColor,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: AppColors.kSecondaryTextColor.withValues(alpha: 0.3),
-          ),
+  Widget _buildAppliedOnDropdown() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: AppColors.kSecondaryTextColor.withValues(alpha: 0.3),
         ),
-        child: _pickedImage != null
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.file(
-                  _pickedImage!,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                ),
-              )
-            : const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.add_photo_alternate_outlined,
-                    color: AppColors.kPrimaryColor,
-                    size: 40,
-                  ),
-                  SizedBox(height: 8),
-                  CustomText(
-                    "Click to upload image",
-                    variant: TextVariant.labelSmall,
-                    color: AppColors.kSecondaryTextColor,
-                  ),
-                ],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _appliedOn,
+          isExpanded: true,
+          items: _appliedOnOptions.map((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: CustomText(
+                value,
+                variant: TextVariant.labelMedium,
               ),
+            );
+          }).toList(),
+          onChanged: (newValue) {
+            setState(() {
+              _appliedOn = newValue!;
+              if (_appliedOn == 'all') {
+                selectedItemsMap.clear();
+                isDropdownOpen = false;
+              }
+            });
+          },
+        ),
       ),
     );
   }
@@ -272,7 +303,7 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
         child: Row(
           children: [
             Expanded(
-              child: selectedItems.isEmpty
+              child: selectedItemsMap.isEmpty
                   ? CustomText(
                       "Select items",
                       variant: TextVariant.labelMedium,
@@ -281,9 +312,9 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
                   : Wrap(
                       spacing: 4,
                       runSpacing: 4,
-                      children: selectedItems
+                      children: selectedItemsMap.keys
                           .map(
-                            (item) => Container(
+                            (itemName) => Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 8,
                                 vertical: 4,
@@ -298,13 +329,13 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   CustomText(
-                                    item,
+                                    itemName,
                                     variant: TextVariant.labelSmall,
                                     color: AppColors.kPrimaryColor,
                                   ),
                                   const SizedBox(width: 4),
                                   GestureDetector(
-                                    onTap: () => toggleSelection(item),
+                                    onTap: () => toggleSelection(itemName, selectedItemsMap[itemName]!),
                                     child: const Icon(
                                       Icons.close,
                                       size: 14,
@@ -352,20 +383,19 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
             ],
           ),
           child: ListView.builder(
-            shrinkWrap: true,
             itemCount: menuItems.length,
             itemBuilder: (context, index) {
               final item = menuItems[index];
-              final isSelected = selectedItems.contains(item.itemName);
+              final isSelected = selectedItemsMap.containsKey(item.itemName);
               return ListTile(
                 dense: true,
                 title: CustomText(item.itemName, variant: TextVariant.labelMedium),
                 trailing: Checkbox(
                   value: isSelected,
-                  onChanged: (_) => toggleSelection(item.itemName),
+                  onChanged: (_) => toggleSelection(item.itemName, item.id!),
                   activeColor: AppColors.kPrimaryColor,
                 ),
-                onTap: () => toggleSelection(item.itemName),
+                onTap: () => toggleSelection(item.itemName, item.id!),
               );
             },
           ),

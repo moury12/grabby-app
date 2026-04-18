@@ -13,6 +13,9 @@ abstract class ProfileRemoteDataSource {
     String? shopLicenseNumber,
     String? contactEmail,
     String? contactPhone,
+    String? addressName,
+    double? lat,
+    double? lon,
   });
   Future<ApiResponse<void>> updateUserLocation({
     required String addressName,
@@ -46,34 +49,48 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     String? shopLicenseNumber,
     String? contactEmail,
     String? contactPhone,
+    String? addressName,
+    double? lat,
+    double? lon,
   }) async {
-    final Map<String, dynamic> data = {"name": name};
-    final role = localStorageService.getUserRoleFromToken();
-    final endpoint = role == 'SHOP_OWNER'
-        ? ApiEndpoints.updateShopOwnerProfile
-        : ApiEndpoints.updateProfile;
+    try {
+      final Map<String, dynamic> data = {"name": name};
+      final role = localStorageService.getUserRoleFromToken();
+      final endpoint = role == 'SHOP_OWNER'
+          ? ApiEndpoints.updateShopOwnerProfile
+          : ApiEndpoints.updateProfile;
 
-    if (role == 'SHOP_OWNER') {
-      if (email != null) data["email"] = email;
-      if (phoneNumber != null) data["phone_number"] = phoneNumber;
-      if (shopName != null) data["shop_name"] = shopName;
-      if (shopLicenseNumber != null)
-        data["shop_license_number"] = shopLicenseNumber;
-      if (contactEmail != null) data["contact_email"] = contactEmail;
-      if (contactPhone != null) data["contact_phone"] = contactPhone;
-    }
+      if (role == 'SHOP_OWNER') {
+        if (email != null) data["email"] = email;
+        if (phoneNumber != null) data["phone_number"] = phoneNumber;
+        if (shopName != null) data["shop_name"] = shopName;
+        if (shopLicenseNumber != null)
+          data["shop_license_number"] = shopLicenseNumber;
+        if (contactEmail != null) data["contact_email"] = contactEmail;
+        if (contactPhone != null) data["contact_phone"] = contactPhone;
+      } else {
+        // Customer profile update can include location
+        if (addressName != null) data["addressName"] = addressName;
+        if (lat != null) data["lat"] = lat;
+        if (lon != null) data["lon"] = lon;
+      }
 
-    if (profileImage != null) {
-      data["profile_image"] = await dio.MultipartFile.fromFile(
-        profileImage.path,
-        filename: profileImage.path.split('/').last,
-      );
+      if (profileImage != null) {
+        data["profile_image"] = await dio.MultipartFile.fromFile(
+          profileImage.path,
+          filename: profileImage.path.split('/').last,
+        );
+      }
 
+      // Always use FormData for consistency with multipart endpoints
       final formData = dio.FormData.fromMap(data);
+      print('Updating profile at $endpoint with fields: ${data.keys.toString()}');
+      
       return await apiService.patch<void>(endpoint, data: formData);
+    } catch (e) {
+      print('Error in updateProfile: $e');
+      rethrow;
     }
-
-    return await apiService.patch<void>(endpoint, data: data);
   }
 
   @override
@@ -82,21 +99,26 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     required double lat,
     required double lon,
   }) async {
-    Map<String, dynamic> data = {
-      "addressName": addressName,
-      "lat": lat,
-      "lon": lon,
-    };
+    try {
+      Map<String, dynamic> data = {
+        "addressName": addressName,
+        "lat": lat,
+        "lon": lon,
+      };
 
-    String endpoint = ApiEndpoints.updateUserLocation;
+      String endpoint = ApiEndpoints.updateUserLocation;
 
-    final role = localStorageService.getUserRoleFromToken();
-    if (role == 'SHOP_OWNER') {
-      endpoint = ApiEndpoints.updateShopOwnerLocation;
-      data = {"address": addressName, "lat": lat, "lng": lon};
-      return await apiService.post<void>(endpoint, data: data);
+      final role = localStorageService.getUserRoleFromToken();
+      if (role == 'SHOP_OWNER') {
+        endpoint = ApiEndpoints.updateShopOwnerLocation;
+        data = {"address": addressName, "lat": lat, "lng": lon};
+        return await apiService.post<void>(endpoint, data: data);
+      }
+
+      return await apiService.patch<void>(endpoint, data: data);
+    } catch (e) {
+      print('Error in updateUserLocation: $e');
+      rethrow;
     }
-
-    return await apiService.patch<void>(endpoint, data: data);
   }
 }

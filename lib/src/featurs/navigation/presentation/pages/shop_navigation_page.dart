@@ -28,7 +28,13 @@ class _ShopNavigationPageState extends State<ShopNavigationPage> {
       ShopHomePage(),
       ShopOrderManagementPage(),
       ShopMenuManagementPage(),
-      PromotionPage(),
+      MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => sl<PromotionBloc>()..add(GetPromotionsEvent())),
+          BlocProvider(create: (context) => sl<MenuBloc>()..add(GetMenuItemsEvent())),
+        ],
+        child: const PromotionPage(),
+      ),
       BusinessProfilePage(),
     ];
 

@@ -1,0 +1,166 @@
+
+class CustomerBranchModel {
+  final String id;
+  final String branchName;
+  final String shopName;
+  final String? image;
+  final String address;
+  final double distance;
+  final String distanceText;
+  final bool isOpen;
+  final String statusText;
+  final String timing;
+  final List<String> tags;
+  final double lat;
+  final double lng;
+  final List<CustomerMenuCategory>? menuCategories;
+
+  const CustomerBranchModel({
+    required this.id,
+    required this.branchName,
+    required this.shopName,
+    this.image,
+    required this.address,
+    required this.distance,
+    required this.distanceText,
+    required this.isOpen,
+    required this.statusText,
+    required this.timing,
+    required this.tags,
+    required this.lat,
+    required this.lng,
+    this.menuCategories,
+  });
+
+  factory CustomerBranchModel.fromJson(Map<String, dynamic> json) {
+    return CustomerBranchModel(
+      id: json['_id'] ?? '',
+      branchName: json['branch_name'] ?? '',
+      shopName: json['shop_name'] ?? '',
+      image: json['image'],
+      address: json['address'] ?? '',
+      distance: (json['distance'] ?? 0.0).toDouble(),
+      distanceText: json['distanceText'] ?? '',
+      isOpen: json['isOpen'] ?? false,
+      statusText: json['statusText'] ?? '',
+      timing: json['timing'] ?? '',
+      tags: List<String>.from(json['tags'] ?? []),
+      lat: (json['lat'] ?? 0.0).toDouble(),
+      lng: (json['lng'] ?? 0.0).toDouble(),
+      menuCategories: json['menu_categories'] != null
+          ? (json['menu_categories'] as List)
+              .map((e) => CustomerMenuCategory.fromJson(e))
+              .toList()
+          : null,
+    );
+  }
+}
+
+class CustomerMenuCategory {
+  final String id;
+  final String name;
+  final List<CustomerMenuItem> menus;
+
+  const CustomerMenuCategory({
+    required this.id,
+    required this.name,
+    required this.menus,
+  });
+
+  factory CustomerMenuCategory.fromJson(Map<String, dynamic> json) {
+    return CustomerMenuCategory(
+      id: json['_id'] ?? '',
+      name: json['name'] ?? '',
+      menus: (json['menus'] as List? ?? [])
+          .map((e) => CustomerMenuItem.fromJson(e))
+          .toList(),
+    );
+  }
+}
+
+class CustomerMenuItem {
+  final String id;
+  final String? image;
+  final String itemName;
+  final double price;
+  final String? description;
+  final int? stamp;
+  final bool isAvailable;
+  final List<CustomerCustomizationGroup>? additionalItems;
+
+  const CustomerMenuItem({
+    required this.id,
+    this.image,
+    required this.itemName,
+    required this.price,
+    this.description,
+    this.stamp,
+    required this.isAvailable,
+    this.additionalItems,
+  });
+
+  factory CustomerMenuItem.fromJson(Map<String, dynamic> json) {
+    return CustomerMenuItem(
+      id: json['_id'] ?? '',
+      image: json['image'],
+      itemName: json['itemName'] ?? '',
+      price: (json['price'] ?? 0.0).toDouble(),
+      description: json['description'],
+      stamp: (json['stamp'] as num?)?.toInt(),
+      isAvailable: json['isAvailable'] ?? true,
+      additionalItems: json['additionalItems'] != null
+          ? (json['additionalItems'] as List)
+              .map((e) => CustomerCustomizationGroup.fromJson(e))
+              .toList()
+          : null,
+    );
+  }
+}
+
+class CustomerCustomizationGroup {
+  final String id;
+  final String groupName;
+  final String type;
+  final List<CustomerCustomizationItem> items;
+
+  const CustomerCustomizationGroup({
+    required this.id,
+    required this.groupName,
+    required this.type,
+    required this.items,
+  });
+
+  factory CustomerCustomizationGroup.fromJson(Map<String, dynamic> json) {
+    return CustomerCustomizationGroup(
+      id: json['_id'] ?? '',
+      groupName: json['groupName'] ?? '',
+      type: json['type'] ?? 'optional',
+      items: (json['items'] as List? ?? [])
+          .map((e) => CustomerCustomizationItem.fromJson(e))
+          .toList(),
+    );
+  }
+}
+
+class CustomerCustomizationItem {
+  final String id;
+  final String name;
+  final double price;
+  final String? image;
+
+  const CustomerCustomizationItem({
+    required this.id,
+    required this.name,
+    required this.price,
+    this.image,
+  });
+
+  factory CustomerCustomizationItem.fromJson(Map<String, dynamic> json) {
+    return CustomerCustomizationItem(
+      id: json['_id'] ?? '',
+      name: json['name'] ?? '',
+      price: (json['price'] ?? 0.0).toDouble(),
+      image: json['image'],
+    );
+  }
+}

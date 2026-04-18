@@ -5,35 +5,34 @@ import 'package:grabby_app/src/featurs/promotion/data/datasources/promotion_remo
 import 'package:grabby_app/src/featurs/promotion/data/repositories/promotion_repository_impl.dart';
 import 'package:grabby_app/src/featurs/promotion/domain/repositories/promotion_repository.dart';
 import 'package:grabby_app/src/featurs/promotion/presentation/bloc/promotion_bloc.dart';
+import 'package:grabby_app/src/featurs/branch/data/datasources/branch_remote_data_source.dart';
+import 'package:grabby_app/src/featurs/branch/data/repositories/branch_repository_impl.dart';
+import 'package:grabby_app/src/featurs/branch/presentation/bloc/customer_branch_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../src_export.dart' ;
 
 final sl = GetIt.instance;
 
 Future<void> init() async {
-  //! Features - Onboarding & Splash
-  // Data sources
+  //! Shared
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
 
-  // LocalStorageService
   sl.registerLazySingleton<LocalStorageService>(
     () => LocalStorageService(sl()),
   );
 
-  // LocationService
   sl.registerLazySingleton<LocationService>(() => LocationService());
 
-  // ApiService
   sl.registerLazySingleton<ApiService>(
     () => ApiService(baseUrl: ApiEndpoints.baseUrl, localStorageService: sl()),
   );
 
+  //! Features - Onboarding & Splash
   sl.registerLazySingleton<OnboardingLocalDataSource>(
     () => OnboardingLocalDataSourceImpl(sharedPreferences: sl()),
   );
 
-  // Bloc
   sl.registerLazySingleton(
     () => OnboardingSplashBloc(
       localDataSource: sl(),
@@ -44,64 +43,52 @@ Future<void> init() async {
   );
 
   // ─── Feature: Auth ─────────────────────────────────────────────────────────
-
-  // Data source
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(sl()),
   );
-
-  // Repository
   sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()));
-
-  // BLoC — factory so each page gets a fresh instance
   sl.registerFactory<AuthBloc>(() => AuthBloc(authRepository: sl()));
 
   // ─── Feature: Profile ──────────────────────────────────────────────────────
-  // Data source
   sl.registerLazySingleton<ProfileRemoteDataSource>(
     () => ProfileRemoteDataSourceImpl(sl(), sl()),
   );
-
-  // Repository
   sl.registerLazySingleton<ProfileRepository>(
     () => ProfileRepositoryImpl(sl()),
   );
-
-  // Bloc
   sl.registerFactory<ProfileBloc>(
     () => ProfileBloc(profileRepository: sl(), locationService: sl()),
   );
 
   // ─── Feature: Branch ───────────────────────────────────────────────────────
-  // Service
   sl.registerLazySingleton<BranchService>(() => BranchService(sl()));
-
-  // Bloc
   sl.registerFactory<BranchBloc>(() => BranchBloc(branchService: sl()));
 
   // ─── Feature: Menu ─────────────────────────────────────────────────────────
-  // Data source
   sl.registerLazySingleton<MenuRemoteDataSource>(
     () => MenuRemoteDataSourceImpl(sl()),
   );
-
-  // Repository
   sl.registerLazySingleton<MenuRepository>(() => MenuRepositoryImpl(sl()));
-
-  // Bloc
   sl.registerFactory<MenuBloc>(() => MenuBloc(sl()));
 
   // ─── Feature: Promotion ────────────────────────────────────────────────────
-  // Data source
   sl.registerLazySingleton<PromotionRemoteDataSource>(
     () => PromotionRemoteDataSourceImpl(sl()),
   );
-
-  // Repository
   sl.registerLazySingleton<PromotionRepository>(
     () => PromotionRepositoryImpl(sl()),
   );
-
-  // Bloc
   sl.registerFactory<PromotionBloc>(() => PromotionBloc(sl()));
+
+  // ─── Feature: Customer Branch ─────────────────────────────────────────────
+  sl.registerLazySingleton<BranchRemoteDataSource>(
+    () => BranchRemoteDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<BranchRepository>(
+    () => BranchRepositoryImpl(sl()),
+  );
+  sl.registerFactory<CustomerBranchBloc>(
+    () => CustomerBranchBloc(branchRepository: sl()),
+  );
 }
+

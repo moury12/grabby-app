@@ -46,22 +46,36 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     emit(ProfileLoading());
     try {
-      // Fetch current location automatically
+      // 1. Fetch current location
       final locationData = await _locationService.getLocationData();
-      
       if (locationData == null) {
         emit(ProfileError('Failed to get current location. Please check your permissions.'));
         return;
       }
 
-      // First update the location
-      await _profileRepository.updateUserLocation(
-        addressName: locationData.address,
-        lat: locationData.latitude,
-        lon: locationData.longitude,
-      );
+      final currentState = state;
+      String? userRole;
+      if (currentState is ProfileLoaded) {
+        userRole = currentState.profileData.authId.role;
+      }
 
-      // Then update the profile
+      print('Starting profile update for role: $userRole');
+
+      // 2. Role-based Location Update
+      if (userRole == 'SHOP_OWNER') {
+        // Shop Owners update location via a separate POST endpoint
+        final locationResponse = await _profileRepository.updateUserLocation(
+          addressName: locationData.address,
+          lat: locationData.latitude,
+          lon: locationData.longitude,
+        );
+        if (!locationResponse.success) {
+          emit(ProfileError(locationResponse.message));
+          return;
+        }
+      }
+
+      // 3. Update Profile (For Customers, this includes the location data in the same call)
       final response = await _profileRepository.updateProfile(
         name: event.name,
         profileImage: event.profileImage,
@@ -71,20 +85,25 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         shopLicenseNumber: event.shopLicenseNumber,
         contactEmail: event.contactEmail,
         contactPhone: event.contactPhone,
+        addressName: locationData.address,
+        lat: locationData.latitude,
+        lon: locationData.longitude,
       );
 
-      print('Update Profile Response: $response');
+      print('Update Profile Final Response: success=${response.success}');
 
       if (response.success) {
         emit(ProfileUpdateSuccess());
-        // Refresh profile after update
         add(GetProfileEvent());
       } else {
         emit(ProfileError(response.message));
       }
     } on ApiException catch (e) {
+      print('ProfileBloc ApiException: ${e.message}');
       emit(ProfileError(e.message));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('ProfileBloc Unexpected Error: $e');
+      print('Stacktrace: $stackTrace');
       emit(ProfileError('Something went wrong. Please try again.'));
     }
   }

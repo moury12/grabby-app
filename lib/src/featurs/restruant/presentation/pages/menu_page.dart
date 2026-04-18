@@ -1,7 +1,8 @@
 import '../../../../src_export.dart';
 
 class MenuPage extends StatefulWidget {
-  const MenuPage({super.key});
+  final CustomerBranchModel branch;
+  const MenuPage({super.key, required this.branch});
 
   @override
   State<MenuPage> createState() => _MenuPageState();
@@ -10,15 +11,21 @@ class MenuPage extends StatefulWidget {
 class _MenuPageState extends State<MenuPage> {
   String _selectedCategory = AppStaticStrings.allItems;
 
-  final List<String> _categories = [
-    AppStaticStrings.allItems,
-    AppStaticStrings.matcha,
-    AppStaticStrings.hotCoffee,
-    AppStaticStrings.coldCoffee,
-  ];
+  late List<String> _categories;
+
+  @override
+  void initState() {
+    super.initState();
+    _categories = [
+      AppStaticStrings.allItems,
+      ...(widget.branch.menuCategories?.map((e) => e.name).toList() ?? []),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
+    final menuCategories = widget.branch.menuCategories ?? [];
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -51,9 +58,10 @@ class _MenuPageState extends State<MenuPage> {
             // Hero Header
             Stack(
               children: [
-                const CustomNetworkImage(
-                  imageUrl:
-                      "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=2033&auto=format&fit=crop",
+                CustomNetworkImage(
+                  imageUrl: widget.branch.image != null
+                      ? "${ApiEndpoints.baseUrl}${widget.branch.image}"
+                      : "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=2033&auto=format&fit=crop",
                   height: 180,
                   width: double.infinity,
                   radius: 16,
@@ -84,8 +92,8 @@ class _MenuPageState extends State<MenuPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const CustomText(
-                          AppStaticStrings.hotCoffee,
+                        CustomText(
+                          widget.branch.branchName,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -115,8 +123,8 @@ class _MenuPageState extends State<MenuPage> {
               ],
             ),
 
-            // Loyalty Stamps
-            const LoyaltyStampsWidget(currentStamps: 4),
+            // Loyalty Stamps (Placeholder current stamps)
+            const LoyaltyStampsWidget(currentStamps: 0),
 
             // Category Chips
             SingleChildScrollView(
@@ -138,44 +146,27 @@ class _MenuPageState extends State<MenuPage> {
             ),
 
             // Menu Sections
-            if (_selectedCategory == AppStaticStrings.allItems ||
-                _selectedCategory == AppStaticStrings.matcha)
-              _buildMenuSection(AppStaticStrings.matcha, [
-                MenuItemWidget(
-                  title: AppStaticStrings.caffeLatte,
-                  price: AppStaticStrings.price,
-                  image:
-                      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop",
-                  discount: AppStaticStrings.discount,
-                  onAdd: () {},
-                ),
-                MenuItemWidget(
-                  title: AppStaticStrings.caffeLatte,
-                  price: AppStaticStrings.price,
-                  image:
-                      "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=2033&auto=format&fit=crop",
-                  onAdd: () {},
-                ),
-              ]),
-
-            if (_selectedCategory == AppStaticStrings.allItems ||
-                _selectedCategory == AppStaticStrings.hotCoffee)
-              _buildMenuSection(AppStaticStrings.hotCoffee, [
-                MenuItemWidget(
-                  title: AppStaticStrings.caffeLatte,
-                  price: AppStaticStrings.price,
-                  image:
-                      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop",
-                  onAdd: () {},
-                ),
-                MenuItemWidget(
-                  title: AppStaticStrings.caffeLatte,
-                  price: AppStaticStrings.price,
-                  image:
-                      "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=2033&auto=format&fit=crop",
-                  onAdd: () {},
-                ),
-              ]),
+            ...menuCategories
+                .where((cat) =>
+                    _selectedCategory == AppStaticStrings.allItems ||
+                    _selectedCategory == cat.name)
+                .map((cat) => _buildMenuSection(
+                      cat.name,
+                      cat.menus
+                          .map((item) => MenuItemWidget(
+                                title: item.itemName,
+                                price: "\$${item.price.toStringAsFixed(1)}",
+                                image: item.image != null &&
+                                        item.image!.isNotEmpty
+                                    ? "${ApiEndpoints.baseUrl}${item.image}"
+                                    : "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop",
+                                // discount: "", // Could be derived if needed
+                                onAdd: () {
+                                  // Implementation for adding to cart
+                                },
+                              ))
+                          .toList(),
+                    )),
           ],
         ),
       ),

@@ -1,19 +1,13 @@
 import '../../../../src_export.dart';
 
 class ActiveDiscountCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String dateRange;
-  final String discount;
+  final PromotionModel promotion;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   const ActiveDiscountCard({
     super.key,
-    required this.title,
-    required this.subtitle,
-    required this.dateRange,
-    required this.discount,
+    required this.promotion,
     required this.onEdit,
     required this.onDelete,
   });
@@ -50,7 +44,7 @@ class ActiveDiscountCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         CustomText(
-                          title,
+                          promotion.discountName,
                           variant: TextVariant.titleMedium,
                           fontWeight: FontWeight.bold,
                         ),
@@ -64,7 +58,7 @@ class ActiveDiscountCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: CustomText(
-                            discount,
+                            promotion.discountValue.toString(),
                             variant: TextVariant.labelMedium,
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -82,14 +76,14 @@ class ActiveDiscountCard extends StatelessWidget {
                         ),
 
                         CustomText(
-                          subtitle,
+                          promotion.eventName ?? 'Event',
                           variant: TextVariant.labelSmall,
                           color: AppColors.kPrimaryColor,
                         ),
                       ],
                     ),
                     CustomText(
-                      AppStaticStrings.appliedToAllCoffeePastries,
+                      "${AppStaticStrings.appliedToAllCoffeePastries} ${promotion.appliedOn}",
                       variant: TextVariant.labelSmall,
                       color: AppColors.kSecondaryTextColor,
                     ),
@@ -103,7 +97,7 @@ class ActiveDiscountCard extends StatelessWidget {
                         ),
 
                         CustomText(
-                          dateRange,
+                          "${promotion.startDate.toString().split(' ').first} - ${promotion.endDate.toString().split(' ').first}",
                           variant: TextVariant.labelSmall,
                           color: AppColors.kSecondaryTextColor,
                         ),

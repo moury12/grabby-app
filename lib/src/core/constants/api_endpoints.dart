@@ -44,4 +44,8 @@ class ApiEndpoints {
   static String branchUpdate(String id) => "/shop-owner/branch/$id";
   static String branchDelete(String id) => "/shop-owner/branch/$id";
   static String branchAvailability(String id) => "/shop-owner/branch/$id/availability";
+
+  // ─── Customer Branch Browsing ─────────────────────────────────────────────
+  static const String customerBranches = "/customers/branches";
+  static String customerBranchDetail(String id) => "/customers/branches/$id";
 }

@@ -53,8 +53,9 @@ class BusinessProfilePage extends StatelessWidget {
                       ProfileMenuItem(
                         title: AppStaticStrings.marketingCampaigns,
                         icon: Icons.campaign_outlined,
-                        onTap: () => context
-                            .pushNamed(RoutesPath.marketingCampaignsName),
+                        onTap: () => context.pushNamed(
+                          RoutesPath.marketingCampaignsName,
+                        ),
                       ),
                       Divider(color: Colors.white, height: 1),
                       ProfileMenuItem(
@@ -133,8 +134,8 @@ class BusinessProfilePage extends StatelessWidget {
             spacing: 6,
             children: [
               CustomNetworkImage(
-                imageUrl: profile.shopLogo != null
-                    ? "${ApiEndpoints.baseUrl}${profile.shopLogo}"
+                imageUrl: profile.profileImage != null
+                    ? "${ApiEndpoints.baseUrl}${profile.profileImage}"
                     : "",
                 width: 60,
                 height: 60,

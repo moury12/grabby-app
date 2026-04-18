@@ -12,6 +12,9 @@ abstract class ProfileRepository {
     String? shopLicenseNumber,
     String? contactEmail,
     String? contactPhone,
+    String? addressName,
+    double? lat,
+    double? lon,
   });
   Future<ApiResponse<void>> updateUserLocation({
     required String addressName,
@@ -40,6 +43,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
     String? shopLicenseNumber,
     String? contactEmail,
     String? contactPhone,
+    String? addressName,
+    double? lat,
+    double? lon,
   }) async {
     return await remoteDataSource.updateProfile(
       name: name,
@@ -50,6 +56,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
       shopLicenseNumber: shopLicenseNumber,
       contactEmail: contactEmail,
       contactPhone: contactPhone,
+      addressName: addressName,
+      lat: lat,
+      lon: lon,
     );
   }
 

@@ -91,14 +91,17 @@ class AppRouter {
         path: RoutesPath.restruantDetailsPath,
         name: RoutesPath.restruantDetailsPath,
         builder: (BuildContext context, GoRouterState state) {
-          return const RestruantDetailsPage();
+          return BlocProvider(
+            create: (context) => sl<CustomerBranchBloc>(),
+            child: RestruantDetailsPage(branchId: state.extra as String),
+          );
         },
       ),
       GoRoute(
         path: RoutesPath.menuPath,
         name: RoutesPath.menuPath,
         builder: (BuildContext context, GoRouterState state) {
-          return const MenuPage();
+          return MenuPage(branch: state.extra as CustomerBranchModel);
         },
       ),
       GoRoute(
@@ -245,7 +248,13 @@ class AppRouter {
         path: RoutesPath.promotionPath,
         name: RoutesPath.promotionPath,
         builder: (BuildContext context, GoRouterState state) {
-          return const PromotionPage();
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (context) => sl<PromotionBloc>()..add(GetPromotionsEvent())),
+              BlocProvider(create: (context) => sl<MenuBloc>()..add(GetMenuItemsEvent())),
+            ],
+            child: const PromotionPage(),
+          );
         },
       ),
       GoRoute(

@@ -54,12 +54,21 @@ class LocationService {
 
   /// Get current coordinates
   Future<Position?> getCurrentPosition() async {
-    final hasPermission = await _handlePermission();
-    if (!hasPermission) return null;
+    try {
+      final hasPermission = await _handlePermission();
+      if (!hasPermission) {
+        print('Location permission denied.');
+        return null;
+      }
 
-    return await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
+      return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 15),
+      );
+    } catch (e) {
+      print('Error getting current position: $e');
+      return null;
+    }
   }
 
   /// Get reverse geocoded address
@@ -81,7 +90,7 @@ class LocationService {
         return addressParts.where((s) => s != null).join(', ');
       }
     } catch (e) {
-      print('Error getting address: $e');
+      print('Error getting address from coordinates ($lat, $lng): $e');
     }
     return "Unknown Address";
   }

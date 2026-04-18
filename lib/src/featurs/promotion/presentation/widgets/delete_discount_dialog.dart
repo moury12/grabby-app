@@ -61,13 +61,13 @@ class DeleteDiscountDialog extends StatelessWidget {
             const SizedBox(height: 24),
             CustomButton(
               text: AppStaticStrings.yesDelete,
-              onPressed: () => context.pop(),
+              onPressed: () => context.pop(true),
               backgroundColor: AppColors.kRedColor,
             ),
             const SizedBox(height: 8),
             CustomButton(
               text: AppStaticStrings.cancel,
-              onPressed: () => context.pop(),
+              onPressed: () => context.pop(false),
               // backgroundColor: Colors.grey,
               isOutlined: true,
             ),

@@ -8,6 +8,7 @@ class CafeCardWidget extends StatelessWidget {
   final String openHours;
   final bool isOpen;
   final List<String> tags;
+  final VoidCallback onTap;
 
   const CafeCardWidget({
     super.key,
@@ -16,6 +17,7 @@ class CafeCardWidget extends StatelessWidget {
     required this.distance,
     required this.openHours,
     this.isOpen = true,
+    required this.onTap,
     this.tags = const ["Car", "Counter"],
   });
 
@@ -37,9 +39,7 @@ class CafeCardWidget extends StatelessWidget {
         ],
       ),
       child: ButtonTapWidget(
-        onTap: () {
-          context.pushNamed(RoutesPath.restruantDetailsPath);
-        },
+        onTap: onTap,
         child: Column(
           children: [
             // Top Section: Image and Overlays
@@ -89,22 +89,23 @@ class CafeCardWidget extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                       const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
+                      if (distance.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.kBackgroundColor,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: CustomText(
+                            distance,
+                            variant: TextVariant.labelSmall,
+                            color: AppColors.kTextColor,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        decoration: BoxDecoration(
-                          color: AppColors.kBackgroundColor,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: CustomText(
-                          distance,
-                          variant: TextVariant.labelSmall,
-                          color: AppColors.kTextColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
                     ],
                   ),
                 ),

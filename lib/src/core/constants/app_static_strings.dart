@@ -358,7 +358,7 @@ class AppStaticStrings {
   static const String weekendDiscount = "Weekend Discount";
   static const String happyHour = "Happy Hour";
   static const String appliedToAllCoffeePastries =
-      "Applied to: All Coffee, All Pastries";
+      "Applied to: ";
   static const String appliedToAll = "Applied to: All";
 
   // Business Profile

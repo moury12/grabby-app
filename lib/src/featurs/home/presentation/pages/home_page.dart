@@ -20,8 +20,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => HomeBloc(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => HomeBloc()),
+        BlocProvider(
+          create: (context) => sl<CustomerBranchBloc>()..add(GetCustomerBranchesEvent()),
+        ),
+      ],
       child: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
           bool isMapView = false;

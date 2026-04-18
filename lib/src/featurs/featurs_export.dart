@@ -9,3 +9,4 @@ export 'reward/reward_export.dart';
 export 'promotion/promotion_export.dart';
 export 'profile-settings/profile_settings_export.dart';
 export 'menu/menu_export.dart';
+export 'branch/branch_export.dart';
