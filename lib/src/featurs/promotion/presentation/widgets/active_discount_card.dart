@@ -58,7 +58,7 @@ class ActiveDiscountCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: CustomText(
-                            promotion.discountValue.toString(),
+                            "${promotion.discountValue.toString()} %",
                             variant: TextVariant.labelMedium,
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

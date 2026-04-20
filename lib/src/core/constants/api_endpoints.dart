@@ -48,4 +48,7 @@ class ApiEndpoints {
   // ─── Customer Branch Browsing ─────────────────────────────────────────────
   static const String customerBranches = "/customers/branches";
   static String customerBranchDetail(String id) => "/customers/branches/$id";
+  static const String upcomingEvents = "/upcoming-events";
+  static const String carPlates = "/car-plates";
+  static String deleteCarPlate(String id) => "/car-plates/$id";
 }

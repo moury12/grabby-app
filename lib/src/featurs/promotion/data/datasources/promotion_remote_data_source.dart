@@ -1,5 +1,6 @@
 import '../../../../core/core_export.dart';
 import '../models/promotion_model.dart';
+import '../models/upcoming_event_model.dart';
 
 abstract class PromotionRemoteDataSource {
   Future<ApiResponse<PromotionModel>> createPromotion(Map<String, dynamic> data);
@@ -10,6 +11,7 @@ abstract class PromotionRemoteDataSource {
   });
   Future<ApiResponse<void>> updatePromotion(String id, Map<String, dynamic> data);
   Future<ApiResponse<void>> deletePromotion(String id);
+  Future<ApiResponse<List<UpcomingEventModel>>> getUpcomingEvents();
 }
 
 class PromotionRemoteDataSourceImpl implements PromotionRemoteDataSource {
@@ -55,6 +57,20 @@ class PromotionRemoteDataSourceImpl implements PromotionRemoteDataSource {
   Future<ApiResponse<void>> deletePromotion(String id) async {
     return await _apiService.delete<void>(
       '/event-offer/shop/$id',
+    );
+  }
+
+  @override
+  Future<ApiResponse<List<UpcomingEventModel>>> getUpcomingEvents() async {
+    return await _apiService.get<List<UpcomingEventModel>>(
+      ApiEndpoints.upcomingEvents,
+      queryParameters: {'limit': '100'},
+      fromJson: (json) {
+        final data = json['data'] as List;
+        return data
+            .map((e) => UpcomingEventModel.fromJson(e as Map<String, dynamic>))
+            .toList();
+      },
     );
   }
 }

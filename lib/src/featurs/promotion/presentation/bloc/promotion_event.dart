@@ -32,3 +32,5 @@ class DeletePromotionEvent extends PromotionEvent {
 
   DeletePromotionEvent(this.id);
 }
+
+class FetchUpcomingEventsEvent extends PromotionEvent {}

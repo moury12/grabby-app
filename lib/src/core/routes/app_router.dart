@@ -122,14 +122,20 @@ class AppRouter {
         path: RoutesPath.carPlatesPath,
         name: RoutesPath.carPlatesPath,
         builder: (BuildContext context, GoRouterState state) {
-          return const CarPlatesPage();
+          return BlocProvider(
+            create: (context) => sl<CarPlateBloc>(),
+            child: const CarPlatesPage(),
+          );
         },
       ),
       GoRoute(
         path: RoutesPath.addCarPlatePath,
         name: RoutesPath.addCarPlatePath,
         builder: (BuildContext context, GoRouterState state) {
-          return const AddCarPlatePage();
+          return BlocProvider(
+            create: (context) => sl<CarPlateBloc>(),
+            child: const AddCarPlatePage(),
+          );
         },
       ),
       GoRoute(

@@ -35,4 +35,9 @@ class PromotionRepositoryImpl implements PromotionRepository {
   Future<ApiResponse<void>> deletePromotion(String id) {
     return remoteDataSource.deletePromotion(id);
   }
+
+  @override
+  Future<ApiResponse<List<UpcomingEventModel>>> getUpcomingEvents() {
+    return remoteDataSource.getUpcomingEvents();
+  }
 }

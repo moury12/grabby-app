@@ -121,43 +121,31 @@ class _PromotionPageState extends State<PromotionPage> {
                               fontWeight: FontWeight.bold,
                             ),
 
-                            GridView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  const SliverGridDelegateWithMaxCrossAxisExtent(
-                                    maxCrossAxisExtent: 200,
-                                    crossAxisSpacing: 12,
-                                    mainAxisSpacing: 12,
-                                    childAspectRatio: 1.7,
-                                  ),
-                              itemCount: 3,
-                              itemBuilder: (context, index) {
-                                final events = [
-                                  {
-                                    "title": AppStaticStrings.ramadanSpecial,
-                                    "date": "Feb 28 - Mar 30, 2026",
-                                    "icon": "🌙",
-                                  },
-                                  {
-                                    "title": "Eid Al-Fitr",
-                                    "date": "Mar 30 - Apr 2, 2026",
-                                    "icon": "🎉",
-                                  },
-                                  {
-                                    "title": "Valentine's Day",
-                                    "date": "February 14, 2026",
-                                    "icon": "💝",
-                                  },
-                                ];
-                                final event = events[index];
-                                return UpcomingEventCard(
-                                  title: event['title']!,
-                                  date: event['date']!,
-                                  icon: event['icon']!,
-                                );
-                              },
-                            ),
+                            if (state.upcomingEvents.isNotEmpty)
+                              GridView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                gridDelegate:
+                                    const SliverGridDelegateWithMaxCrossAxisExtent(
+                                      maxCrossAxisExtent: 200,
+                                      crossAxisSpacing: 12,
+                                      mainAxisSpacing: 12,
+                                      childAspectRatio: 1.7,
+                                    ),
+                                itemCount: state.upcomingEvents.length,
+                                itemBuilder: (context, index) {
+                                  final event = state.upcomingEvents[index];
+                                  return UpcomingEventCard(
+                                    title: event.name,
+                                    date:
+                                        "${event.startDate} - ${event.endDate}",
+                                    imageUrl:
+                                        event.icons.isNotEmpty
+                                            ? event.icons.first
+                                            : null,
+                                  );
+                                },
+                              ),
 
                             Row(
                               children: [

@@ -23,6 +23,8 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
   final TextEditingController _discountController = TextEditingController();
+  String? _selectedEvent; // Holds selected event name
+  List<UpcomingEventModel> _events = [];
 
   @override
   void initState() {
@@ -30,7 +32,7 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
     // Initialize form with existing promotion data if editing
     if (widget.promotion != null) {
       _nameController.text = widget.promotion!.discountName;
-      _occasionController.text = widget.promotion!.eventName ?? '';
+      _selectedEvent = widget.promotion!.eventName; // This handles previous data as well
       _startDateController.text = widget.promotion!.startDate.toString().split(' ').first;
       _endDateController.text = widget.promotion!.endDate.toString().split(' ').first;
       _discountController.text = widget.promotion!.discountValue.toInt().toString();
@@ -39,6 +41,8 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
         selectedItemsMap[item.itemName] = item.id;
       }
     }
+    // Fetch upcoming events for dropdown
+    context.read<PromotionBloc>().add(FetchUpcomingEventsEvent());
   }
 
   @override
@@ -89,7 +93,7 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
 
     final data = {
       'discountName': _nameController.text,
-      'eventName': _occasionController.text.isNotEmpty ? _occasionController.text : null,
+      'eventName': _selectedEvent,
       'startDate': _startDateController.text,
       'endDate': _endDateController.text,
       'discountType': 'percentage',
@@ -122,9 +126,20 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message)),
           );
+        } else if (state is UpcomingEventsLoaded) {
+          setState(() {
+            _events = state.upcomingEvents;
+          });
         }
       },
-      child: Container(
+      child: BlocBuilder<PromotionBloc, PromotionState>(
+        builder: (context, state) {
+          if (state is UpcomingEventsLoaded) {
+            _events = state.upcomingEvents;
+          } else if (state is PromotionsLoaded) {
+            _events = state.upcomingEvents;
+          }
+          return Container(
         padding: AppPadding.getPadding16(context),
         decoration: const BoxDecoration(
           color: Colors.white,
@@ -162,7 +177,7 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
               CustomTextField(textEditingController: _nameController, hintText: "Cappuccino"),
 
               _buildFieldLabel(AppStaticStrings.eventOccasionOptional),
-              CustomTextField(textEditingController: _occasionController, hintText: ""),
+              _buildEventDropdown(),
 
               Row(
                 spacing: 6,
@@ -237,6 +252,54 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
               const SizedBox(height: 10),
             ],
           ),
+        ),
+        );
+      },
+    ),
+  );
+}
+
+  Widget _buildEventDropdown() {
+    // If we have a selected event that's not in the list (e.g. from old data),
+    // we should still display it or handle it.
+    
+    
+    final List<String> eventNames = _events.map((e) => e.name).toSet().toList();
+    if (_selectedEvent != null && !eventNames.contains(_selectedEvent)) {
+      eventNames.add(_selectedEvent!);
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: AppColors.kSecondaryTextColor.withValues(alpha: 0.3),
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _selectedEvent,
+          isExpanded: true,
+          hint: CustomText(
+            "Select Event",
+            variant: TextVariant.labelMedium,
+            color: AppColors.kSecondaryTextColor,
+          ),
+          items: eventNames.map((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: CustomText(
+                value,
+                variant: TextVariant.labelMedium,
+              ),
+            );
+          }).toList(),
+          onChanged: (newValue) {
+            setState(() {
+              _selectedEvent = newValue;
+            });
+          },
         ),
       ),
     );

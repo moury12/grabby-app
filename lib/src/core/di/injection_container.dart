@@ -1,14 +1,14 @@
 import 'package:get_it/get_it.dart';
 import 'package:grabby_app/src/featurs/profile-settings/data/services/branch_service.dart';
 import 'package:grabby_app/src/featurs/profile-settings/presentation/bloc/branch/branch_bloc.dart';
-import 'package:grabby_app/src/featurs/promotion/data/datasources/promotion_remote_data_source.dart';
-import 'package:grabby_app/src/featurs/promotion/data/repositories/promotion_repository_impl.dart';
-import 'package:grabby_app/src/featurs/promotion/domain/repositories/promotion_repository.dart';
-import 'package:grabby_app/src/featurs/promotion/presentation/bloc/promotion_bloc.dart';
+
 import 'package:grabby_app/src/featurs/branch/data/datasources/branch_remote_data_source.dart';
 import 'package:grabby_app/src/featurs/branch/data/repositories/branch_repository_impl.dart';
-import 'package:grabby_app/src/featurs/branch/presentation/bloc/customer_branch_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:grabby_app/src/featurs/cart-checkout/data/datasources/car_plate_remote_data_source.dart';
+import 'package:grabby_app/src/featurs/cart-checkout/data/repositories/car_plate_repository_impl.dart';
+import 'package:grabby_app/src/featurs/cart-checkout/domain/repositories/car_plate_repository.dart';
+import 'package:grabby_app/src/featurs/cart-checkout/presentation/bloc/car_plate_bloc.dart';
 import '../../src_export.dart' ;
 
 final sl = GetIt.instance;
@@ -90,5 +90,14 @@ Future<void> init() async {
   sl.registerFactory<CustomerBranchBloc>(
     () => CustomerBranchBloc(branchRepository: sl()),
   );
+
+  // ─── Feature: Car Plate ────────────────────────────────────────────────────
+  sl.registerLazySingleton<CarPlateRemoteDataSource>(
+    () => CarPlateRemoteDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<CarPlateRepository>(
+    () => CarPlateRepositoryImpl(sl()),
+  );
+  sl.registerFactory<CarPlateBloc>(() => CarPlateBloc(sl()));
 }
 

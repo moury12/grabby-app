@@ -24,7 +24,9 @@ void initializeMapRenderer() async {
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
     WidgetsFlutterBinding.ensureInitialized();
     try {
-      await mapsImplementation.initializeWithRenderer(AndroidMapRenderer.latest);
+      await mapsImplementation.initializeWithRenderer(
+        AndroidMapRenderer.latest,
+      );
     } catch (e) {
       debugPrint('Failed to initialize latest renderer: $e');
     }
