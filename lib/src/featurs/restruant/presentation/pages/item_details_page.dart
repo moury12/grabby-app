@@ -12,6 +12,13 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
   String _selectedMilk = 'Regular Milk';
   final TextEditingController _notesController = TextEditingController();
 
+  late CustomerMenuItem item;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    item = GoRouterState.of(context).extra as CustomerMenuItem;
+  }
   @override
   void dispose() {
     _notesController.dispose();
@@ -46,17 +53,23 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                 ),
               ),
             ),
-            flexibleSpace: const FlexibleSpaceBar(
+            flexibleSpace: FlexibleSpaceBar(
               background: CustomNetworkImage(
-                imageUrl:
-                    "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=2033&auto=format&fit=crop",
+                imageUrl: item.image != null && item.image!.isNotEmpty
+                    ? "${ApiEndpoints.baseUrl}${item.image}"
+                    : "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=2033&auto=format&fit=crop",
                 height: 300,
                 width: double.infinity,
                 radius: 0,
               ),
             ),
           ),
-
+if(item.stamp!=null && item.stamp! >0)SliverPadding(
+  padding: EdgeInsetsGeometry.all(  12),
+  sliver: SliverToBoxAdapter(child: LoyaltyStampsWidget(
+    currentStamps:item.totalStamps??0,totalStamps: item.stamp??0,
+    remainingStamps: item.remainingStamps??0,
+    isFree: item.isFree,),)),
           // Content
           SliverPadding(
             padding: AppPadding.getPadding12(context),
@@ -66,12 +79,12 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                 spacing: 8,
                 children: [
                   CustomText(
-                    "Item name here",
+                    item.itemName,
                     variant: TextVariant.headlineMedium,
                     fontWeight: FontWeight.bold,
                   ),
                   CustomText(
-                    "AED 16.00",
+                    "AED ${item.price.toStringAsFixed(2)}",
                     variant: TextVariant.labelLarge,
                     color: AppColors.kPrimaryColor,
                   ),
@@ -136,7 +149,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
               Expanded(
                 child: CustomButton(
                   text:
-                      "Add $_quantity to bag. AED${(16.00 * _quantity).toStringAsFixed(2)}",
+                      "Add $_quantity to bag. AED${(item.price * _quantity).toStringAsFixed(2)}",
                   onPressed: () {
                     context.pushNamed(RoutesPath.cartPath);
                   },
@@ -152,19 +165,24 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
   }
 
   Widget _buildMilkSelectionList(BuildContext context) {
-    // Defining milks with their optional extra price
-    final List<Map<String, dynamic>> milks = [
-      {'name': 'Regular Milk', 'price': null},
-      {'name': 'Oat Milk', 'price': '+AED 5.00'},
-      {'name': 'Almond Milk', 'price': '+AED 5.00'},
-      {'name': 'Coconut Milk', 'price': '+AED 5.00'},
-    ];
+    // Get milk options from item's additionalItems
+    final milkGroup = item.additionalItems?.firstWhere(
+      (group) => group.groupName.toLowerCase().contains('milk'),
+      orElse: () => CustomerCustomizationGroup(
+        id: '',
+        groupName: 'Milk Options',
+        type: 'regular',
+        items: [],
+      ),
+    );
+
+    final milks = milkGroup?.items ?? [];
 
     return Column(
       children: milks.map((milk) {
-        final isSelected = _selectedMilk == milk['name'];
+        final isSelected = _selectedMilk == milk.name;
         return InkWell(
-          onTap: () => setState(() => _selectedMilk = milk['name']),
+          onTap: () => setState(() => _selectedMilk = milk.name),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Row(
@@ -197,7 +215,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                 // Milk name
                 Expanded(
                   child: CustomText(
-                    milk['name'],
+                    milk.name,
                     fontSize: 14,
                     fontWeight: isSelected
                         ? FontWeight.bold
@@ -205,9 +223,9 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                   ),
                 ),
                 // Price if any
-                if (milk['price'] != null)
+                if (milk.price > 0)
                   CustomText(
-                    milk['price'],
+                    '+AED ${milk.price.toStringAsFixed(2)}',
                     fontSize: 12,
                     color: AppColors.kSecondaryTextColor,
                   ),

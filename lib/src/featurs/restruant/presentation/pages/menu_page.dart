@@ -56,75 +56,75 @@ class _MenuPageState extends State<MenuPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Hero Header
-            Stack(
-              children: [
-                CustomNetworkImage(
-                  imageUrl: widget.branch.image != null
-                      ? "${ApiEndpoints.baseUrl}${widget.branch.image}"
-                      : "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=2033&auto=format&fit=crop",
-                  height: 180,
-                  width: double.infinity,
-                  radius: 16,
-                ),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        colors: [
-                          Colors.black.withValues(alpha: 0.6),
-                          Colors.transparent,
-                        ],
-                      ),
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(16),
-                        bottomRight: Radius.circular(16),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CustomText(
-                          widget.branch.branchName,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.kPrimaryColor.withValues(
-                              alpha: 0.8,
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const CustomText(
-                            AppStaticStrings.tryItNow,
-                            fontSize: 12,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            // Stack(
+            //   children: [
+            //     CustomNetworkImage(
+            //       imageUrl: widget.branch.image != null
+            //           ? "${ApiEndpoints.baseUrl}${widget.branch.image}"
+            //           : "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=2033&auto=format&fit=crop",
+            //       height: 180,
+            //       width: double.infinity,
+            //       radius: 16,
+            //     ),
+            //     Positioned(
+            //       bottom: 0,
+            //       left: 0,
+            //       right: 0,
+            //       child: Container(
+            //         padding: const EdgeInsets.symmetric(
+            //           horizontal: 16,
+            //           vertical: 12,
+            //         ),
+            //         decoration: BoxDecoration(
+            //           gradient: LinearGradient(
+            //             begin: Alignment.bottomCenter,
+            //             end: Alignment.topCenter,
+            //             colors: [
+            //               Colors.black.withValues(alpha: 0.6),
+            //               Colors.transparent,
+            //             ],
+            //           ),
+            //           borderRadius: const BorderRadius.only(
+            //             bottomLeft: Radius.circular(16),
+            //             bottomRight: Radius.circular(16),
+            //           ),
+            //         ),
+            //         child: Row(
+            //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //           children: [
+            //             CustomText(
+            //               widget.branch.branchName,
+            //               fontSize: 18,
+            //               fontWeight: FontWeight.bold,
+            //               color: Colors.white,
+            //             ),
+            //             Container(
+            //               padding: const EdgeInsets.symmetric(
+            //                 horizontal: 12,
+            //                 vertical: 6,
+            //               ),
+            //               decoration: BoxDecoration(
+            //                 color: AppColors.kPrimaryColor.withValues(
+            //                   alpha: 0.8,
+            //                 ),
+            //                 borderRadius: BorderRadius.circular(20),
+            //               ),
+            //               child: const CustomText(
+            //                 AppStaticStrings.tryItNow,
+            //                 fontSize: 12,
+            //                 color: Colors.white,
+            //                 fontWeight: FontWeight.w600,
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
 
-            // Loyalty Stamps (Placeholder current stamps)
-            const LoyaltyStampsWidget(currentStamps: 0),
+            // // Loyalty Stamps (Placeholder current stamps)
+            // const LoyaltyStampsWidget(currentStamps: 0),
 
             // Category Chips
             SingleChildScrollView(
@@ -162,6 +162,7 @@ class _MenuPageState extends State<MenuPage> {
                                     : "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop",
                                 // discount: "", // Could be derived if needed
                                 onAdd: () {
+                                   context.pushNamed(RoutesPath.itemDetailsPath,extra: item);
                                   // Implementation for adding to cart
                                 },
                               ))

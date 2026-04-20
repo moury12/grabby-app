@@ -2,12 +2,13 @@ import '../../../../src_export.dart';
 
 class LoyaltyStampsWidget extends StatelessWidget {
   final int currentStamps;
-  final int totalStamps;
-
+  final int totalStamps;  
+final int? remainingStamps;
+final bool isFree;
   const LoyaltyStampsWidget({
     super.key,
     required this.currentStamps,
-    this.totalStamps = 10,
+    this.totalStamps = 10, this.remainingStamps, this.isFree=false,
   });
 
   @override
@@ -35,7 +36,7 @@ class LoyaltyStampsWidget extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         CustomText(
-          AppStaticStrings.moreStamps,
+          "${(remainingStamps??0)<0?0:remainingStamps} ${AppStaticStrings.moreStamps}",
           fontSize: 12,
           color: AppColors.kTextColor,
           fontWeight: FontWeight.w500,

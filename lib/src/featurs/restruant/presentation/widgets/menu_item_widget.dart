@@ -20,7 +20,7 @@ class MenuItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ButtonTapWidget(
       onTap: () {
-        context.pushNamed(RoutesPath.itemDetailsPath);
+        onAdd();
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),

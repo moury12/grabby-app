@@ -86,7 +86,11 @@ class CustomerMenuItem {
   final String? description;
   final int? stamp;
   final bool isAvailable;
+  final CustomerMenuItemCategory? category;
   final List<CustomerCustomizationGroup>? additionalItems;
+  final int? totalStamps;
+  final bool isFree;
+  final int? remainingStamps;
 
   const CustomerMenuItem({
     required this.id,
@@ -96,7 +100,11 @@ class CustomerMenuItem {
     this.description,
     this.stamp,
     required this.isAvailable,
+    this.category,
     this.additionalItems,
+    this.totalStamps,
+    this.isFree = false,
+    this.remainingStamps,
   });
 
   factory CustomerMenuItem.fromJson(Map<String, dynamic> json) {
@@ -108,11 +116,46 @@ class CustomerMenuItem {
       description: json['description'],
       stamp: (json['stamp'] as num?)?.toInt(),
       isAvailable: json['isAvailable'] ?? true,
+      category: json['category'] != null
+          ? CustomerMenuItemCategory.fromJson(json['category'])
+          : null,
       additionalItems: json['additionalItems'] != null
           ? (json['additionalItems'] as List)
               .map((e) => CustomerCustomizationGroup.fromJson(e))
               .toList()
           : null,
+      totalStamps: (json['totalStamps'] as num?)?.toInt(),
+      isFree: json['isFree'] ?? false,
+      remainingStamps: (json['remainingStamps'] as num?)?.toInt(),
+    );
+  }
+}
+
+class CustomerMenuItemCategory {
+  final String id;
+  final String name;
+  final String? shopOwnerId;
+  final String? createdAt;
+  final String? updatedAt;
+  final int? v;
+
+  const CustomerMenuItemCategory({
+    required this.id,
+    required this.name,
+    this.shopOwnerId,
+    this.createdAt,
+    this.updatedAt,
+    this.v,
+  });
+
+  factory CustomerMenuItemCategory.fromJson(Map<String, dynamic> json) {
+    return CustomerMenuItemCategory(
+      id: json['_id'] ?? '',
+      name: json['name'] ?? '',
+      shopOwnerId: json['shopOwnerId'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
+      v: (json['__v'] as num?)?.toInt(),
     );
   }
 }

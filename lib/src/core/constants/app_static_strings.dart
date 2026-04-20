@@ -79,7 +79,7 @@ class AppStaticStrings {
   static const String addToCart = "Add to Cart";
   static const String tryItNow = "Try it now";
   static const String hotCoffee = "Hot Coffee";
-  static const String moreStamps = "10 more stamps to get a free coffee";
+  static const String moreStamps = " more stamps to get a free coffee";
   static const String allItems = "All Items";
   static const String matcha = "Matcha";
   static const String coldCoffee = "Cold Cof";
