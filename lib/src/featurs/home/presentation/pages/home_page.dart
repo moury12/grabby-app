@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'package:flutter/cupertino.dart';
-
 import '../../../../src_export.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,11 +10,40 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
+  late final CustomerBranchBloc _branchBloc;
+
   @override
   void initState() {
     super.initState();
+    _branchBloc = sl<CustomerBranchBloc>();
+    _fetchBranches();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       PromotedShopsSheet.show(context);
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _fetchBranches({String? query}) async {
+    final position = await sl<LocationService>().getCurrentPosition();
+    _branchBloc.add(GetCustomerBranchesEvent(
+      query: query,
+      lat: position?.latitude,
+      lng: position?.longitude,
+    ));
+  }
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      _fetchBranches(query: query);
     });
   }
 
@@ -23,9 +52,7 @@ class _HomePageState extends State<HomePage> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => HomeBloc()),
-        BlocProvider(
-          create: (context) => sl<CustomerBranchBloc>()..add(GetCustomerBranchesEvent()),
-        ),
+        BlocProvider.value(value: _branchBloc),
       ],
       child: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
@@ -44,6 +71,8 @@ class _HomePageState extends State<HomePage> {
                 child: Padding(
                   padding: AppPadding.getPadding12(context),
                   child: CustomTextField(
+                    textEditingController: _searchController,
+                    onChanged: _onSearchChanged,
                     prefixIcon: Icon(
                       CupertinoIcons.search,
                       color: AppColors.kSecondaryTextColor.withValues(

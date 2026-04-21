@@ -5,7 +5,12 @@ import '../../data/repositories/branch_repository_impl.dart';
 // Events
 abstract class CustomerBranchEvent {}
 
-class GetCustomerBranchesEvent extends CustomerBranchEvent {}
+class GetCustomerBranchesEvent extends CustomerBranchEvent {
+  final String? query;
+  final double? lat;
+  final double? lng;
+  GetCustomerBranchesEvent({this.query, this.lat, this.lng});
+}
 
 class GetCustomerBranchDetailEvent extends CustomerBranchEvent {
   final String id;
@@ -48,7 +53,11 @@ class CustomerBranchBloc extends Bloc<CustomerBranchEvent, CustomerBranchState> 
   ) async {
     emit(CustomerBranchLoading());
     try {
-      final response = await branchRepository.getBranches();
+      final response = await branchRepository.getBranches(
+        query: event.query,
+        lat: event.lat,
+        lng: event.lng,
+      );
       if (response.success) {
         emit(CustomerBranchesLoaded(response.data ?? []));
       } else {
