@@ -33,7 +33,7 @@ class _MenuPageState extends State<MenuPage> {
         actions: [
           ButtonTapWidget(
             onTap: () {
-              context.pushNamed(RoutesPath.cartPath);
+              context.pushNamed(RoutesPath.cartPath, extra: widget.branch.id);
             },
             child: Padding(
               padding: const EdgeInsets.only(right: 16),
@@ -162,7 +162,13 @@ class _MenuPageState extends State<MenuPage> {
                                     : "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop",
                                 // discount: "", // Could be derived if needed
                                 onAdd: () {
-                                   context.pushNamed(RoutesPath.itemDetailsPath,extra: item);
+                                   context.pushNamed(
+                                    RoutesPath.itemDetailsPath,
+                                    extra: {
+                                      'item': item,
+                                      'branchId': widget.branch.id,
+                                    },
+                                  );
                                   // Implementation for adding to cart
                                 },
                               ))

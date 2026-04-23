@@ -9,6 +9,10 @@ import 'package:grabby_app/src/featurs/cart-checkout/data/datasources/car_plate_
 import 'package:grabby_app/src/featurs/cart-checkout/data/repositories/car_plate_repository_impl.dart';
 import 'package:grabby_app/src/featurs/cart-checkout/domain/repositories/car_plate_repository.dart';
 import 'package:grabby_app/src/featurs/cart-checkout/presentation/bloc/car_plate_bloc.dart';
+import 'package:grabby_app/src/featurs/cart-checkout/data/datasources/cart_remote_data_source.dart';
+import 'package:grabby_app/src/featurs/cart-checkout/data/repositories/cart_repository_impl.dart';
+import 'package:grabby_app/src/featurs/cart-checkout/domain/repositories/cart_repository.dart';
+import 'package:grabby_app/src/featurs/cart-checkout/presentation/bloc/cart_bloc.dart';
 import '../../src_export.dart' ;
 
 final sl = GetIt.instance;
@@ -99,5 +103,14 @@ Future<void> init() async {
     () => CarPlateRepositoryImpl(sl()),
   );
   sl.registerFactory<CarPlateBloc>(() => CarPlateBloc(sl()));
+
+  // ─── Feature: Cart ─────────────────────────────────────────────────────────
+  sl.registerLazySingleton<CartRemoteDataSource>(
+    () => CartRemoteDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<CartRepository>(
+    () => CartRepositoryImpl(sl()),
+  );
+  sl.registerFactory<CartBloc>(() => CartBloc(sl()));
 }
 

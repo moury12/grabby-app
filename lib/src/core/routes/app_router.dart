@@ -1,3 +1,4 @@
+import 'package:grabby_app/src/featurs/cart-checkout/presentation/bloc/cart_bloc.dart';
 import 'package:grabby_app/src/featurs/profile-settings/presentation/bloc/branch/branch_bloc.dart';
 
 import '../../src_export.dart';
@@ -108,14 +109,20 @@ class AppRouter {
         path: RoutesPath.itemDetailsPath,
         name: RoutesPath.itemDetailsPath,
         builder: (BuildContext context, GoRouterState state) {
-          return const ItemDetailsPage();
+          return BlocProvider(
+            create: (context) => sl<CartBloc>(),
+            child: const ItemDetailsPage(),
+          );
         },
       ),
       GoRoute(
         path: RoutesPath.cartPath,
         name: RoutesPath.cartPath,
         builder: (BuildContext context, GoRouterState state) {
-          return const CartPage();
+          return BlocProvider(
+            create: (context) => sl<CartBloc>(),
+            child: const CartPage(),
+          );
         },
       ),
       GoRoute(

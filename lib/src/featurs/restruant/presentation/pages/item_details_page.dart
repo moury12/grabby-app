@@ -9,15 +9,28 @@ class ItemDetailsPage extends StatefulWidget {
 
 class _ItemDetailsPageState extends State<ItemDetailsPage> {
   int _quantity = 1;
-  String _selectedMilk = 'Regular Milk';
+  CustomerCustomizationItem? _selectedMilkItem;
   final TextEditingController _notesController = TextEditingController();
 
   late CustomerMenuItem item;
+  late String branchId;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    item = GoRouterState.of(context).extra as CustomerMenuItem;
+    final extra = GoRouterState.of(context).extra as Map<String, dynamic>;
+    item = extra['item'] as CustomerMenuItem;
+    branchId = extra['branchId'] as String;
+
+    // Initialize default milk selection if not already set
+    if (_selectedMilkItem == null) {
+      final milkGroup = item.additionalItems?.where(
+        (group) => group.groupName.toLowerCase().contains('milk'),
+      ).firstOrNull;
+      if (milkGroup != null && milkGroup.items.isNotEmpty) {
+        _selectedMilkItem = milkGroup.items.first;
+      }
+    }
   }
   @override
   void dispose() {
@@ -27,9 +40,22 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
+    return BlocListener<CartBloc, CartState>(
+      listener: (context, state) {
+        if (state.status == CartStatus.success && state.successMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.successMessage!)),
+          );
+          context.pushNamed(RoutesPath.cartPath);
+        } else if (state.status == CartStatus.error && state.errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.errorMessage!), backgroundColor: Colors.red),
+          );
+        }
+      },
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: [
           // Collapsible Header Image
           SliverAppBar(
             expandedHeight: 200,
@@ -145,18 +171,42 @@ if(item.stamp!=null && item.stamp! >0)SliverPadding(
                 },
               ),
 
-              // Add to Bag Button
-              Expanded(
-                child: CustomButton(
-                  text:
-                      "Add $_quantity to bag. AED${(item.price * _quantity).toStringAsFixed(2)}",
-                  onPressed: () {
-                    context.pushNamed(RoutesPath.cartPath);
+               Expanded(
+                child: BlocBuilder<CartBloc, CartState>(
+                  builder: (context, state) {
+                    return CustomButton(
+                      isLoading: state.status == CartStatus.loading,
+                      text:
+                          "Add $_quantity to bag. AED${(item.price * _quantity).toStringAsFixed(2)}",
+                      onPressed: () {
+                        final List<CartAdditionalItemModel> additionalItems = [];
+                        if (_selectedMilkItem != null) {
+                          additionalItems.add(CartAdditionalItemModel(
+                            itemId: _selectedMilkItem!.id,
+                            name: _selectedMilkItem!.name,
+                            price: _selectedMilkItem!.price,
+                            image: _selectedMilkItem!.image,
+                            quantity: 1,
+                          ));
+                        }
+
+                        context.read<CartBloc>().add(AddToCartEvent(AddToCartRequest(
+                              branchId: branchId,
+                              productId: item.id,
+                              menuName: item.itemName,
+                              menuPrice: item.price,
+                              menuImage: item.image ?? '',
+                              quantity: _quantity,
+                              additionalItems: additionalItems,
+                            )));
+                      },
+                      backgroundColor: AppColors.kPrimaryColor,
+                      borderRadius: 16,
+                    );
                   },
-                  backgroundColor: AppColors.kPrimaryColor,
-                  borderRadius: 16,
                 ),
-              ),
+              ), // Add to Bag Button
+             
             ],
           ),
         ),
@@ -180,9 +230,9 @@ if(item.stamp!=null && item.stamp! >0)SliverPadding(
 
     return Column(
       children: milks.map((milk) {
-        final isSelected = _selectedMilk == milk.name;
+        final isSelected = _selectedMilkItem?.id == milk.id;
         return InkWell(
-          onTap: () => setState(() => _selectedMilk = milk.name),
+          onTap: () => setState(() => _selectedMilkItem = milk),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Row(

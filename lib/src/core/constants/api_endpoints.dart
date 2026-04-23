@@ -51,4 +51,9 @@ class ApiEndpoints {
   static const String upcomingEvents = "/upcoming-events";
   static const String carPlates = "/car-plates";
   static String deleteCarPlate(String id) => "/car-plates/$id";
+
+  // ─── Cart ──────────────────────────────────────────────────────────────────
+  static const String addToCart = "/cart/add";
+  static const String cartSummary = "/cart/summary";
+  static String cartItem(String id) => "/cart/item/$id";
 }
