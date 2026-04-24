@@ -3,11 +3,15 @@ import '../../../../src_export.dart';
 class CartOrderSummaryWidget extends StatelessWidget {
   final double subtotal;
   final double total;
+  final double? discount;
+  final double? credit;
 
   const CartOrderSummaryWidget({
     super.key,
     required this.subtotal,
     required this.total,
+    this.discount,
+    this.credit,
   });
 
   @override
@@ -37,6 +41,38 @@ class CartOrderSummaryWidget extends StatelessWidget {
               ),
             ],
           ),
+          if (discount != null && discount! > 0)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CustomText(
+                  AppStaticStrings.discountAmount,
+                  fontSize: 14,
+                  color: AppColors.kSecondaryTextColor,
+                ),
+                CustomText(
+                  '- ${AppStaticStrings.aedPrefix}${discount?.toStringAsFixed(2)}',
+                  fontSize: 14,
+                  color: AppColors.kSecondaryTextColor,
+                ),
+              ],
+            ),
+          if (credit != null && credit! > 0)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CustomText(
+                  AppStaticStrings.credit,
+                  fontSize: 14,
+                  color: AppColors.kSecondaryTextColor,
+                ),
+                CustomText(
+                  '- ${AppStaticStrings.aedPrefix}${credit?.toStringAsFixed(2)}',
+                  fontSize: 14,
+                  color: AppColors.kSecondaryTextColor,
+                ),
+              ],
+            ),
           const Divider(height: 1),
           // Total row
           Row(

@@ -97,7 +97,10 @@ class _CarPlatesPageState extends State<CarPlatesPage> {
 
                             // Plate List
                             ...state.carPlates.map(
-                              (plate) => _buildPlateCard(context, plate: plate),
+                              (plate) => ButtonTapWidget(
+                                onTap: () => Navigator.pop(context, plate),
+                                child: _buildPlateCard(context, plate: plate),
+                              ),
                             ),
                           ],
                         ),

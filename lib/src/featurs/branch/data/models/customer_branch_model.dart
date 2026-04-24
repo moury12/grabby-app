@@ -91,6 +91,7 @@ class CustomerMenuItem {
   final int? totalStamps;
   final bool isFree;
   final int? remainingStamps;
+  final String? shopOwnerId;
 
   const CustomerMenuItem({
     required this.id,
@@ -105,6 +106,7 @@ class CustomerMenuItem {
     this.totalStamps,
     this.isFree = false,
     this.remainingStamps,
+    this.shopOwnerId,
   });
 
   factory CustomerMenuItem.fromJson(Map<String, dynamic> json) {
@@ -127,6 +129,7 @@ class CustomerMenuItem {
       totalStamps: (json['totalStamps'] as num?)?.toInt(),
       isFree: json['isFree'] ?? false,
       remainingStamps: (json['remainingStamps'] as num?)?.toInt(),
+      shopOwnerId: json['shopOwnerId'],
     );
   }
 }

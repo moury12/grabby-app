@@ -1,6 +1,5 @@
 import '../../../../src_export.dart';
-import '../../domain/repositories/cart_repository.dart';
-import '../../data/models/cart_model.dart';
+
 
 part 'cart_event.dart';
 part 'cart_state.dart';
@@ -71,12 +70,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(state.copyWith(status: CartStatus.loading));
     try {
       final response = await _cartRepository.updateCartItem(event.cartItemId, event.quantity);
-      if (response.success && response.data != null) {
-        emit(state.copyWith(
-          status: CartStatus.success,
-          cart: response.data,
-          successMessage: response.message,
-        ));
+      if (response.success) {
+        // Refresh cart after update
+        add(FetchCartEvent(event.branchId));
       } else {
         emit(state.copyWith(status: CartStatus.error, errorMessage: response.message));
       }

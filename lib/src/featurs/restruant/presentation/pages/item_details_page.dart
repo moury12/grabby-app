@@ -46,7 +46,13 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.successMessage!)),
           );
-          context.pushNamed(RoutesPath.cartPath);
+          context.pushNamed(
+            RoutesPath.cartPath,
+            extra: {
+              'branchId': branchId,
+              'shopOwnerId': item.shopOwnerId,
+            },
+          );
         } else if (state.status == CartStatus.error && state.errorMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.errorMessage!), backgroundColor: Colors.red),
@@ -185,7 +191,7 @@ if(item.stamp!=null && item.stamp! >0)SliverPadding(
                             itemId: _selectedMilkItem!.id,
                             name: _selectedMilkItem!.name,
                             price: _selectedMilkItem!.price,
-                            image: _selectedMilkItem!.image,
+                            image: _selectedMilkItem!.image??"",
                             quantity: 1,
                           ));
                         }
@@ -211,7 +217,7 @@ if(item.stamp!=null && item.stamp! >0)SliverPadding(
           ),
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildMilkSelectionList(BuildContext context) {

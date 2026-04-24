@@ -13,6 +13,9 @@ import 'package:grabby_app/src/featurs/cart-checkout/data/datasources/cart_remot
 import 'package:grabby_app/src/featurs/cart-checkout/data/repositories/cart_repository_impl.dart';
 import 'package:grabby_app/src/featurs/cart-checkout/domain/repositories/cart_repository.dart';
 import 'package:grabby_app/src/featurs/cart-checkout/presentation/bloc/cart_bloc.dart';
+import 'package:grabby_app/src/featurs/reward/data/datasources/reward_remote_data_source.dart';
+import 'package:grabby_app/src/featurs/reward/data/repositories/reward_repository_impl.dart';
+import 'package:grabby_app/src/featurs/reward/presentation/bloc/reward_bloc.dart';
 import '../../src_export.dart' ;
 
 final sl = GetIt.instance;
@@ -103,6 +106,15 @@ Future<void> init() async {
     () => CarPlateRepositoryImpl(sl()),
   );
   sl.registerFactory<CarPlateBloc>(() => CarPlateBloc(sl()));
+
+  // ─── Feature: Reward ───────────────────────────────────────────────────────
+  sl.registerLazySingleton<RewardRemoteDataSource>(
+    () => RewardRemoteDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<RewardRepository>(
+    () => RewardRepositoryImpl(sl()),
+  );
+  sl.registerFactory<RewardBloc>(() => RewardBloc(sl()));
 
   // ─── Feature: Cart ─────────────────────────────────────────────────────────
   sl.registerLazySingleton<CartRemoteDataSource>(

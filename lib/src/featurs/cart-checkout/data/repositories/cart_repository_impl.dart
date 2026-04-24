@@ -1,6 +1,7 @@
 import '../../domain/repositories/cart_repository.dart';
 import '../datasources/cart_remote_data_source.dart';
 import '../models/cart_model.dart';
+import '../models/promo_code_model.dart';
 import '../../../../core/services/api_response.dart';
 
 class CartRepositoryImpl implements CartRepository {
@@ -26,5 +27,15 @@ class CartRepositoryImpl implements CartRepository {
   @override
   Future<ApiResponse<void>> deleteCartItem(String cartItemId) {
     return remoteDataSource.deleteCartItem(cartItemId);
+  }
+
+  @override
+  Future<ApiResponse<PromoCodeModel>> validatePromoCode(String code, String shopOwnerId, String cartId) {
+    return remoteDataSource.validatePromoCode(code, shopOwnerId, cartId);
+  }
+
+  @override
+  Future<ApiResponse<void>> applyCredit(String cartId) {
+    return remoteDataSource.applyCredit(cartId);
   }
 }

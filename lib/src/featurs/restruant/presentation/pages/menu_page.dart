@@ -33,7 +33,15 @@ class _MenuPageState extends State<MenuPage> {
         actions: [
           ButtonTapWidget(
             onTap: () {
-              context.pushNamed(RoutesPath.cartPath, extra: widget.branch.id);
+              final shopOwnerId = widget.branch.menuCategories?.firstOrNull?.menus
+                  .firstOrNull?.shopOwnerId;
+              context.pushNamed(
+                RoutesPath.cartPath,
+                extra: {
+                  'branchId': widget.branch.id,
+                  'shopOwnerId': shopOwnerId,
+                },
+              );
             },
             child: Padding(
               padding: const EdgeInsets.only(right: 16),

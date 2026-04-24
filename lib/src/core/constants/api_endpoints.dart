@@ -56,4 +56,10 @@ class ApiEndpoints {
   static const String addToCart = "/cart/add";
   static const String cartSummary = "/cart/summary";
   static String cartItem(String id) => "/cart/item/$id";
+  static const String validatePromoCode = "/promo-code/validate";
+  static const String applyCredit = "/cart/apply-credit";
+
+  // ─── Reward/Wallet ──────────────────────────────────────────────────────────
+  static const String wallet = "/customers/wallet";
+  static const String convertPoints = "/customers/convert-points";
 }

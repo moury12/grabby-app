@@ -19,6 +19,7 @@ class AppStaticStrings {
   static const String emailAddressOrPhoneNumber =
       "Email Address Or Phone Number";
   static const String password = "Password";
+  static const String credit = "Credit";
   static const String oldPassword = "Old Password";
   static const String confirmLocation = "Confirm Location";
   static const String cancelOrder = "Cancel Order";
@@ -86,6 +87,7 @@ class AppStaticStrings {
   static const String caffeLatte = "Caffe Latte";
   static const String price = "AED 14.50";
   static const String discount = "20% OFF";
+  static const String discountAmount = "Discount Amount";
   static const String promotedShops = "Promoted Shops";
   static const String promotedShopsDesc =
       "Check out trending items from promoted shops!";
