@@ -1,27 +1,23 @@
+import 'package:intl/intl.dart';
 import '../../../../src_export.dart';
 
 class OrderCard extends StatelessWidget {
-  final String shopName;
-  final String orderId;
-  final List<String> items;
-  final String dateTime;
-  final String price;
-  final String status;
-  final bool isActive;
+  final OrderModel order;
 
-  const OrderCard({
-    super.key,
-    required this.shopName,
-    required this.orderId,
-    required this.items,
-    required this.dateTime,
-    required this.price,
-    required this.status,
-    this.isActive = false,
-  });
+  const OrderCard({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
+    final branch = order.branchId is BranchInfo
+        ? (order.branchId as BranchInfo)
+        : null;
+    final shopName = branch?.branchName ?? "Brew & Co";
+    final isActive = [
+      "placed",
+      "preparing",
+      "ready",
+    ].contains(order.status?.toLowerCase());
+
     return Container(
       padding: AppPadding.getPadding12(context),
       decoration: BoxDecoration(
@@ -43,7 +39,7 @@ class OrderCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CustomText(shopName, fontSize: 16, fontWeight: FontWeight.bold),
-              _buildStatusBadge(),
+              _buildStatusBadge(order.status ?? ""),
             ],
           ),
           Column(
@@ -51,7 +47,7 @@ class OrderCard extends StatelessWidget {
             spacing: 8,
             children: [
               CustomText(
-                "${AppStaticStrings.order} $orderId",
+                "${AppStaticStrings.order} ${order.orderId ?? order.id}",
                 fontSize: 14,
                 color: AppColors.kTextColor,
                 fontWeight: FontWeight.w600,
@@ -70,8 +66,8 @@ class OrderCard extends StatelessWidget {
                           BlendMode.srcIn,
                         ),
                       ),
-                      const CustomText(
-                        "Car - A 24204",
+                      CustomText(
+                        "${order.pickupType == "carPickup" ? "Car" : "Walk-in"} - ${order.carPlates ?? ""}",
                         fontSize: 13,
                         color: AppColors.kSecondaryTextColor,
                       ),
@@ -86,7 +82,11 @@ class OrderCard extends StatelessWidget {
                         color: AppColors.kSecondaryTextColor,
                       ),
                       CustomText(
-                        dateTime,
+                        order.createdAt != null
+                            ? DateFormat(
+                                'MMM d, h:mm a',
+                              ).format(DateTime.parse(order.createdAt!))
+                            : "",
                         fontSize: 13,
                         color: AppColors.kSecondaryTextColor,
                       ),
@@ -101,11 +101,15 @@ class OrderCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CustomText(
-                "${items.length} ${AppStaticStrings.itemsCount}",
+                "${order.items.length} ${AppStaticStrings.itemsCount}",
                 fontSize: 14,
                 color: AppColors.kSecondaryTextColor,
               ),
-              CustomText(price, fontSize: 16, fontWeight: FontWeight.bold),
+              CustomText(
+                "${order.totalAmount.toStringAsFixed(2)} AED",
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ],
           ),
           if (isActive)
@@ -116,18 +120,20 @@ class OrderCard extends StatelessWidget {
                   child: CustomButton(
                     text: AppStaticStrings.trackOrder,
                     onPressed: () {
-                      context.push(RoutesPath.orderTrackingPath);
+                      context.pushNamed(
+                        RoutesPath.orderTrackingPath,
+                        extra: order.id,
+                      );
                     },
                   ),
                 ),
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      context.push(RoutesPath.orderCanceledPath);
+                      context.read<OrderBloc>().add(CancelOrderEvent(order.id ?? ""));
                     },
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: AppColors.kPrimaryColor),
-                      // backgroundColor: const Color(0xFFF3F2FF),
+                      side: const BorderSide(color: AppColors.kPrimaryColor),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -147,28 +153,40 @@ class OrderCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBadge() {
+  Widget _buildStatusBadge(String status) {
     bool isCompleted = status.toLowerCase() == "completed";
+    bool isCancelled = status.toLowerCase() == "cancelled";
+
+    Color bgColor = const Color(0xFFFFF3E0);
+    Color textColor = Colors.orange;
+    IconData icon = Icons.card_giftcard;
+
+    if (isCompleted) {
+      bgColor = const Color(0xFFE8F5E9);
+      textColor = Colors.green;
+      icon = Icons.check_circle_outline;
+    } else if (isCancelled) {
+      bgColor = Colors.red.shade50;
+      textColor = Colors.red;
+      icon = Icons.cancel_outlined;
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: isCompleted ? const Color(0xFFE8F5E9) : const Color(0xFFFFF3E0),
+        color: bgColor,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         spacing: 4,
         children: [
-          Icon(
-            isCompleted ? Icons.check_circle_outline : Icons.card_giftcard,
-            size: 14,
-            color: isCompleted ? Colors.green : Colors.orange,
-          ),
+          Icon(icon, size: 14, color: textColor),
           CustomText(
-            status,
+            status.toUpperCase(),
             fontSize: 11,
             fontWeight: FontWeight.bold,
-            color: isCompleted ? Colors.green : Colors.orange,
+            color: textColor,
           ),
         ],
       ),

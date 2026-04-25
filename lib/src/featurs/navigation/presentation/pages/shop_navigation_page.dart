@@ -1,3 +1,5 @@
+import 'package:grabby_app/src/featurs/profile-settings/presentation/bloc/branch/branch_bloc.dart';
+
 import '../../../../src_export.dart';
 
 class ShopNavigationPage extends StatefulWidget {
@@ -26,7 +28,13 @@ class _ShopNavigationPageState extends State<ShopNavigationPage> {
   Widget build(BuildContext context) {
     final List<Widget> pages = [
       ShopHomePage(),
-      ShopOrderManagementPage(),
+      MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => sl<OrderBloc>()),
+          BlocProvider(create: (context) => sl<BranchBloc>()),
+        ],
+        child: const ShopOrderManagementPage(),
+      ),
       ShopMenuManagementPage(),
       MultiBlocProvider(
         providers: [

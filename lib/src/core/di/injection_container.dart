@@ -4,6 +4,8 @@ import 'package:grabby_app/src/featurs/profile-settings/presentation/bloc/branch
 
 import 'package:grabby_app/src/featurs/branch/data/datasources/branch_remote_data_source.dart';
 import 'package:grabby_app/src/featurs/branch/data/repositories/branch_repository_impl.dart';
+import 'package:grabby_app/src/featurs/reward/data/datasources/reward_remote_data_source.dart';
+import 'package:grabby_app/src/featurs/reward/data/repositories/reward_repository_impl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:grabby_app/src/featurs/cart-checkout/data/datasources/car_plate_remote_data_source.dart';
 import 'package:grabby_app/src/featurs/cart-checkout/data/repositories/car_plate_repository_impl.dart';
@@ -13,9 +15,10 @@ import 'package:grabby_app/src/featurs/cart-checkout/data/datasources/cart_remot
 import 'package:grabby_app/src/featurs/cart-checkout/data/repositories/cart_repository_impl.dart';
 import 'package:grabby_app/src/featurs/cart-checkout/domain/repositories/cart_repository.dart';
 import 'package:grabby_app/src/featurs/cart-checkout/presentation/bloc/cart_bloc.dart';
-import 'package:grabby_app/src/featurs/reward/data/datasources/reward_remote_data_source.dart';
-import 'package:grabby_app/src/featurs/reward/data/repositories/reward_repository_impl.dart';
 import 'package:grabby_app/src/featurs/reward/presentation/bloc/reward_bloc.dart';
+import 'package:grabby_app/src/featurs/order/data/datasources/order_remote_data_source.dart';
+import 'package:grabby_app/src/featurs/order/domain/repositories/order_repository.dart';
+import 'package:grabby_app/src/featurs/order/presentation/bloc/order_bloc.dart';
 import '../../src_export.dart' ;
 
 final sl = GetIt.instance;
@@ -124,5 +127,14 @@ Future<void> init() async {
     () => CartRepositoryImpl(sl()),
   );
   sl.registerFactory<CartBloc>(() => CartBloc(sl()));
+
+  // ─── Feature: Order ────────────────────────────────────────────────────────
+  sl.registerLazySingleton<OrderRemoteDataSource>(
+    () => OrderRemoteDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<OrderRepository>(
+    () => OrderRepositoryImpl(sl()),
+  );
+  sl.registerFactory<OrderBloc>(() => OrderBloc(sl()));
 }
 

@@ -62,4 +62,12 @@ class ApiEndpoints {
   // ─── Reward/Wallet ──────────────────────────────────────────────────────────
   static const String wallet = "/customers/wallet";
   static const String convertPoints = "/customers/convert-points";
+
+  // ─── Orders ──────────────────────────────────────────────────────────────────
+  static const String orders = "/orders";
+  static const String myOrders = "/orders/my-orders";
+  static String orderDetail(String id) => "/orders/$id";
+  static String branchOrders(String branchId) => "/orders/branch/$branchId";
+  static String updateOrderStatus(String id) => "/orders/$id/status";
+  static String cancelOrder(String id) => "/orders/$id/cancel";
 }

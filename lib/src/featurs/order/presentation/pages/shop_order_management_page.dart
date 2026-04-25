@@ -1,4 +1,6 @@
 import '../../../../src_export.dart';
+import '../widgets/shop_order_card.dart';
+import '../../../profile-settings/presentation/bloc/branch/branch_bloc.dart';
 
 class ShopOrderManagementPage extends StatefulWidget {
   const ShopOrderManagementPage({super.key});
@@ -9,17 +11,34 @@ class ShopOrderManagementPage extends StatefulWidget {
 }
 
 class _ShopOrderManagementPageState extends State<ShopOrderManagementPage> {
-  String selectedBranch = "Brew&Blow";
-  final List<String> branches = ["Brew&Blow", "Downtown", "Uptown"];
+  String? selectedBranchId;
+  String? selectedBranchName;
   int selectedTabIndex = 0;
 
   final List<String> tabs = [
-    AppStaticStrings.all,
-    AppStaticStrings.pending,
-    AppStaticStrings.preparing,
-    AppStaticStrings.ready,
-    AppStaticStrings.completed,
+    'placed',
+    'preparing',
+    'ready',
+    'completed',
+    'cancelled',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<BranchBloc>().add(GetBranchesEvent());
+  }
+
+  void _fetchOrders() {
+    if (selectedBranchId != null) {
+      context.read<OrderBloc>().add(
+        FetchBranchOrdersEvent(
+          branchId: selectedBranchId!,
+          status: tabs[selectedTabIndex],
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +48,9 @@ class _ShopOrderManagementPageState extends State<ShopOrderManagementPage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            CustomText(
+            const CustomText(
               AppStaticStrings.orderManagement,
               variant: TextVariant.headlineSmall,
-              // fontWeight: FontWeight.bold,
             ),
             _buildBranchDropdown(),
           ],
@@ -40,176 +58,175 @@ class _ShopOrderManagementPageState extends State<ShopOrderManagementPage> {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(40),
           child: Padding(
-            padding: AppPadding.getPadding10(context),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             child: Container(
               height: 40,
               decoration: BoxDecoration(
                 color: AppColors.kPrimaryColor,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(tabs.length * 2 - 1, (index) {
-                  if (index.isOdd) {
-                    return Container(
-                      width: 1,
-                      height: 24,
-                      color: Colors.white.withValues(alpha: 0.5),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: List.generate(tabs.length * 2 - 1, (index) {
+                    if (index.isOdd) {
+                      return Container(
+                        width: 1,
+                        height: 24,
+                        color: Colors.white.withValues(alpha: 0.5),
+                      );
+                    }
+                    final tabIndex = index ~/ 2;
+                    final isSelected = selectedTabIndex == tabIndex;
+
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() => selectedTabIndex = tabIndex);
+                        _fetchOrders();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        height: double.infinity,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? AppColors.kSecondaryColor
+                              : Colors.transparent,
+                          borderRadius: isSelected
+                              ? BorderRadius.circular(8)
+                              : null,
+                        ),
+                        child: CustomText(
+                          tabs[tabIndex].toUpperCase(),
+                          variant: TextVariant.labelSmall,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     );
-                  }
-                  final tabIndex = index ~/ 2;
-                  final isSelected = selectedTabIndex == tabIndex;
-
-                  return GestureDetector(
-                    onTap: () => setState(() => selectedTabIndex = tabIndex),
-                    child: Container(
-                      padding: AppPadding.getPadding6H(context),
-                      height: double.infinity,
-
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppColors
-                                  .kSecondaryColor // Light blue highlight
-                            : Colors.transparent,
-                        borderRadius: isSelected
-                            ? BorderRadius.circular(8)
-                            : null,
-                      ),
-                      child: CustomText(
-                        tabs[tabIndex],
-                        variant: TextVariant.labelMedium,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  );
-                }),
+                  }),
+                ),
               ),
             ),
           ),
         ),
       ),
-      body: _buildOrderList(tabs[selectedTabIndex]),
+      body: BlocBuilder<OrderBloc, OrderState>(
+        builder: (context, state) {
+          if (selectedBranchId == null) {
+            return const Center(child: CustomText("Please select a branch"));
+          }
+          if (state.status == OrderStatus.loading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state.status == OrderStatus.failure) {
+            return Center(child: CustomText(state.errorMessage ?? "Error"));
+          }
+          if (state.orders.isEmpty) {
+            return RefreshIndicator(
+              onRefresh: () async => _fetchOrders(),
+              child: Stack(
+                children: [
+                  ListView(),
+                  const Center(child: CustomText("No orders found")),
+                ],
+              ),
+            );
+          }
+
+          return RefreshIndicator(
+            onRefresh: () async => _fetchOrders(),
+            child: ListView.builder(
+              padding: AppPadding.getPadding12H(context),
+              itemCount: state.orders.length,
+              itemBuilder: (context, index) {
+                final order = state.orders[index];
+                return ShopOrderCard(
+                  order: order,
+                  onTap: () async {
+                    final result = await context.pushNamed(
+                      RoutesPath.shopOrderDetailsPath,
+                      extra: order.id,
+                    );
+                    if (result == true) {
+                      _fetchOrders();
+                    }
+                  },
+                );
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 
   Widget _buildBranchDropdown() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: SizedBox(
-          height: 30,
-          child: DropdownButton<String>(
-            value: selectedBranch,
-            icon: const Icon(
-              Icons.keyboard_arrow_down,
-              color: AppColors.kPrimaryColor,
+    return BlocConsumer<BranchBloc, BranchState>(
+      listener: (context, state) {
+        if (state is BranchesLoaded &&
+            state.branches.isNotEmpty &&
+            selectedBranchId == null) {
+          setState(() {
+            selectedBranchId = state.branches.first.id;
+            selectedBranchName = state.branches.first.branchName;
+          });
+          _fetchOrders();
+        }
+      },
+      builder: (context, state) {
+        if (state is BranchLoading) {
+          return const SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          );
+        }
+        if (state is BranchesLoaded) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
             ),
-            style: TextStyle(
-              color: AppColors.kPrimaryColor,
-              fontSize: ResponsiveTextSizes.getFontSizeSmall(context),
-              fontWeight: FontWeight.w800,
-            ),
-            onChanged: (String? newValue) {
-              if (newValue != null) {
-                setState(() => selectedBranch = newValue);
-              }
-            },
-            items: branches.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: CustomText(
-                  value,
-                  variant: TextVariant.labelSmall,
-                  color: AppColors.kPrimaryColor,
-                  fontWeight: FontWeight.w700,
+            child: DropdownButtonHideUnderline(
+              child: SizedBox(
+                height: 30,
+                child: DropdownButton<String>(
+                  value: selectedBranchId,
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down,
+                    color: AppColors.kPrimaryColor,
+                  ),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      setState(() {
+                        selectedBranchId = newValue;
+                        selectedBranchName = state.branches
+                            .firstWhere((b) => b.id == newValue)
+                            .branchName;
+                      });
+                      _fetchOrders();
+                    }
+                  },
+                  items: state.branches.map<DropdownMenuItem<String>>((branch) {
+                    return DropdownMenuItem<String>(
+                      value: branch.id,
+                      child: CustomText(
+                        branch.branchName,
+                        variant: TextVariant.labelSmall,
+                        color: AppColors.kPrimaryColor,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    );
+                  }).toList(),
                 ),
-              );
-            }).toList(),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildOrderList(String filter) {
-    // Dummy Data
-    final List<Map<String, dynamic>> dummyOrders = [
-      {
-        "id": "#ORD-1234",
-        "time": "2 min ago",
-        "customer": "John Doe",
-        "orderCount": 12,
-        "stampCount": 6,
-        "items": [
-          {"qty": 2, "name": "Cappuccino", "price": "5.50"},
-          {"qty": 1, "name": "Croissant", "price": "5.50"},
-        ],
-        "status": AppStaticStrings.ready,
-        "pickup": AppStaticStrings.pickupCounter,
-        "total": "14.50",
-        "hasArrived": true,
-      },
-      {
-        "id": "#ORD-1234",
-        "time": "2 min ago",
-        "customer": "John Doe",
-        "orderCount": 12,
-        "stampCount": 6,
-        "items": [
-          {"qty": 2, "name": "Cappuccino", "price": "5.50"},
-          {"qty": 1, "name": "Croissant", "price": "5.50"},
-        ],
-        "status": AppStaticStrings.ready,
-        "pickup": AppStaticStrings.pickupCounter,
-        "total": "14.50",
-        "hasArrived": true,
-      },
-      {
-        "id": "#ORD-1235",
-        "time": "5 min ago",
-        "customer": "Jane Smith",
-        "orderCount": 5,
-        "stampCount": 2,
-        "items": [
-          {"qty": 1, "name": "Latte", "price": "14.50"},
-        ],
-        "status": AppStaticStrings.preparing,
-        "pickup": "${AppStaticStrings.carPickupWithPlate}ABC 123",
-        "total": "14.50",
-        "hasArrived": false,
-      },
-    ];
-
-    final filteredOrders = filter == AppStaticStrings.all
-        ? dummyOrders
-        : dummyOrders.where((o) => o['status'] == filter).toList();
-
-    return ListView.builder(
-      padding: AppPadding.getPadding12H(context),
-      itemCount: filteredOrders.length,
-      itemBuilder: (context, index) {
-        final order = filteredOrders[index];
-        return ShopOrderCard(
-          orderId: order['id'],
-          time: order['time'],
-          customerName: order['customer'],
-          orderCount: order['orderCount'],
-          stampCount: order['stampCount'],
-          items: List<Map<String, dynamic>>.from(order['items']),
-          status: order['status'],
-          pickupType: order['pickup'],
-          totalPrice: order['total'],
-          hasArrived: order['hasArrived'] ?? false,
-          onTap: () {
-            context.pushNamed(RoutesPath.shopOrderDetailsPath);
-          },
-        );
+              ),
+            ),
+          );
+        }
+        return const SizedBox();
       },
     );
   }

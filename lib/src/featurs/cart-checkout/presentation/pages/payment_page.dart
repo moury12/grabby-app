@@ -1,14 +1,15 @@
 import '../../../../src_export.dart';
 
 class PaymentPage extends StatefulWidget {
-  const PaymentPage({super.key});
+  final OrderModel order;
+  const PaymentPage({super.key, required this.order});
 
   @override
   State<PaymentPage> createState() => _PaymentPageState();
 }
 
 class _PaymentPageState extends State<PaymentPage> {
-  String _selectedMethod = "Credit/Debit Card";
+  String _selectedMethod = "Credit Card";
 
   @override
   Widget build(BuildContext context) {
@@ -23,21 +24,25 @@ class _PaymentPageState extends State<PaymentPage> {
             // Pickup Details
             _buildSection(
               title: AppStaticStrings.pickupDetails,
-              child: const Column(
+              child: Column(
                 spacing: 12,
                 children: [
                   PickupDetailItem(
                     icon: ImagesConstant.kCarIcon,
-                    title: AppStaticStrings.carPickup,
-                    subtitle: "ABC 1234",
+                    title: widget.order.pickupType == "carPickup"
+                        ? AppStaticStrings.carPickup
+                        : AppStaticStrings.counterPickup,
+                    subtitle: widget.order.carPlates ?? "",
                     iconColor: Colors.white,
                     backgroundColor: AppColors.kPrimaryColor,
                   ),
-                  PickupDetailItem(
-                    icon: ImagesConstant.kClockIcon,
-                    title: AppStaticStrings.readyIn1520mins,
-                    subtitle: "Brew & Co - Main Street",
-                  ),
+                  // PickupDetailItem(
+                  //   icon: ImagesConstant.kClockIcon,
+                  //   title: AppStaticStrings.readyIn1520mins,
+                  //   subtitle: widget.order.branchId is BranchInfo
+                  //       ? (widget.order.branchId as BranchInfo).branchName
+                  //       : "", // This could also be dynamic if branch info is available
+                  // ),
                 ],
               ),
             ),
@@ -50,78 +55,73 @@ class _PaymentPageState extends State<PaymentPage> {
                 children: [
                   PaymentMethodCard(
                     icon: "card",
-                    title: AppStaticStrings.creditDebitCard,
-                    subtitle: "•••• 4242",
-                    isSelected: _selectedMethod == "Credit/Debit Card",
-                    onTap: () =>
-                        setState(() => _selectedMethod = "Credit/Debit Card"),
+                    title:
+                        widget.order.paymentMethod ??
+                        AppStaticStrings.creditDebitCard,
+                    subtitle: widget.order.transactionId != null
+                        ? "ID: ${widget.order.transactionId}"
+                        : "•••• 4242",
+                    isSelected: true,
+                    onTap: () {},
                   ),
-                  // PaymentMethodCard(
-                  //   icon: "wallet",
-                  //   title: AppStaticStrings.digitalWallet,
-                  //   subtitle: "Apple Pay/ Goggle Pay",
-                  //   isSelected: _selectedMethod == "Digital Wallet",
-                  //   onTap: () =>
-                  //       setState(() => _selectedMethod = "Digital Wallet"),
-                  // ),
                 ],
               ),
             ),
 
             // Available Credit
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 8,
-                children: [
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomText(
-                        AppStaticStrings.availableCredit,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      CustomText(
-                        "5.00 AED",
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green,
-                      ),
-                    ],
-                  ),
-                  GestureDetector(
-                    onTap: () {},
-                    child: const CustomText(
-                      AppStaticStrings.applyCredit,
-                      fontSize: 14,
-                      color: Color(0xFFA59BF9),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // Container(
+            //   padding: const EdgeInsets.all(12),
+            //   decoration: BoxDecoration(
+            //     color: Colors.white,
+            //     borderRadius: BorderRadius.circular(12),
+            //   ),
+            //   child: Column(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     spacing: 8,
+            //     children: [
+            //       const Row(
+            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //         children: [
+            //           CustomText(
+            //             AppStaticStrings.availableCredit,
+            //             fontSize: 14,
+            //             fontWeight: FontWeight.w500,
+            //           ),
+            //           CustomText(
+            //             "5.00 AED",
+            //             fontSize: 14,
+            //             fontWeight: FontWeight.bold,
+            //             color: Colors.green,
+            //           ),
+            //         ],
+            //       ),
+            //       GestureDetector(
+            //         onTap: () {},
+            //         child: const CustomText(
+            //           AppStaticStrings.applyCredit,
+            //           fontSize: 14,
+            //           color: Color(0xFFA59BF9),
+            //           fontWeight: FontWeight.w600,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
 
-            // Summary
+            // // Summary
             Column(
               spacing: 8,
               children: [
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    CustomText(
-                      AppStaticStrings.subtotal,
+                    const CustomText(
+                      AppStaticStrings.orderNumber,
                       fontSize: 14,
                       color: AppColors.kSecondaryTextColor,
                     ),
                     CustomText(
-                      "16.60 AED",
+                      widget.order.orderId ?? "",
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -136,7 +136,7 @@ class _PaymentPageState extends State<PaymentPage> {
                       fontWeight: FontWeight.bold,
                     ),
                     CustomText(
-                      "16.60 AED",
+                      "${widget.order.totalAmount.toStringAsFixed(2)} AED",
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFFA59BF9),
@@ -151,9 +151,12 @@ class _PaymentPageState extends State<PaymentPage> {
       bottomNavigationBar: Padding(
         padding: AppPadding.getPadding12(context).copyWith(bottom: 24),
         child: CustomButton(
-          text: "${AppStaticStrings.payNow} 16.60 AED",
+          text: AppStaticStrings.paymentSuccess,
           onPressed: () {
-            context.pushNamed(RoutesPath.paymentSuccessPath);
+            context.pushReplacementNamed(
+              RoutesPath.paymentSuccessPath,
+              extra: widget.order,
+            );
           },
         ),
       ),

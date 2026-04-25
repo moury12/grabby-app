@@ -11,6 +11,7 @@ class AppStaticStrings {
   static const String earnLoaylty = "Earn Loyalty Stamps";
   static const String collectDigitalStamps =
       "Collect digital stamps at your favorite shops and redeem rewards.";
+static const String paymentSuccess = "Payment Success";
 
   static const String gladToMeetYouAgain = "Glad to meet you again!";
   static const String loginAccount = "Login Account";

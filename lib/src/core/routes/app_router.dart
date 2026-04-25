@@ -119,8 +119,11 @@ class AppRouter {
         path: RoutesPath.cartPath,
         name: RoutesPath.cartPath,
         builder: (BuildContext context, GoRouterState state) {
-          return BlocProvider(
-            create: (context) => sl<CartBloc>(),
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (context) => sl<CartBloc>()),
+              BlocProvider(create: (context) => sl<OrderBloc>()),
+            ],
             child: const CartPage(),
           );
         },
@@ -149,35 +152,44 @@ class AppRouter {
         path: RoutesPath.checkoutPath,
         name: RoutesPath.checkoutPath,
         builder: (BuildContext context, GoRouterState state) {
-          return const PaymentPage();
+          return PaymentPage(order: state.extra as OrderModel);
         },
       ),
       GoRoute(
         path: RoutesPath.paymentSuccessPath,
         name: RoutesPath.paymentSuccessPath,
         builder: (BuildContext context, GoRouterState state) {
-          return const PaymentSuccessPage();
+          return PaymentSuccessPage(order: state.extra as OrderModel);
         },
       ),
       GoRoute(
         path: RoutesPath.orderTrackingPath,
         name: RoutesPath.orderTrackingPath,
         builder: (BuildContext context, GoRouterState state) {
-          return const OrderTrackingPage();
+          return BlocProvider(
+            create: (context) => sl<OrderBloc>(),
+            child: OrderTrackingPage(orderId: state.extra as String),
+          );
         },
       ),
       GoRoute(
         path: RoutesPath.orderHistoryPath,
         name: RoutesPath.orderHistoryPath,
         builder: (BuildContext context, GoRouterState state) {
-          return const OrderHistoryPage();
+          return BlocProvider(
+            create: (context) => sl<OrderBloc>(),
+            child: const OrderHistoryPage(),
+          );
         },
       ),
       GoRoute(
         path: RoutesPath.orderTrackingMapViewPath,
         name: RoutesPath.orderTrackingMapViewPath,
         builder: (BuildContext context, GoRouterState state) {
-          return const OrderTrackingMapViewPage();
+          return BlocProvider(
+            create: (context) => sl<OrderBloc>(),
+            child: OrderTrackingMapViewPage(orderId: state.extra as String),
+          );
         },
       ),
       GoRoute(
@@ -247,14 +259,23 @@ class AppRouter {
         path: RoutesPath.shopOrderManagementPath,
         name: RoutesPath.shopOrderManagementPath,
         builder: (BuildContext context, GoRouterState state) {
-          return const ShopOrderManagementPage();
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (context) => sl<OrderBloc>()),
+              BlocProvider(create: (context) => sl<BranchBloc>()),
+            ],
+            child: const ShopOrderManagementPage(),
+          );
         },
       ),
       GoRoute(
         path: RoutesPath.shopOrderDetailsPath,
         name: RoutesPath.shopOrderDetailsPath,
         builder: (BuildContext context, GoRouterState state) {
-          return const ShopOrderDetailsPage();
+          return BlocProvider(
+            create: (context) => sl<OrderBloc>(),
+            child: ShopOrderDetailsPage(orderId: state.extra as String),
+          );
         },
       ),
       GoRoute(

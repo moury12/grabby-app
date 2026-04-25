@@ -37,8 +37,8 @@ class CartItemWithStepperCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: imageUrl != null
-                ? Image.network(
-                    imageUrl!,
+                ? CustomNetworkImage(
+                    imageUrl: "${ApiEndpoints.baseUrl}/${imageUrl ?? ""}",
                     width: 64,
                     height: 64,
                     fit: BoxFit.cover,

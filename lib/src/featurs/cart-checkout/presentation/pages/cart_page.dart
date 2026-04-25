@@ -294,28 +294,80 @@ class _CartPageState extends State<CartPage> {
         backgroundColor: AppColors.kBackgroundColor,
         elevation: 0,
       ),
-      body: BlocBuilder<CartBloc, CartState>(
-        builder: (context, state) {
-          return RefreshIndicator(
-            onRefresh: () async {
-              if (branchId.isNotEmpty) {
-                context.read<CartBloc>().add(FetchCartEvent(branchId));
-              }
-            },
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: AppPadding.getPadding12(context).copyWith(top: 0),
-              child: _buildContent(state),
-            ),
-          );
+      body: BlocListener<OrderBloc, OrderState>(
+        listener: (context, state) {
+          if (state.status == OrderStatus.success && state.selectedOrder != null) {
+            context.pushNamed(
+              RoutesPath.checkoutPath,
+              extra: state.selectedOrder,
+            );
+          } else if (state.status == OrderStatus.failure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.errorMessage ?? "Failed to place order")),
+            );
+          }
         },
+        child: BlocBuilder<CartBloc, CartState>(
+          builder: (context, state) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                if (branchId.isNotEmpty) {
+                  context.read<CartBloc>().add(FetchCartEvent(branchId));
+                }
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: AppPadding.getPadding12(context).copyWith(top: 0),
+                child: _buildContent(state),
+              ),
+            );
+          },
+        ),
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-        child: CustomButton(
-          text: AppStaticStrings.proceedToCheckout,
-          onPressed: () {
-            context.pushNamed(RoutesPath.checkoutPath);
+        child: BlocBuilder<OrderBloc, OrderState>(
+          builder: (context, orderState) {
+            return CustomButton(
+              
+              text: AppStaticStrings.proceedToCheckout,
+              isLoading: orderState.status == OrderStatus.loading,
+              onPressed: () {
+                final cartState = context.read<CartBloc>().state;
+                if (cartState.cart != null) {
+                  final cart = cartState.cart!;
+                  final order = OrderModel(
+                    branchId: cart.branchId,
+                    items: cart.items
+                        .map((item) => OrderItemModel(
+                              productId: item.productId,
+                              menuName: item.menuName,
+                              menuPrice: item.menuPrice,
+                              menuImage: item.menuImage,
+                              quantity: item.quantity,
+                              additionalItems: item.additionalItems
+                                  .map((e) => OrderAdditionalItemModel(
+                                        itemId: e.itemId,
+                                        name: e.name,
+                                        price: e.price,
+                                        quantity: e.quantity,
+                                      ))
+                                  .toList(),
+                              totalPrice: item.totalPrice,
+                            ))
+                        .toList(),
+                    pickupType: _isCarPickup ? "carPickup" : "walkIn",
+                    totalAmount: _appliedPromo != null && _appliedPromo!.isValid
+                        ? _appliedPromo!.finalPrice
+                        : cart.totalAmount,
+                    paymentMethod: "Credit Card",
+                    carPlates:
+                        _isCarPickup ? (_selectedCarPlate?.plateCode ?? "") : null,
+                  );
+                  context.read<OrderBloc>().add(CreateOrderEvent(order));
+                }
+              },
+            );
           },
         ),
       ),

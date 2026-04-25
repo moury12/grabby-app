@@ -1,15 +1,25 @@
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../src_export.dart';
 
 class ShopOrderDetailsPage extends StatefulWidget {
-  const ShopOrderDetailsPage({super.key});
+  final String orderId;
+  const ShopOrderDetailsPage({super.key, required this.orderId});
 
   @override
   State<ShopOrderDetailsPage> createState() => _ShopOrderDetailsPageState();
 }
 
 class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
-  String currentStatus = AppStaticStrings.pending;
+  @override
+  void initState() {
+    super.initState();
+    _fetchDetails();
+  }
+
+  void _fetchDetails() {
+    context.read<OrderBloc>().add(FetchOrderDetailsEvent(widget.orderId));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,34 +27,58 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
       backgroundColor: AppColors.kBackgroundColor,
       appBar: AppBar(
         title: CustomText(
-          "#ORD-1234",
+          "#${widget.orderId}",
           variant: TextVariant.headlineMedium,
-          // fontWeight: FontWeight.bold,
         ),
       ),
-      body: SingleChildScrollView(
-        padding: AppPadding.getPadding12(context).copyWith(top: 0),
-        child: Column(
-          spacing: 8,
-          children: [
-            _buildStatusStepper(),
-            _buildPickupInfo(),
-            _buildMapSection(),
-            _buildItemsSection(),
-            _buildActionButtons(),
-          ],
-        ),
+      body: BlocConsumer<OrderBloc, OrderState>(
+        listener: (context, state) {
+          if (state.status == OrderStatus.success && state.successMessage != null && state.successMessage!.contains("Order status updated")) {
+            _fetchDetails();
+            // Optional: return true to refresh parent list
+          }
+           if (state.status == OrderStatus.failure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.errorMessage ?? "Error")),
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state.status == OrderStatus.loading && state.selectedOrder == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final order = state.selectedOrder;
+          if (order == null) {
+            return const Center(child: CustomText("Order not found"));
+          }
+
+          return RefreshIndicator(
+            onRefresh: () async => _fetchDetails(),
+            child: SingleChildScrollView(
+              padding: AppPadding.getPadding12(context).copyWith(top: 0),
+              child: Column(
+                spacing: 8,
+                children: [
+                  _buildStatusStepper(order.status ?? ""),
+                  _buildPickupInfo(order),
+                  _buildMapSection(order),
+                  _buildItemsSection(order),
+                  _buildActionButtons(order, state.status == OrderStatus.updating),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildStatusStepper() {
+  Widget _buildStatusStepper(String currentStatus) {
     final List<String> statuses = [
-      AppStaticStrings.placedStatus,
-      AppStaticStrings.acceptedStatus,
-      AppStaticStrings.preparing,
-      AppStaticStrings.ready,
-      AppStaticStrings.completed,
+      'placed',
+      'preparing',
+      'ready',
+      'completed',
     ];
 
     return Container(
@@ -57,11 +91,8 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
         children: statuses.asMap().entries.map((entry) {
           int idx = entry.key;
           String status = entry.value;
-          bool isCompleted = _isStatusCompleted(status);
-          bool isCurrent =
-              currentStatus == status ||
-              (currentStatus == AppStaticStrings.pending &&
-                  status == AppStaticStrings.placedStatus);
+          bool isCompleted = _isStatusCompleted(status, currentStatus);
+          bool isCurrent = currentStatus.toLowerCase() == status.toLowerCase();
 
           return Row(
             children: [
@@ -92,7 +123,7 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
               ),
               const SizedBox(width: 12),
               CustomText(
-                status,
+                status.toUpperCase(),
                 variant: TextVariant.bodyMedium,
                 fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
                 color: isCompleted || isCurrent
@@ -106,25 +137,14 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
     );
   }
 
-  bool _isStatusCompleted(String status) {
-    // Very simple mock logic for the stepper
-    final List<String> order = [
-      AppStaticStrings.placedStatus,
-      AppStaticStrings.acceptedStatus,
-      AppStaticStrings.preparing,
-      AppStaticStrings.ready,
-      AppStaticStrings.completed,
-    ];
-    int currentIdx = order.indexOf(
-      currentStatus == AppStaticStrings.pending
-          ? AppStaticStrings.placedStatus
-          : currentStatus,
-    );
-    int statusIdx = order.indexOf(status);
+  bool _isStatusCompleted(String status, String currentStatus) {
+    final List<String> order = ['placed', 'preparing', 'ready', 'completed'];
+    int currentIdx = order.indexOf(currentStatus.toLowerCase());
+    int statusIdx = order.indexOf(status.toLowerCase());
     return statusIdx < currentIdx;
   }
 
-  Widget _buildPickupInfo() {
+  Widget _buildPickupInfo(OrderModel order) {
     return Container(
       padding: AppPadding.getPadding8(context),
       width: double.infinity,
@@ -145,7 +165,10 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
             spacing: 8,
             children: [
               SvgPicture.asset(ImagesConstant.kGroupIcon),
-              CustomText("Counter Pickup", variant: TextVariant.bodyMedium),
+              CustomText(
+                order.pickupType == "carPickup" ? "Car Pickup (${order.carPlates})" : "Walk-in",
+                variant: TextVariant.bodyMedium,
+              ),
             ],
           ),
         ],
@@ -153,7 +176,11 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
     );
   }
 
-  Widget _buildMapSection() {
+  Widget _buildMapSection(OrderModel order) {
+    final branch = order.branchId is BranchInfo ? (order.branchId as BranchInfo) : null;
+    final lat = branch?.lat ?? 25.2048;
+    final lng = branch?.lng ?? 55.2708;
+
     return Container(
       height: 200,
       width: double.infinity,
@@ -163,60 +190,22 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(appRadius),
-        child: Stack(
-          children: [
-            const GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: LatLng(25.2048, 55.2708), // Example location
-                zoom: 14,
-              ),
-              zoomControlsEnabled: false,
-              myLocationButtonEnabled: false,
-              markers: {},
-            ),
-            Positioned(
-              top: 12,
-              left: 12,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  spacing: 8,
-                  children: [
-                    const Icon(
-                      Icons.navigation_outlined,
-                      color: AppColors.kPrimaryColor,
-                      size: 16,
-                    ),
-                    CustomText(
-                      AppStaticStrings.customerIsOnTheWay,
-                      variant: TextVariant.labelMedium,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(
+            target: LatLng(lat, lng),
+            zoom: 14,
+          ),
+          zoomControlsEnabled: false,
+          myLocationButtonEnabled: false,
+          markers: {
+            Marker(markerId: const MarkerId('shop'), position: LatLng(lat, lng)),
+          },
         ),
       ),
     );
   }
 
-  Widget _buildItemsSection() {
+  Widget _buildItemsSection(OrderModel order) {
     return Container(
       padding: AppPadding.getPadding8(context),
       decoration: BoxDecoration(
@@ -232,7 +221,7 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
             variant: TextVariant.titleMedium,
             fontWeight: FontWeight.bold,
           ),
-          _buildItemRow("2x Caffe Latte", "9.00 AED"),
+          ...order.items.map((item) => _buildItemRow("${item.quantity}x ${item.menuName}", "AED ${item.totalPrice?.toStringAsFixed(2)}")),
           const Divider(height: 1),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -243,7 +232,7 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
                 fontWeight: FontWeight.bold,
               ),
               CustomText(
-                "21.10 AED",
+                "${order.totalAmount.toStringAsFixed(2)} AED",
                 variant: TextVariant.titleLarge,
                 color: AppColors.kPrimaryColor,
                 fontWeight: FontWeight.bold,
@@ -265,31 +254,43 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildActionButtons(OrderModel order, bool isUpdating) {
     String mainButtonText = "";
-    VoidCallback? onMainTap;
+    String nextStatus = "";
+    final currentStatus = order.status?.toLowerCase();
 
-    if (currentStatus == AppStaticStrings.pending) {
+    if (currentStatus == 'placed') {
       mainButtonText = AppStaticStrings.startPreparing;
-      onMainTap = () =>
-          setState(() => currentStatus = AppStaticStrings.preparing);
-    } else if (currentStatus == AppStaticStrings.preparing) {
+      nextStatus = 'preparing';
+    } else if (currentStatus == 'preparing') {
       mainButtonText = AppStaticStrings.markAsReady;
-      onMainTap = () => setState(() => currentStatus = AppStaticStrings.ready);
-    } else if (currentStatus == AppStaticStrings.ready) {
+      nextStatus = 'ready';
+    } else if (currentStatus == 'ready') {
       mainButtonText = AppStaticStrings.completeOrder;
-      onMainTap = () =>
-          setState(() => currentStatus = AppStaticStrings.completed);
+      nextStatus = 'completed';
     }
 
     return Column(
-      // spacing: 12,
       children: [
         if (mainButtonText.isNotEmpty)
-          CustomButton(text: mainButtonText, onPressed: onMainTap!),
+          CustomButton(
+            text: mainButtonText,
+            isLoading: isUpdating,
+            onPressed: () {
+              context.read<OrderBloc>().add(UpdateOrderStatusEvent(
+                orderId: order.id ?? "",
+                status: nextStatus,
+              ));
+            },
+          ),
         CustomButton(
           text: AppStaticStrings.cancelOrder,
-          onPressed: () {},
+          onPressed: () {
+             context.read<OrderBloc>().add(UpdateOrderStatusEvent(
+                orderId: order.id ?? "",
+                status: 'cancelled',
+              ));
+          },
           backgroundColor: Colors.white,
           textColor: AppColors.kRedColor,
           borderColor: AppColors.kRedColor,

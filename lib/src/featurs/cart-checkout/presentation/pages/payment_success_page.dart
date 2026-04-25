@@ -1,7 +1,9 @@
+
 import '../../../../src_export.dart';
 
 class PaymentSuccessPage extends StatelessWidget {
-  const PaymentSuccessPage({super.key});
+  final OrderModel order;
+  const PaymentSuccessPage({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +28,10 @@ class PaymentSuccessPage extends StatelessWidget {
                 height: 80,
               ),
             ),
-            const Column(
+            Column(
               spacing: 8,
               children: [
-                CustomText(
+                const CustomText(
                   AppStaticStrings.paymentSuccessful,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -49,30 +51,30 @@ class PaymentSuccessPage extends StatelessWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Column(
+              child: Column(
                 spacing: 12,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      CustomText(
+                      const CustomText(
                         AppStaticStrings.orderNumber,
                         color: AppColors.kSecondaryTextColor,
                       ),
-                      CustomText("#GC12345", fontWeight: FontWeight.bold),
+                      CustomText("#${order.orderId ?? order.id}", fontWeight: FontWeight.bold),
                     ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      CustomText(
+                      const CustomText(
                         AppStaticStrings.totalPaid,
                         color: AppColors.kSecondaryTextColor,
                       ),
                       CustomText(
-                        "11.60 AED",
+                        "${order.totalAmount.toStringAsFixed(2)} AED",
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFFA59BF9),
+                        color: const Color(0xFFA59BF9),
                       ),
                     ],
                   ),
@@ -87,7 +89,7 @@ class PaymentSuccessPage extends StatelessWidget {
                 CustomButton(
                   text: AppStaticStrings.trackOrder,
                   onPressed: () {
-                    context.pushNamed(RoutesPath.orderTrackingPath);
+                    context.pushNamed(RoutesPath.orderTrackingMapViewPath, extra: order.id);
                   },
                 ),
                 SizedBox(

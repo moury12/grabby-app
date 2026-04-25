@@ -1,37 +1,27 @@
+
+import 'package:intl/intl.dart';
 import '../../../../src_export.dart';
 
 class ShopOrderCard extends StatelessWidget {
-  final String orderId;
-  final String time;
-  final String customerName;
-  final int orderCount;
-  final int stampCount;
-  final List<Map<String, dynamic>> items;
-  final String status;
-  final String pickupType;
-  final String totalPrice;
-  final bool isPaid;
-  final bool hasArrived;
+  final OrderModel order;
   final VoidCallback? onTap;
 
   const ShopOrderCard({
     super.key,
-    required this.orderId,
-    required this.time,
-    required this.customerName,
-    required this.orderCount,
-    required this.stampCount,
-    required this.items,
-    required this.status,
-    required this.pickupType,
-    required this.totalPrice,
-    this.isPaid = true,
-    this.hasArrived = false,
+    required this.order,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final customer = order.customerId is CustomerInfo ? (order.customerId as CustomerInfo) : null;
+    final customerName = customer?.name ?? "Customer";
+    final pickupType = order.pickupType == "carPickup" ? "Car Pickup - ${order.carPlates}" : "Walk-in";
+    final time = order.createdAt != null 
+        ? DateFormat('h:mm a').format(DateTime.parse(order.createdAt!))
+        : "";
+    final isPaid = order.paymentStatus?.toLowerCase() == "paid";
+
     return ButtonTapWidget(
       onTap: onTap,
       child: Container(
@@ -52,7 +42,7 @@ class ShopOrderCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomText(
-                      orderId,
+                      order.orderId ?? order.id ?? "",
                       variant: TextVariant.titleLarge,
                       fontWeight: FontWeight.bold,
                     ),
@@ -63,7 +53,7 @@ class ShopOrderCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                _buildStatusBanner(status),
+                _buildStatusBanner(order.status ?? ""),
               ],
             ),
 
@@ -72,26 +62,26 @@ class ShopOrderCard extends StatelessWidget {
               variant: TextVariant.titleMedium,
               fontWeight: FontWeight.bold,
             ),
-            CustomText(
-              "$orderCount ${AppStaticStrings.ordersCount} \u2022 $stampCount ${AppStaticStrings.stampsCount}",
-              variant: TextVariant.labelSmall,
-              color: AppColors.kSecondaryTextColor,
-            ),
+            // CustomText(
+            //   "0 ${AppStaticStrings.ordersCount} \u2022 0 ${AppStaticStrings.stampsCount}",
+            //   variant: TextVariant.labelSmall,
+            //   color: AppColors.kSecondaryTextColor,
+            // ),
 
             const Divider(height: 1, color: AppColors.kAccentColor),
 
-            ...items.map(
+            ...order.items.map(
               (item) => Padding(
                 padding: const EdgeInsets.only(bottom: 6),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     CustomText(
-                      "${item['qty']}x ${item['name']}",
+                      "${item.quantity}x ${item.menuName}",
                       variant: TextVariant.bodyMedium,
                     ),
                     CustomText(
-                      "AED ${item['price']}",
+                      "AED ${item.totalPrice?.toStringAsFixed(2)}",
                       variant: TextVariant.titleSmall,
                       fontWeight: FontWeight.bold,
                     ),
@@ -108,23 +98,25 @@ class ShopOrderCard extends StatelessWidget {
                 Row(
                   spacing: 8,
                   children: [
-                    if (isPaid)
+                    if (!isPaid) // User said "right now it will be unpaid just"
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.kGreenColor.withValues(alpha: 0.1),
+                          color: Colors.red.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: CustomText(
-                          AppStaticStrings.paid,
+                        child: const CustomText(
+                          "Unpaid",
                           variant: TextVariant.labelSmall,
-                          color: AppColors.kGreenColor,
+                          color: Colors.red,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                    // Commented out "Customer Arrived" as requested
+                    /*
                     if (hasArrived)
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -144,7 +136,8 @@ class ShopOrderCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       )
-                    else
+                    */
+                    
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
@@ -158,7 +151,7 @@ class ShopOrderCard extends StatelessWidget {
                           spacing: 4,
                           children: [
                             Icon(
-                              pickupType.contains('Car')
+                              order.pickupType == "carPickup"
                                   ? Icons.directions_car_filled_outlined
                                   : Icons.person_outline,
                               size: 16,
@@ -176,7 +169,7 @@ class ShopOrderCard extends StatelessWidget {
                   ],
                 ),
                 CustomText(
-                  "AED $totalPrice",
+                  "AED ${order.totalAmount.toStringAsFixed(2)}",
                   variant: TextVariant.titleLarge,
                   color: AppColors.kPrimaryColor,
                   fontWeight: FontWeight.bold,
@@ -191,17 +184,17 @@ class ShopOrderCard extends StatelessWidget {
 
   Widget _buildStatusBanner(String status) {
     Color color;
-    switch (status) {
-      case AppStaticStrings.pending:
+    switch (status.toLowerCase()) {
+      case "placed":
         color = Colors.orange;
         break;
-      case AppStaticStrings.preparing:
+      case "preparing":
         color = AppColors.kBlueColor;
         break;
-      case AppStaticStrings.ready:
+      case "ready":
         color = AppColors.kGreenColor;
         break;
-      case AppStaticStrings.completed:
+      case "completed":
         color = AppColors.kSecondaryTextColor;
         break;
       default:
@@ -218,14 +211,14 @@ class ShopOrderCard extends StatelessWidget {
         spacing: 4,
         children: [
           Icon(
-            status == AppStaticStrings.ready
+            status.toLowerCase() == "ready"
                 ? Icons.check_circle_outline
                 : Icons.access_time,
             size: 16,
             color: color,
           ),
           CustomText(
-            status,
+            status.toUpperCase(),
             variant: TextVariant.labelMedium,
             color: color,
             fontWeight: FontWeight.bold,
