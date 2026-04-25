@@ -1,4 +1,6 @@
+import 'package:grabby_app/src/core/utils/launcher_utils.dart';
 import 'package:grabby_app/src/featurs/home/presentation/bloc/shop_dashboard_bloc.dart';
+import 'package:grabby_app/src/featurs/support/presentation/bloc/support_bloc.dart';
 
 import '../../../../src_export.dart';
 
@@ -7,8 +9,11 @@ class BusinessProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<ProfileBloc>()..add(GetProfileEvent()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => sl<ProfileBloc>()..add(GetProfileEvent())),
+        BlocProvider(create: (context) => sl<SupportBloc>()..add(GetHelpCenterEvent())),
+      ],
       child: Scaffold(
         appBar: AppBar(
           title: CustomText(
@@ -80,16 +85,35 @@ class BusinessProfilePage extends StatelessWidget {
                       //   onTap: () => context.pushNamed(RoutesPath.rewardSettingsName),
                       // ),
                       Divider(color: Colors.white, height: 1),
-                      ProfileMenuItem(
-                        title: AppStaticStrings.helpCenter,
-                        icon: Icons.help_outline,
-                        onTap: () {},
+                      BlocListener<SupportBloc, SupportState>(
+                        listener: (context, state) {
+                          if (state is SupportError) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(state.message)));
+                          }
+                        },
+                        child: ProfileMenuItem(
+                          title: AppStaticStrings.helpCenter,
+                          icon: Icons.help_outline,
+                          onTap: () {
+                            final state = context.read<SupportBloc>().state;
+                            if (state is HelpCenterLoaded &&
+                                state.data.isNotEmpty) {
+                              LauncherUtils.makePhoneCall(state.data.first.phone);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text("Help center contact not available")));
+                            }
+                          },
+                        ),
                       ),
                       Divider(color: Colors.white, height: 1),
                       ProfileMenuItem(
                         title: AppStaticStrings.termsAndConditions,
                         icon: Icons.description_outlined,
-                        onTap: () {},
+                        onTap: () =>
+                            context.pushNamed(RoutesPath.termsAndConditionsPath),
                       ),
                       Divider(color: Colors.white, height: 1),
                       CustomButton(

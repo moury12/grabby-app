@@ -128,8 +128,9 @@ class BranchBloc extends Bloc<BranchEvent, BranchState> {
     try {
       final response = await _branchService.updateBranchAvailability(event.branchId, event.availability);
       if (response.success) {
-        emit(const BranchOperationSuccess('Branch availability updated successfully'));
-        // reload availability if needed, but ui could pop
+        emit(const BranchOperationSuccess(
+            'Branch availability updated successfully'));
+        add(GetBranchesEvent());
       } else {
         emit(BranchError(response.message));
       }

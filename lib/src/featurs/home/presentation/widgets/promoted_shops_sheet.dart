@@ -1,3 +1,4 @@
+import 'package:grabby_app/src/featurs/home/presentation/bloc/promoted_ads_bloc.dart';
 import '../../../../src_export.dart';
 
 class PromotedShopsSheet extends StatelessWidget {
@@ -41,32 +42,40 @@ class PromotedShopsSheet extends StatelessWidget {
           ),
 
           Flexible(
-            child: SingleChildScrollView(
-              child: Column(
-                spacing: 8,
-                children: List.generate(
-                  3,
-                  (index) => PromotedShopCardWidget(
-                    shopName: "Mug & Muffin",
-                    shopImg:
-                        "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop",
-                    items: const [
-                      {
-                        "title": "Hot Coffee",
-                        "price": "AED 24.6",
-                        "image":
-                            "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop",
-                      },
-                      {
-                        "title": "Hot Coffee",
-                        "price": "AED 24.6",
-                        "image":
-                            "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop",
-                      },
-                    ],
-                  ),
-                ),
-              ),
+            child: BlocBuilder<PromotedAdsBloc, PromotedAdsState>(
+              builder: (context, state) {
+                if (state is PromotedAdsLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is PromotedAdsError) {
+                  return Center(child: CustomText(state.message));
+                } else if (state is PromotedAdsLoaded) {
+                  if (state.ads.isEmpty) {
+                    return const Center(child: CustomText("No promoted shops found nearby."));
+                  }
+                  return SingleChildScrollView(
+                    child: Column(
+                      spacing: 8,
+                      children: state.ads.map((ad) {
+                        return PromotedShopCardWidget(
+                          branchId: ad.branchId,
+                          shopName: ad.shopOwner.name,
+                          shopImg: ad.shopOwner.profileImage != null
+                              ? "${ApiEndpoints.baseUrl}${ad.shopOwner.profileImage}"
+                              : "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop",
+                          items: ad.topRatedMenus.map((m) => {
+                            "title": m.itemName,
+                            "price": "AED ${m.price.toStringAsFixed(1)}",
+                            "image": m.image != null && m.image!.isNotEmpty
+                                ? "${ApiEndpoints.baseUrl}${m.image}"
+                                : "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop",
+                          }).toList(),
+                        );
+                      }).toList(),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
             ),
           ),
         ],
@@ -79,9 +88,12 @@ class PromotedShopsSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => const FractionallySizedBox(
-        heightFactor: 0.8,
-        child: PromotedShopsSheet(),
+      builder: (context) => BlocProvider(
+        create: (context) => sl<PromotedAdsBloc>()..add(GetPromotedAdsEvent()),
+        child: const FractionallySizedBox(
+          heightFactor: 0.8,
+          child: PromotedShopsSheet(),
+        ),
       ),
     );
   }

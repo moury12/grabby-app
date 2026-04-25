@@ -204,7 +204,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                   ),
                                   ButtonTapWidget(
                                     onTap: () {
-                                      // TODO: Navigate to Terms and Conditions
+                                      context.pushNamed(
+                                          RoutesPath.termsAndConditionsPath);
                                     },
                                     child: CustomText(
                                       AppStaticStrings.termsAndConditions,

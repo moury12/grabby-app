@@ -102,7 +102,10 @@ class AppRouter {
         path: RoutesPath.menuPath,
         name: RoutesPath.menuPath,
         builder: (BuildContext context, GoRouterState state) {
-          return MenuPage(branch: state.extra as CustomerBranchModel);
+          return BlocProvider(
+            create: (context) => sl<CustomerBranchBloc>(),
+            child: MenuPage(branchId: state.extra as String),
+          );
         },
       ),
       GoRoute(
@@ -386,6 +389,16 @@ class AppRouter {
         name: RoutesPath.locationSelectionName,
         builder: (BuildContext context, GoRouterState state) {
           return const LocationSelectionPage();
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.termsAndConditionsPath,
+        name: RoutesPath.termsAndConditionsPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return BlocProvider(
+            create: (context) => sl<SupportBloc>(),
+            child: const TermsAndConditionsPage(),
+          );
         },
       ),
     ],

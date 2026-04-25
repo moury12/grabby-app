@@ -96,9 +96,19 @@ class _BranchTimingsPageState extends State<BranchTimingsPage> {
         List<ShopBranchModel> branches = [];
         if (state is BranchesLoaded) {
           branches = state.branches;
-          if (branches.isNotEmpty && _selectedBranch == null) {
-            _selectedBranch = branches.first;
-            _updateTimingsFromBranch(_selectedBranch!);
+          if (branches.isNotEmpty) {
+            if (_selectedBranch == null) {
+              _selectedBranch = branches.first;
+              _updateTimingsFromBranch(_selectedBranch!);
+            } else {
+              // Update selected branch reference from new list to get latest data
+              final updatedBranch = branches.firstWhere(
+                (b) => b.id == _selectedBranch!.id,
+                orElse: () => branches.first,
+              );
+              _selectedBranch = updatedBranch;
+              _updateTimingsFromBranch(_selectedBranch!);
+            }
           }
         }
 
@@ -113,36 +123,49 @@ class _BranchTimingsPageState extends State<BranchTimingsPage> {
           ),
           body: (state is BranchLoading && branches.isEmpty)
               ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                  padding: AppPadding.getPadding12H(context),
-                  child: Column(
-                    spacing: 8,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ..._timings.entries.map((entry) {
-                        return TimingRow(
-                          day: entry.key,
-                          isOpen: entry.value["isOpen"],
-                          openingTime: entry.value["open"],
-                          closingTime: entry.value["close"],
-                          onOpeningTimeTap: () => _selectTime(entry.key, true),
-                          onClosingTimeTap: () => _selectTime(entry.key, false),
-                          onToggle: (val) {
-                            setState(() {
-                              _timings[entry.key]!["isOpen"] = val;
-                            });
-                          },
-                        );
-                      }),
-                      _buildHoursSummaryBox(context),
-                      _buildImportantNotes(context),
-                      space2H,
-                      CustomButton(
-                        text: "Save Timings",
-                        onPressed: _selectedBranch != null ? _saveTimings : () {},
-                      ),
-                      space4H,
-                    ],
+              : RefreshIndicator(
+                  onRefresh: () async {
+                    context.read<BranchBloc>().add(GetBranchesEvent());
+                    if (_selectedBranch != null) {
+                      context
+                          .read<BranchBloc>()
+                          .add(GetBranchDetailsEvent(_selectedBranch!.id));
+                    }
+                  },
+                  child: SingleChildScrollView(
+                    padding: AppPadding.getPadding12H(context),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Column(
+                      spacing: 8,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ..._timings.entries.map((entry) {
+                          return TimingRow(
+                            day: entry.key,
+                            isOpen: entry.value["isOpen"],
+                            openingTime: entry.value["open"],
+                            closingTime: entry.value["close"],
+                            onOpeningTimeTap: () => _selectTime(entry.key, true),
+                            onClosingTimeTap: () =>
+                                _selectTime(entry.key, false),
+                            onToggle: (val) {
+                              setState(() {
+                                _timings[entry.key]!["isOpen"] = val;
+                              });
+                            },
+                          );
+                        }),
+                        _buildHoursSummaryBox(context),
+                        _buildImportantNotes(context),
+                        space2H,
+                        CustomButton(
+                          text: "Save Timings",
+                          onPressed:
+                              _selectedBranch != null ? _saveTimings : () {},
+                        ),
+                        space4H,
+                      ],
+                    ),
                   ),
                 ),
         );

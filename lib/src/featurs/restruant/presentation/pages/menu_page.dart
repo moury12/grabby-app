@@ -1,8 +1,8 @@
 import '../../../../src_export.dart';
 
 class MenuPage extends StatefulWidget {
-  final CustomerBranchModel branch;
-  const MenuPage({super.key, required this.branch});
+  final String branchId;
+  const MenuPage({super.key, required this.branchId});
 
   @override
   State<MenuPage> createState() => _MenuPageState();
@@ -11,179 +11,135 @@ class MenuPage extends StatefulWidget {
 class _MenuPageState extends State<MenuPage> {
   String _selectedCategory = AppStaticStrings.allItems;
 
-  late List<String> _categories;
-
   @override
   void initState() {
     super.initState();
-    _categories = [
-      AppStaticStrings.allItems,
-      ...(widget.branch.menuCategories?.map((e) => e.name).toList() ?? []),
-    ];
+    _fetchMenu();
+  }
+
+  void _fetchMenu() {
+    context
+        .read<CustomerBranchBloc>()
+        .add(GetCustomerBranchDetailEvent(widget.branchId));
   }
 
   @override
   Widget build(BuildContext context) {
-    final menuCategories = widget.branch.menuCategories ?? [];
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: const Text(AppStaticStrings.menu),
         actions: [
-          ButtonTapWidget(
-            onTap: () {
-              final shopOwnerId = widget.branch.menuCategories?.firstOrNull?.menus
-                  .firstOrNull?.shopOwnerId;
-              context.pushNamed(
-                RoutesPath.cartPath,
-                extra: {
-                  'branchId': widget.branch.id,
-                  'shopOwnerId': shopOwnerId,
-                },
-              );
+          BlocBuilder<CustomerBranchBloc, CustomerBranchState>(
+            builder: (context, state) {
+              if (state is CustomerBranchDetailLoaded) {
+                return ButtonTapWidget(
+                  onTap: () {
+                    final shopOwnerId = state
+                        .branch.menuCategories?.firstOrNull?.menus.firstOrNull?.shopOwnerId;
+                    context.pushNamed(
+                      RoutesPath.cartPath,
+                      extra: {
+                        'branchId': state.branch.id,
+                        'shopOwnerId': shopOwnerId,
+                      },
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: SvgPicture.asset(
+                      ImagesConstant.kCartIcon,
+                      height: 24,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.black,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
             },
-            child: Padding(
-              padding: const EdgeInsets.only(right: 16),
-              child: SvgPicture.asset(
-                ImagesConstant.kCartIcon,
-                height: 24,
-                colorFilter: const ColorFilter.mode(
-                  Colors.black,
-                  BlendMode.srcIn,
-                ),
-              ),
-            ),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: AppPadding.getPadding12(context).copyWith(top: 0),
-        child: Column(
-          spacing: 8,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Hero Header
-            // Stack(
-            //   children: [
-            //     CustomNetworkImage(
-            //       imageUrl: widget.branch.image != null
-            //           ? "${ApiEndpoints.baseUrl}${widget.branch.image}"
-            //           : "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=2033&auto=format&fit=crop",
-            //       height: 180,
-            //       width: double.infinity,
-            //       radius: 16,
-            //     ),
-            //     Positioned(
-            //       bottom: 0,
-            //       left: 0,
-            //       right: 0,
-            //       child: Container(
-            //         padding: const EdgeInsets.symmetric(
-            //           horizontal: 16,
-            //           vertical: 12,
-            //         ),
-            //         decoration: BoxDecoration(
-            //           gradient: LinearGradient(
-            //             begin: Alignment.bottomCenter,
-            //             end: Alignment.topCenter,
-            //             colors: [
-            //               Colors.black.withValues(alpha: 0.6),
-            //               Colors.transparent,
-            //             ],
-            //           ),
-            //           borderRadius: const BorderRadius.only(
-            //             bottomLeft: Radius.circular(16),
-            //             bottomRight: Radius.circular(16),
-            //           ),
-            //         ),
-            //         child: Row(
-            //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //           children: [
-            //             CustomText(
-            //               widget.branch.branchName,
-            //               fontSize: 18,
-            //               fontWeight: FontWeight.bold,
-            //               color: Colors.white,
-            //             ),
-            //             Container(
-            //               padding: const EdgeInsets.symmetric(
-            //                 horizontal: 12,
-            //                 vertical: 6,
-            //               ),
-            //               decoration: BoxDecoration(
-            //                 color: AppColors.kPrimaryColor.withValues(
-            //                   alpha: 0.8,
-            //                 ),
-            //                 borderRadius: BorderRadius.circular(20),
-            //               ),
-            //               child: const CustomText(
-            //                 AppStaticStrings.tryItNow,
-            //                 fontSize: 12,
-            //                 color: Colors.white,
-            //                 fontWeight: FontWeight.w600,
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //       ),
-            //     ),
-            //   ],
-            // ),
+      body: BlocBuilder<CustomerBranchBloc, CustomerBranchState>(
+        builder: (context, state) {
+          if (state is CustomerBranchLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is CustomerBranchError) {
+            return Center(child: CustomText(state.message));
+          } else if (state is CustomerBranchDetailLoaded) {
+            final branch = state.branch;
+            final menuCategories = branch.menuCategories ?? [];
+            final categories = [
+              AppStaticStrings.allItems,
+              ...(branch.menuCategories?.map((e) => e.name).toList() ?? []),
+            ];
 
-            // // Loyalty Stamps (Placeholder current stamps)
-            // const LoyaltyStampsWidget(currentStamps: 0),
+            return RefreshIndicator(
+              onRefresh: () async => _fetchMenu(),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: AppPadding.getPadding12(context).copyWith(top: 0),
+                child: Column(
+                  spacing: 8,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Category Chips
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        spacing: 8,
+                        children: categories.map((category) {
+                          return _buildCategoryChip(
+                            category,
+                            _selectedCategory == category,
+                            onTap: () {
+                              setState(() {
+                                _selectedCategory = category;
+                              });
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ),
 
-            // Category Chips
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                spacing: 8,
-                children: _categories.map((category) {
-                  return _buildCategoryChip(
-                    category,
-                    _selectedCategory == category,
-                    onTap: () {
-                      setState(() {
-                        _selectedCategory = category;
-                      });
-                    },
-                  );
-                }).toList(),
+                    // Menu Sections
+                    ...menuCategories
+                        .where((cat) =>
+                            _selectedCategory == AppStaticStrings.allItems ||
+                            _selectedCategory == cat.name)
+                        .map((cat) => _buildMenuSection(
+                              cat.name,
+                              cat.menus
+                                  .map((item) => MenuItemWidget(
+                                        title: item.itemName,
+                                        price:
+                                            "\$${item.price.toStringAsFixed(1)}",
+                                        image: item.image != null &&
+                                                item.image!.isNotEmpty
+                                            ? "${ApiEndpoints.baseUrl}${item.image}"
+                                            : "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop",
+                                        onAdd: () {
+                                          context.pushNamed(
+                                            RoutesPath.itemDetailsPath,
+                                            extra: {
+                                              'item': item,
+                                              'branchId': branch.id,
+                                            },
+                                          );
+                                        },
+                                      ))
+                                  .toList(),
+                            )),
+                  ],
+                ),
               ),
-            ),
-
-            // Menu Sections
-            ...menuCategories
-                .where((cat) =>
-                    _selectedCategory == AppStaticStrings.allItems ||
-                    _selectedCategory == cat.name)
-                .map((cat) => _buildMenuSection(
-                      cat.name,
-                      cat.menus
-                          .map((item) => MenuItemWidget(
-                                title: item.itemName,
-                                price: "\$${item.price.toStringAsFixed(1)}",
-                                image: item.image != null &&
-                                        item.image!.isNotEmpty
-                                    ? "${ApiEndpoints.baseUrl}${item.image}"
-                                    : "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop",
-                                // discount: "", // Could be derived if needed
-                                onAdd: () {
-                                   context.pushNamed(
-                                    RoutesPath.itemDetailsPath,
-                                    extra: {
-                                      'item': item,
-                                      'branchId': widget.branch.id,
-                                    },
-                                  );
-                                  // Implementation for adding to cart
-                                },
-                              ))
-                          .toList(),
-                    )),
-          ],
-        ),
+            );
+          }
+          return const SizedBox.shrink();
+        },
       ),
     );
   }

@@ -71,4 +71,12 @@ class ApiEndpoints {
   static String updateOrderStatus(String id) => "/orders/$id/status";
   static String cancelOrder(String id) => "/orders/$id/cancel";
   static const String shopDashboard = "/dashboard/shop-owner";
+
+  // ─── Onboarding ────────────────────────────────────────────────────────────
+  static const String feeStructure = "/free-structure";
+  static const String faq = "/faq";
+  static const String termsAndConditions = "/terms-and-conditions";
+  static const String helpCenter = "/help-center";
+  static String promotedAds(double lat, double lon) =>
+      "/shop-owner-plan/ads?lat=$lat&lon=$lon";
 }

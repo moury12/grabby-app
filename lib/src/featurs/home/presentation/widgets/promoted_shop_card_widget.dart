@@ -1,12 +1,14 @@
 import '../../../../src_export.dart';
 
 class PromotedShopCardWidget extends StatelessWidget {
+  final String branchId;
   final String shopName;
   final String shopImg;
   final List<Map<String, String>> items;
 
   const PromotedShopCardWidget({
     super.key,
+    required this.branchId,
     required this.shopName,
     required this.shopImg,
     required this.items,
@@ -77,7 +79,10 @@ class PromotedShopCardWidget extends StatelessWidget {
           CustomButton(
             text: AppStaticStrings.viewFullDetails,
             onPressed: () {
-              context.pushNamed(RoutesPath.menuPath);
+              context.pushNamed(
+                RoutesPath.restruantDetailsPath,
+                extra: branchId,
+              );
             },
             backgroundColor: AppColors.kPrimaryColor,
             borderRadius: 12,

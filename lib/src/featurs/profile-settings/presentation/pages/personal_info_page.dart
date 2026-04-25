@@ -73,7 +73,7 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
               setState(() {
                 _profileData = state.profileData;
                 _isShopOwner = state.profileData.authId.role == 'SHOP_OWNER';
-                
+
                 _nameController.text = state.profileData.name;
                 _emailController.text = state.profileData.email;
                 _phoneController.text = state.profileData.phoneNumber;
@@ -279,27 +279,25 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           spacing: 12,
                           children: [
-                            if (_profileData?.shopLogo != null &&
-                                _profileData!.shopLogo!.isNotEmpty) ...[
-                              const CustomText(
-                                AppStaticStrings.shopLogo,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.kSecondaryTextColor,
-                              ),
-                              CustomNetworkImage(
-                                imageUrl:
-                                    "${ApiEndpoints.baseUrl}${_profileData!.shopLogo!}",
-                                width: 80,
-                                height: 80,
-                                radius: 8,
-                                imageErrorUrl: ImagesConstant.kOnboard1Img,
-                              ),
-                            ],
+                            // if (_profileData?.shopLogo != null &&
+                            //     _profileData!.shopLogo!.isNotEmpty) ...[
+                            //   const CustomText(
+                            //     AppStaticStrings.shopLogo,
+                            //     fontSize: 14,
+                            //     fontWeight: FontWeight.w500,
+                            //     color: AppColors.kSecondaryTextColor,
+                            //   ),
+                            //   CustomNetworkImage(
+                            //     imageUrl:
+                            //         "${ApiEndpoints.baseUrl}${_profileData!.shopLogo!}",
+                            //     width: 80,
+                            //     height: 80,
+                            //     radius: 8,
+                            //     imageErrorUrl: ImagesConstant.kOnboard1Img,
+                            //   ),
+                            // ],
                             if (_profileData?.businessLicense != null &&
-                                _profileData!
-                                    .businessLicense!
-                                    .isNotEmpty) ...[
+                                _profileData!.businessLicense!.isNotEmpty) ...[
                               const CustomText(
                                 AppStaticStrings.businessLicense,
                                 fontSize: 14,

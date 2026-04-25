@@ -22,6 +22,10 @@ import 'package:grabby_app/src/featurs/order/presentation/bloc/order_bloc.dart';
 import 'package:grabby_app/src/featurs/home/data/datasources/home_remote_data_source.dart';
 import 'package:grabby_app/src/featurs/home/domain/repositories/home_repository.dart';
 import 'package:grabby_app/src/featurs/home/presentation/bloc/shop_dashboard_bloc.dart';
+import 'package:grabby_app/src/featurs/home/presentation/bloc/promoted_ads_bloc.dart';
+import 'package:grabby_app/src/featurs/support/data/datasources/support_remote_data_source.dart';
+import 'package:grabby_app/src/featurs/support/domain/repositories/support_repository.dart';
+import 'package:grabby_app/src/featurs/support/presentation/bloc/support_bloc.dart';
 import '../../src_export.dart' ;
 
 final sl = GetIt.instance;
@@ -148,4 +152,23 @@ Future<void> init() async {
     () => HomeRepositoryImpl(sl()),
   );
   sl.registerFactory<ShopDashboardBloc>(() => ShopDashboardBloc(sl()));
+  sl.registerFactory<PromotedAdsBloc>(
+    () => PromotedAdsBloc(repository: sl(), locationService: sl()),
+  );
+
+  // ─── Feature: Onboarding Info ─────────────────────────────────────────────
+  sl.registerLazySingleton<OnboardingRemoteDataSource>(
+    () => OnboardingRemoteDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<OnboardingRepository>(
+    () => OnboardingRepositoryImpl(sl()),
+  );
+  sl.registerFactory<OnboardingInfoBloc>(() => OnboardingInfoBloc(sl()));
+
+  // ─── Feature: Support ──────────────────────────────────────────────────────
+  sl.registerLazySingleton<SupportRemoteDataSource>(
+    () => SupportRemoteDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<SupportRepository>(() => SupportRepositoryImpl(sl()));
+  sl.registerFactory<SupportBloc>(() => SupportBloc(repository: sl()));
 }
