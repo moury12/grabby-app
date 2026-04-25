@@ -1,3 +1,5 @@
+import 'package:grabby_app/src/featurs/home/presentation/bloc/shop_dashboard_bloc.dart';
+
 import '../../../../src_export.dart';
 
 class BusinessProfilePage extends StatelessWidget {
@@ -184,34 +186,39 @@ class BusinessProfilePage extends StatelessWidget {
   }
 
   Widget _buildStatsRow(BuildContext context) {
-    return const Row(
-      spacing: 6,
-      children: [
-        Expanded(
-          child: ProfileStatCard(
-            label: AppStaticStrings.totalRevenue,
-            value: "AED 12,450",
-            icon: Icons.attach_money,
-            iconColor: AppColors.kGreenColor,
-          ),
-        ),
-        Expanded(
-          child: ProfileStatCard(
-            label: AppStaticStrings.totalOrders,
-            value: "487",
-            icon: Icons.trending_up,
-            iconColor: AppColors.kPrimaryColor,
-          ),
-        ),
-        Expanded(
-          child: ProfileStatCard(
-            label: AppStaticStrings.customers,
-            value: "187",
-            icon: Icons.people_outline,
-            iconColor: AppColors.kSecondaryColor,
-          ),
-        ),
-      ],
+    return BlocBuilder<ShopDashboardBloc, ShopDashboardState>(
+      builder: (context, state) {
+        final stats = state.stats;
+        return Row(
+          spacing: 6,
+          children: [
+            Expanded(
+              child: ProfileStatCard(
+                label: AppStaticStrings.totalRevenue,
+                value: "AED ${stats?.totalRevenue.toStringAsFixed(2) ?? "0.00"}",
+                icon: Icons.attach_money,
+                iconColor: AppColors.kGreenColor,
+              ),
+            ),
+            Expanded(
+              child: ProfileStatCard(
+                label: AppStaticStrings.totalOrders,
+                value: "${stats?.totalOrders ?? 0}",
+                icon: Icons.trending_up,
+                iconColor: AppColors.kPrimaryColor,
+              ),
+            ),
+            Expanded(
+              child: ProfileStatCard(
+                label: AppStaticStrings.customers,
+                value: "${stats?.totalUniqueCustomers ?? 0}",
+                icon: Icons.people_outline,
+                iconColor: AppColors.kSecondaryColor,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

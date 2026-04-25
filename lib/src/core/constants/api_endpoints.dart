@@ -70,4 +70,5 @@ class ApiEndpoints {
   static String branchOrders(String branchId) => "/orders/branch/$branchId";
   static String updateOrderStatus(String id) => "/orders/$id/status";
   static String cancelOrder(String id) => "/orders/$id/cancel";
+  static const String shopDashboard = "/dashboard/shop-owner";
 }

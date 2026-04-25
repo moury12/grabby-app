@@ -19,6 +19,9 @@ import 'package:grabby_app/src/featurs/reward/presentation/bloc/reward_bloc.dart
 import 'package:grabby_app/src/featurs/order/data/datasources/order_remote_data_source.dart';
 import 'package:grabby_app/src/featurs/order/domain/repositories/order_repository.dart';
 import 'package:grabby_app/src/featurs/order/presentation/bloc/order_bloc.dart';
+import 'package:grabby_app/src/featurs/home/data/datasources/home_remote_data_source.dart';
+import 'package:grabby_app/src/featurs/home/domain/repositories/home_repository.dart';
+import 'package:grabby_app/src/featurs/home/presentation/bloc/shop_dashboard_bloc.dart';
 import '../../src_export.dart' ;
 
 final sl = GetIt.instance;
@@ -136,5 +139,13 @@ Future<void> init() async {
     () => OrderRepositoryImpl(sl()),
   );
   sl.registerFactory<OrderBloc>(() => OrderBloc(sl()));
-}
 
+  // ─── Feature: Home (Dashboard) ────────────────────────────────────────────────
+  sl.registerLazySingleton<HomeRemoteDataSource>(
+    () => HomeRemoteDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<HomeRepository>(
+    () => HomeRepositoryImpl(sl()),
+  );
+  sl.registerFactory<ShopDashboardBloc>(() => ShopDashboardBloc(sl()));
+}

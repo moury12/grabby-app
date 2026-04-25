@@ -130,7 +130,7 @@ class _PromotionPageState extends State<PromotionPage> {
                                       maxCrossAxisExtent: 200,
                                       crossAxisSpacing: 12,
                                       mainAxisSpacing: 12,
-                                      childAspectRatio: 1.7,
+                                      childAspectRatio: 1.3,
                                     ),
                                 itemCount: state.upcomingEvents.length,
                                 itemBuilder: (context, index) {
@@ -139,10 +139,9 @@ class _PromotionPageState extends State<PromotionPage> {
                                     title: event.name,
                                     date:
                                         "${event.startDate} - ${event.endDate}",
-                                    imageUrl:
-                                        event.icons.isNotEmpty
-                                            ? event.icons.first
-                                            : null,
+                                    imageUrl: event.icons.isNotEmpty
+                                        ? event.icons.first
+                                        : null,
                                   );
                                 },
                               ),
