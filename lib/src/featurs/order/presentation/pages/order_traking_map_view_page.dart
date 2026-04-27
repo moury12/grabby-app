@@ -1,41 +1,187 @@
-
+import 'dart:async';
+import 'dart:developer';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:grabby_app/src/core/di/injection_container.dart' as di;
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../src_export.dart';
+import 'package:geolocator/geolocator.dart';
 
 class OrderTrackingMapViewPage extends StatefulWidget {
   final String orderId;
   const OrderTrackingMapViewPage({super.key, required this.orderId});
 
   @override
-  State<OrderTrackingMapViewPage> createState() => _OrderTrackingMapViewPageState();
+  State<OrderTrackingMapViewPage> createState() =>
+      _OrderTrackingMapViewPageState();
 }
 
 class _OrderTrackingMapViewPageState extends State<OrderTrackingMapViewPage> {
+  GoogleMapController? _mapController;
+  Set<Polyline> _polyLines = {};
+  LatLng? _myLocation;
+  final ValueNotifier<LatLng?> _myLocationNotifier = ValueNotifier(null);
+  bool _isGeneratingPolyline = false;
+  final LocationService _locationService = di.sl<LocationService>();
+
   @override
   void initState() {
     super.initState();
     context.read<OrderBloc>().add(FetchOrderDetailsEvent(widget.orderId));
+    
+    _myLocationNotifier.addListener(() {
+      if (mounted) {
+        setState(() {
+          _myLocation = _myLocationNotifier.value;
+        });
+        _updatePolyline();
+      }
+    });
+
+    getLocation();
+  }
+
+  
+  Future<void> getLocation() async {
+    Position? position = await _locationService.getCurrentPosition();
+    if (position != null) {
+      if (mounted) {
+        setState(() {
+          _myLocation = LatLng(position.latitude, position.longitude);
+        });
+        _updatePolyline();
+      }
+    }
+  }
+
+  void _updatePolyline() {
+    final state = context.read<OrderBloc>().state;
+    final order = state.selectedOrder;
+    if (order == null || _myLocation == null) return;
+
+    final branch = order.branchId is BranchInfo
+        ? (order.branchId as BranchInfo)
+        : null;
+    if (branch == null) return;
+
+    final shopPos = LatLng(branch.lat ?? 0, branch.lng ?? 0);
+    generatePolylineBetweenPoints(shopPos, _myLocation!);
+  }
+
+  Future<void> generatePolylineBetweenPoints(LatLng origin, LatLng dest) async {
+    if (_isGeneratingPolyline) return;
+    _isGeneratingPolyline = true;
+
+    try {
+      PolylinePoints polylinePoints = PolylinePoints(
+        apiKey: AppStaticStrings.googleMapApiKey,
+      );
+
+      PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+        request: PolylineRequest(
+          origin: PointLatLng(origin.latitude, origin.longitude),
+          destination: PointLatLng(dest.latitude, dest.longitude),
+          mode: TravelMode.driving,
+        ),
+      );
+
+      if (result.points.isNotEmpty) {
+        List<LatLng> routePoints = result.points
+            .map((point) => LatLng(point.latitude, point.longitude))
+            .toList();
+
+        setState(() {
+          _polyLines.clear();
+          _polyLines.add(
+            Polyline(
+              polylineId: const PolylineId("route_line"),
+              color: AppColors.kBlueColor,
+              width: 6,
+              points: routePoints,
+              visible: true,
+              geodesic: true,
+            ),
+          );
+        });
+        log("SUCCESS: Polyline generated with ${routePoints.length} points");
+        zoomToFitPoints(origin, dest);
+      } else {
+        log("MAP ERROR: ${result.errorMessage}");
+      }
+    } catch (e) {
+      log("Polyline Exception: $e");
+    } finally {
+      _isGeneratingPolyline = false;
+    }
+  }
+
+  Future<void> zoomToFitPoints(LatLng shopPos, LatLng myPos) async {
+    try {
+      if (_mapController == null) return;
+      final GoogleMapController controller = _mapController!;
+
+      LatLngBounds bounds;
+      if (shopPos.latitude > myPos.latitude &&
+          shopPos.longitude > myPos.longitude) {
+        bounds = LatLngBounds(southwest: myPos, northeast: shopPos);
+      } else if (shopPos.longitude > myPos.longitude) {
+        bounds = LatLngBounds(
+          southwest: LatLng(shopPos.latitude, myPos.longitude),
+          northeast: LatLng(myPos.latitude, shopPos.longitude),
+        );
+      } else if (shopPos.latitude > myPos.latitude) {
+        bounds = LatLngBounds(
+          southwest: LatLng(myPos.latitude, shopPos.longitude),
+          northeast: LatLng(shopPos.latitude, myPos.longitude),
+        );
+      } else {
+        bounds = LatLngBounds(southwest: shopPos, northeast: myPos);
+      }
+
+      controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
+    } catch (e) {
+      log("Zoom failed: $e");
+    }
+  }
+
+  @override
+  void dispose() {
+    _locationService.stopTrackingLocation();
+    _myLocationNotifier.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text(AppStaticStrings.orderTracking)),
-      body: BlocBuilder<OrderBloc, OrderState>(
+      body: BlocConsumer<OrderBloc, OrderState>(
+        listener: (context, state) {
+          if (state.status == OrderStatus.success &&
+              state.selectedOrder != null) {
+            _updatePolyline();
+          }
+        },
         builder: (context, state) {
-          if (state.status == OrderStatus.loading) {
+          if (state.status == OrderStatus.loading &&
+              state.selectedOrder == null) {
             return const Center(child: CircularProgressIndicator());
           }
           if (state.status == OrderStatus.failure) {
-            return Center(child: CustomText(state.errorMessage ?? "Error loading order"));
+            return Center(
+              child: CustomText(state.errorMessage ?? "Error loading order"),
+            );
           }
           final order = state.selectedOrder;
           if (order == null) {
             return const Center(child: CustomText("Order details not found"));
           }
 
-          final branch = order.branchId is BranchInfo ? (order.branchId as BranchInfo) : null;
+          final branch = order.branchId is BranchInfo
+              ? (order.branchId as BranchInfo)
+              : null;
           final shopName = branch?.branchName ?? "no data";
           final orderId = order.orderId ?? order.id ?? "";
           final lat = branch?.lat ?? 25.2048;
@@ -43,7 +189,9 @@ class _OrderTrackingMapViewPageState extends State<OrderTrackingMapViewPage> {
 
           return RefreshIndicator(
             onRefresh: () async {
-              context.read<OrderBloc>().add(FetchOrderDetailsEvent(widget.orderId));
+              context.read<OrderBloc>().add(
+                FetchOrderDetailsEvent(widget.orderId),
+              );
             },
             child: SingleChildScrollView(
               padding: AppPadding.getPadding12(context),
@@ -57,203 +205,44 @@ class _OrderTrackingMapViewPageState extends State<OrderTrackingMapViewPage> {
                       height: 250,
                       width: double.infinity,
                       child: GoogleMap(
-                        style: '''[
-  {
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#212121"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.icon",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#757575"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.text.stroke",
-    "stylers": [
-      {
-        "color": "#212121"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#757575"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative.country",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#9e9e9e"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative.land_parcel",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative.locality",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#bdbdbd"
-      }
-    ]
-  },
-  {
-    "featureType": "poi",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#757575"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.park",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#181818"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.park",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#616161"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.park",
-    "elementType": "labels.text.stroke",
-    "stylers": [
-      {
-        "color": "#1b1b1b"
-      }
-    ]
-  },
-  {
-    "featureType": "road",
-    "elementType": "geometry.fill",
-    "stylers": [
-      {
-        "color": "#2c2c2c"
-      }
-    ]
-  },
-  {
-    "featureType": "road",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#8a8a8a"
-      }
-    ]
-  },
-  {
-    "featureType": "road.arterial",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#373737"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#3c3c3c"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway.controlled_access",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#4e4e4e"
-      }
-    ]
-  },
-  {
-    "featureType": "road.local",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#616161"
-      }
-    ]
-  },
-  {
-    "featureType": "transit",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#757575"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#000000"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#3d3d3d"
-      }
-    ]
-  }
-]''',
                         initialCameraPosition: CameraPosition(
                           target: LatLng(lat, lng),
                           zoom: 14,
                         ),
+                        onMapCreated: (controller) {
+                          _mapController = controller;
+                          _updatePolyline();
+                          _locationService.startTrackingLocation(
+                            markerPosition: _myLocationNotifier,
+                            mapController: _mapController,
+                          );
+                        },
                         zoomControlsEnabled: false,
                         myLocationButtonEnabled: false,
+                        polylines: _polyLines,
+                        gestureRecognizers: {
+                          Factory<OneSequenceGestureRecognizer>(
+                            () => EagerGestureRecognizer(),
+                          ),
+                        },
                         markers: {
                           Marker(
                             markerId: const MarkerId('shop'),
                             position: LatLng(lat, lng),
+                            icon: BitmapDescriptor.defaultMarkerWithHue(
+                              BitmapDescriptor.hueAzure,
+                            ),
+                            infoWindow: const InfoWindow(title: "Shop"),
                           ),
+                          if (_myLocation != null)
+                            Marker(
+                              markerId: const MarkerId('me'),
+                              position: _myLocation!,
+                              icon: BitmapDescriptor.defaultMarkerWithHue(
+                                BitmapDescriptor.hueOrange,
+                              ),
+                              infoWindow: const InfoWindow(title: "Me"),
+                            ),
                         },
                       ),
                     ),

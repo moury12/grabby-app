@@ -1,6 +1,7 @@
 
 import '../../../../src_export.dart';
 import '../models/shop_ad_model.dart';
+import '../models/shop_dashboard_model.dart';
 
 abstract class HomeRemoteDataSource {
   Future<ApiResponse<ShopDashboardModel>> getShopDashboardStats();

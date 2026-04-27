@@ -1,7 +1,9 @@
+import 'package:grabby_app/src/featurs/support/data/datasources/support_remote_data_source.dart';
+import 'package:grabby_app/src/featurs/support/data/models/help_center_model.dart';
+import 'package:grabby_app/src/featurs/support/data/models/terms_and_conditions_model.dart';
+
 import '../../../../src_export.dart';
-import '../data/datasources/support_remote_data_source.dart';
-import '../data/models/terms_and_conditions_model.dart';
-import '../data/models/help_center_model.dart';
+
 
 abstract class SupportRepository {
   Future<ApiResponse<List<TermsAndConditionsModel>>> getTermsAndConditions();

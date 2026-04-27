@@ -17,6 +17,7 @@ class OrderModel {
   final String? transactionId;
   final String? createdAt;
   final String? updatedAt;
+  final bool? nearByShop;
 
   OrderModel({
     this.id,
@@ -35,6 +36,7 @@ class OrderModel {
     this.transactionId,
     this.createdAt,
     this.updatedAt,
+    this.nearByShop,
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
@@ -61,6 +63,7 @@ class OrderModel {
       transactionId: json['transactionId'],
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
+      nearByShop: json['nearByShop'],
     );
   }
 
@@ -72,6 +75,7 @@ class OrderModel {
       'totalAmount': totalAmount,
       'paymentMethod': paymentMethod,
       'carPlates': carPlates,
+      'nearByShop': nearByShop,
     };
   }
 }
@@ -195,12 +199,20 @@ class CustomerInfo {
   final String name;
   final String email;
   final String phoneNumber;
+  final String? profileImage;
+  final String? addressName;
+  final double? lat;
+  final double? lon;
 
   CustomerInfo({
     required this.id,
     required this.name,
     required this.email,
     required this.phoneNumber,
+    this.profileImage,
+    this.addressName,
+    this.lat,
+    this.lon,
   });
 
   factory CustomerInfo.fromJson(Map<String, dynamic> json) {
@@ -209,6 +221,10 @@ class CustomerInfo {
       name: json['name'] ?? '',
       email: json['email'] ?? '',
       phoneNumber: json['phone_number'] ?? '',
+      profileImage: json['profile_image'],
+      addressName: json['addressName'],
+      lat: json['lat']?.toDouble(),
+      lon: json['lon']?.toDouble(),
     );
   }
 }

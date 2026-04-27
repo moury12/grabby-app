@@ -1,5 +1,11 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'socket_service.dart';
+import 'local_storage_service.dart';
 
 class LocationData {
   final double latitude;
@@ -17,6 +23,18 @@ class LocationData {
 }
 
 class LocationService {
+  final SocketService _socketService;
+  final LocalStorageService _localStorageService;
+
+  LocationService({
+    required SocketService socketService,
+    required LocalStorageService localStorageService,
+  })  : _socketService = socketService,
+        _localStorageService = localStorageService;
+
+  StreamSubscription<Position>? _positionStream;
+  String? _lastTripId;
+  bool isRunning = false;
   /// Internal helper to check and request permissions
   Future<bool> _handlePermission() async {
     bool serviceEnabled;
@@ -107,5 +125,88 @@ class LocationService {
       longitude: position.longitude,
       address: address,
     );
+  }
+  /// Get coordinates stream
+  Stream<Position> getPositionStream() {
+    return Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 10, // Update every 10 meters
+      ),
+    );
+  }
+
+  /// Start tracking location and emitting to socket (Adapted from previous project)
+  Future<void> startTrackingLocation({
+    required ValueNotifier<LatLng?> markerPosition,
+    required GoogleMapController? mapController,
+    bool emitToSocket = true,
+  }) async {
+    try {
+      if (isRunning) {
+        debugPrint("Location tracking is already running.");
+        return;
+      }
+      isRunning = true;
+
+  
+
+      await _positionStream?.cancel();
+
+      _positionStream = getPositionStream().listen((Position position) {
+        final newPosition = LatLng(position.latitude, position.longitude);
+        markerPosition.value = newPosition;
+
+        final token = _localStorageService.getAccessToken();
+        if (token != null && token.isNotEmpty) {
+          try {
+            Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+            final String role = decodedToken['role'] ?? "";
+            final String userId = decodedToken['userId'] ?? "";
+
+            // Driver specific location updates
+            if (role == "CUSTOMER") {
+            
+                // Trip specific update
+                _socketService.emit('updateLocation', {
+                
+                  "lat": position.latitude,
+                  "lon": position.longitude,
+                });
+            
+
+              // // General driver location update
+              // if (_socketService.IsConnected) {
+              //   _socketService.emit('updateLocation', {
+              //     "lat": position.latitude,
+              //     "lon": position.longitude,
+              //     "userId": userId,
+              //     "role": role,
+              //   });
+              // }
+            }
+          } catch (e) {
+            debugPrint("Error decoding token or emitting socket: $e");
+          }
+        }
+
+        if (mapController != null) {
+          mapController.animateCamera(CameraUpdate.newLatLng(newPosition));
+        }
+      });
+
+    } catch (e) {
+      debugPrint("Error starting location tracking: $e");
+    } finally {
+      isRunning = false;
+    }
+  }
+
+  /// Stop tracking location
+  Future<void> stopTrackingLocation() async {
+    await _positionStream?.cancel();
+    _positionStream = null;
+    _lastTripId = null;
+    isRunning = false;
   }
 }

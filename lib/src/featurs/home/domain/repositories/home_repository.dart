@@ -1,6 +1,9 @@
 
 import 'package:grabby_app/src/featurs/home/data/datasources/home_remote_data_source.dart';
 import 'package:grabby_app/src/featurs/home/data/models/shop_ad_model.dart';
+import 'package:grabby_app/src/featurs/home/data/models/shop_dashboard_model.dart';
+
+import '../../../../core/core_export.dart';
 
 abstract class HomeRepository {
   Future<ApiResponse<ShopDashboardModel>> getShopDashboardStats();

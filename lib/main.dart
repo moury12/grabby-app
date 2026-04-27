@@ -38,13 +38,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Grabby App',
-      theme: AppTheme.getLightTheme(context),
-      routerConfig: AppRouter.router,
-      // builder: (context, child) {
-      //   return NavigationListener(child: child ?? const SizedBox());
-      // },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => sl<ProfileBloc>()..add(GetProfileEvent()),
+        ),
+      ],
+      child: MaterialApp.router(
+        title: 'Grabby App',
+        theme: AppTheme.getLightTheme(context),
+        routerConfig: AppRouter.router,
+      ),
     );
   }
 }

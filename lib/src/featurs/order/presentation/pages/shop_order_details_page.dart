@@ -1,6 +1,11 @@
-
+import 'dart:async';
+import 'dart:developer';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../src_export.dart';
+import '../../../../core/services/socket_service.dart';
 
 class ShopOrderDetailsPage extends StatefulWidget {
   final String orderId;
@@ -11,10 +16,150 @@ class ShopOrderDetailsPage extends StatefulWidget {
 }
 
 class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
+  LatLng? _customerLocation;
+  GoogleMapController? _mapController;
+  Set<Polyline> _polyLines = {};
+  bool _isGeneratingPolyline = false;
+
   @override
   void initState() {
     super.initState();
     _fetchDetails();
+    _initSocket();
+  }
+
+  void _initSocket() {
+    final socketService = sl<SocketService>();
+    socketService.on('locationUpdate/${widget.orderId}', (data) {
+      if (data != null && data['lat'] != null && data['lon'] != null) {
+        log("customer location: $data");
+        if (mounted) {
+          setState(() {
+            _customerLocation = LatLng(
+              double.parse(data['lat'].toString()),
+              double.parse(data['lon'].toString()),
+            );
+          });
+          _updatePolyline();
+          _updateCameraPosition();
+        }
+      }
+    });
+  }
+
+  void _updatePolyline() {
+    final state = context.read<OrderBloc>().state;
+    final order = state.selectedOrder;
+    if (order == null || _customerLocation == null) return;
+
+    final branch = order.branchId is BranchInfo
+        ? (order.branchId as BranchInfo)
+        : null;
+    if (branch == null) return;
+
+    final shopPos = LatLng(branch.lat ?? 0, branch.lng ?? 0);
+    _generatePolyline(shopPos, _customerLocation!);
+  }
+
+  Future<void> _generatePolyline(LatLng origin, LatLng dest) async {
+    if (_isGeneratingPolyline) return;
+    _isGeneratingPolyline = true;
+
+    try {
+      PolylinePoints polylinePoints = PolylinePoints(
+        apiKey: AppStaticStrings.googleMapApiKey,
+      );
+
+      PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+        request: PolylineRequest(
+          origin: PointLatLng(origin.latitude, origin.longitude),
+          destination: PointLatLng(dest.latitude, dest.longitude),
+          mode: TravelMode.driving,
+        ),
+      );
+
+      if (result.points.isNotEmpty) {
+        List<LatLng> routePoints = result.points
+            .map((point) => LatLng(point.latitude, point.longitude))
+            .toList();
+
+        setState(() {
+          _polyLines.clear();
+          _polyLines.add(
+            Polyline(
+              polylineId: const PolylineId("route_line"),
+              color: AppColors.kBlueColor,
+              width: 6,
+              points: routePoints,
+              visible: true,
+              geodesic: true,
+            ),
+          );
+        });
+      }
+    } catch (e) {
+      log("Polyline Exception: $e");
+    } finally {
+      _isGeneratingPolyline = false;
+    }
+  }
+
+  void _updateCameraPosition() {
+    if (_mapController == null || _customerLocation == null) return;
+
+    // Get shop location from state (assuming it's loaded)
+    final state = context.read<OrderBloc>().state;
+    final order = state.selectedOrder;
+    if (order == null) return;
+
+    final branch = order.branchId is BranchInfo
+        ? (order.branchId as BranchInfo)
+        : null;
+    if (branch == null) return;
+
+    final shopPos = LatLng(branch.lat ?? 0, branch.lng ?? 0);
+
+    LatLngBounds bounds;
+    if (shopPos.latitude > _customerLocation!.latitude) {
+      bounds = LatLngBounds(
+        southwest: LatLng(
+          _customerLocation!.latitude,
+          _customerLocation!.longitude < shopPos.longitude
+              ? _customerLocation!.longitude
+              : shopPos.longitude,
+        ),
+        northeast: LatLng(
+          shopPos.latitude,
+          _customerLocation!.longitude > shopPos.longitude
+              ? _customerLocation!.longitude
+              : shopPos.longitude,
+        ),
+      );
+    } else {
+      bounds = LatLngBounds(
+        southwest: LatLng(
+          shopPos.latitude,
+          _customerLocation!.longitude < shopPos.longitude
+              ? _customerLocation!.longitude
+              : shopPos.longitude,
+        ),
+        northeast: LatLng(
+          _customerLocation!.latitude,
+          _customerLocation!.longitude > shopPos.longitude
+              ? _customerLocation!.longitude
+              : shopPos.longitude,
+        ),
+      );
+    }
+
+    _mapController!.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
+  }
+
+  @override
+  void dispose() {
+    sl<SocketService>().off('locationUpdate/${widget.orderId}');
+    _mapController?.dispose();
+    super.dispose();
   }
 
   void _fetchDetails() {
@@ -33,18 +178,21 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
       ),
       body: BlocConsumer<OrderBloc, OrderState>(
         listener: (context, state) {
-          if (state.status == OrderStatus.success && state.successMessage != null && state.successMessage!.contains("Order status updated")) {
+          if (state.status == OrderStatus.success &&
+              state.successMessage != null &&
+              state.successMessage!.contains("Order status updated")) {
             _fetchDetails();
             // Optional: return true to refresh parent list
           }
-           if (state.status == OrderStatus.failure) {
+          if (state.status == OrderStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.errorMessage ?? "Error")),
             );
           }
         },
         builder: (context, state) {
-          if (state.status == OrderStatus.loading && state.selectedOrder == null) {
+          if (state.status == OrderStatus.loading &&
+              state.selectedOrder == null) {
             return const Center(child: CircularProgressIndicator());
           }
           final order = state.selectedOrder;
@@ -63,7 +211,10 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
                   _buildPickupInfo(order),
                   _buildMapSection(order),
                   _buildItemsSection(order),
-                  _buildActionButtons(order, state.status == OrderStatus.updating),
+                  _buildActionButtons(
+                    order,
+                    state.status == OrderStatus.updating,
+                  ),
                 ],
               ),
             ),
@@ -74,12 +225,7 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
   }
 
   Widget _buildStatusStepper(String currentStatus) {
-    final List<String> statuses = [
-      'placed',
-      'preparing',
-      'ready',
-      'completed',
-    ];
+    final List<String> statuses = ['placed', 'preparing', 'ready', 'completed'];
 
     return Container(
       padding: AppPadding.getPadding8(context),
@@ -166,7 +312,9 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
             children: [
               SvgPicture.asset(ImagesConstant.kGroupIcon),
               CustomText(
-                order.pickupType == "carPickup" ? "Car Pickup (${order.carPlates})" : "Walk-in",
+                order.pickupType == "carPickup"
+                    ? "Car Pickup (${order.carPlates})"
+                    : "Walk-in",
                 variant: TextVariant.bodyMedium,
               ),
             ],
@@ -177,12 +325,19 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
   }
 
   Widget _buildMapSection(OrderModel order) {
-    final branch = order.branchId is BranchInfo ? (order.branchId as BranchInfo) : null;
-    final lat = branch?.lat ?? 25.2048;
-    final lng = branch?.lng ?? 55.2708;
-
+    final customer = order.customerId is CustomerInfo
+        ? (order.customerId as CustomerInfo)
+        : null;
+    _customerLocation = LatLng(customer?.lat ?? 0, customer?.lon ?? 0);
+    final branch = order.branchId is BranchInfo
+        ? (order.branchId as BranchInfo)
+        : null;
+    final shopLat = branch?.lat ?? 25.2048;
+    final shopLng = branch?.lng ?? 55.2708;
+    final shopPos = LatLng(shopLat, shopLng);
+    _generatePolyline(shopPos, _customerLocation!);
     return Container(
-      height: 200,
+      height: 250,
       width: double.infinity,
       decoration: BoxDecoration(
         color: AppColors.kAccentColor,
@@ -191,14 +346,39 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(appRadius),
         child: GoogleMap(
-          initialCameraPosition: CameraPosition(
-            target: LatLng(lat, lng),
-            zoom: 14,
-          ),
+          initialCameraPosition: CameraPosition(target: shopPos, zoom: 14),
+          onMapCreated: (controller) {
+            _mapController = controller;
+            if (_customerLocation != null) {
+              _updateCameraPosition();
+            }
+          },
           zoomControlsEnabled: false,
           myLocationButtonEnabled: false,
+          polylines: _polyLines,
+          gestureRecognizers: {
+            Factory<OneSequenceGestureRecognizer>(
+              () => EagerGestureRecognizer(),
+            ),
+          },
           markers: {
-            Marker(markerId: const MarkerId('shop'), position: LatLng(lat, lng)),
+            Marker(
+              markerId: const MarkerId('shop'),
+              position: shopPos,
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                BitmapDescriptor.hueAzure,
+              ),
+              infoWindow: const InfoWindow(title: "Shop Location"),
+            ),
+            if (_customerLocation != null)
+              Marker(
+                markerId: const MarkerId('customer'),
+                position: _customerLocation!,
+                icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueOrange,
+                ),
+                infoWindow: const InfoWindow(title: "Customer Location"),
+              ),
           },
         ),
       ),
@@ -221,7 +401,12 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
             variant: TextVariant.titleMedium,
             fontWeight: FontWeight.bold,
           ),
-          ...order.items.map((item) => _buildItemRow("${item.quantity}x ${item.menuName}", "AED ${item.totalPrice?.toStringAsFixed(2)}")),
+          ...order.items.map(
+            (item) => _buildItemRow(
+              "${item.quantity}x ${item.menuName}",
+              "AED ${item.totalPrice?.toStringAsFixed(2)}",
+            ),
+          ),
           const Divider(height: 1),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -277,19 +462,23 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
             text: mainButtonText,
             isLoading: isUpdating,
             onPressed: () {
-              context.read<OrderBloc>().add(UpdateOrderStatusEvent(
-                orderId: order.id ?? "",
-                status: nextStatus,
-              ));
+              context.read<OrderBloc>().add(
+                UpdateOrderStatusEvent(
+                  orderId: order.id ?? "",
+                  status: nextStatus,
+                ),
+              );
             },
           ),
         CustomButton(
           text: AppStaticStrings.cancelOrder,
           onPressed: () {
-             context.read<OrderBloc>().add(UpdateOrderStatusEvent(
+            context.read<OrderBloc>().add(
+              UpdateOrderStatusEvent(
                 orderId: order.id ?? "",
                 status: 'cancelled',
-              ));
+              ),
+            );
           },
           backgroundColor: Colors.white,
           textColor: AppColors.kRedColor,

@@ -519,4 +519,5 @@ static const String paymentSuccess = "Payment Success";
   static const String branchesLabel = "Branches";
   static const String documentsLabel = "Documents";
   static const String back = "Back";
+  static const String googleMapApiKey = "REMOVED";
 }

@@ -1,5 +1,9 @@
+import 'dart:async';
 import 'dart:io';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../../../src_export.dart';
+import '../../../../core/services/socket_service.dart';
 
 part 'profile_event.dart';
 part 'profile_state.dart';
@@ -7,12 +11,19 @@ part 'profile_state.dart';
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ProfileRepository _profileRepository;
   final LocationService _locationService;
+  final SocketService _socketService;
+  final LocalStorageService _localStorageService;
+  StreamSubscription<Position>? _locationSubscription;
 
   ProfileBloc({
     required ProfileRepository profileRepository,
     required LocationService locationService,
+    required SocketService socketService,
+    required LocalStorageService localStorageService,
   })  : _profileRepository = profileRepository,
         _locationService = locationService,
+        _socketService = socketService,
+        _localStorageService = localStorageService,
         super(ProfileInitial()) {
     on<GetProfileEvent>(_onGetProfile);
     on<UpdateProfileEvent>(_onUpdateProfile);
@@ -26,7 +37,23 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     try {
       final response = await _profileRepository.getProfile();
       if (response.success && response.data != null) {
-        emit(ProfileLoaded(response.data!));
+        final profile = response.data!;
+        emit(ProfileLoaded(profile));
+
+        // Connect Socket and Start Location Tracking
+        final token = _localStorageService.getAccessToken();
+        if (token != null) {
+          _socketService.connect(token);
+          
+          // Initial Location Emit
+          final position = await _locationService.getCurrentPosition();
+          if (position != null) {
+            _emitLocation(position, token);
+          }
+
+          // Start continuous tracking
+          _startLocationTracking(token);
+        }
       } else {
         emit(ProfileError(response.message));
       }
@@ -38,6 +65,43 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       debugPrint("ProfileBloc stackTrace: $stackTrace");
       emit(ProfileError('Something went wrong. Please try again.'));
     }
+  }
+
+  void _startLocationTracking(String token) {
+    _locationSubscription?.cancel();
+    _locationSubscription = _locationService.getPositionStream().listen(
+      (Position position) {
+        _emitLocation(position, token);
+      },
+      onError: (error) {
+        debugPrint('Location stream error: $error');
+      },
+    );
+  }
+
+  void _emitLocation(Position position, String token) {
+    try {
+      final Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+      final String userId = decodedToken['userId'] ?? '';
+      final String role = decodedToken['role'] ?? '';
+
+      _socketService.emit('updateLocation', {
+        // 'userId': userId,
+        // 'role': role,
+        'lat': position.latitude,
+        'lon': position.longitude,
+      });
+      debugPrint('Emitted location: $role - $userId (${position.latitude}, ${position.longitude})');
+    } catch (e) {
+      debugPrint('Error emitting location: $e');
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _locationSubscription?.cancel();
+    _socketService.disconnect();
+    return super.close();
   }
 
   Future<void> _onUpdateProfile(

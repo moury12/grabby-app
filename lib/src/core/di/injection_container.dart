@@ -1,4 +1,8 @@
 import 'package:get_it/get_it.dart';
+import 'package:grabby_app/src/core/services/socket_service.dart';
+import 'package:grabby_app/src/featurs/onboarding-splash/data/datasources/onboarding_remote_data_source.dart';
+import 'package:grabby_app/src/featurs/onboarding-splash/domain/repositories/onboarding_repository.dart';
+import 'package:grabby_app/src/featurs/onboarding-splash/presentation/bloc/info_bloc/onboarding_info_bloc.dart';
 import 'package:grabby_app/src/featurs/profile-settings/data/services/branch_service.dart';
 import 'package:grabby_app/src/featurs/profile-settings/presentation/bloc/branch/branch_bloc.dart';
 
@@ -39,7 +43,14 @@ Future<void> init() async {
     () => LocalStorageService(sl()),
   );
 
-  sl.registerLazySingleton<LocationService>(() => LocationService());
+  sl.registerLazySingleton<LocationService>(
+    () => LocationService(
+      socketService: sl(),
+      localStorageService: sl(),
+    ),
+  );
+
+  sl.registerLazySingleton<SocketService>(() => SocketService());
 
   sl.registerLazySingleton<ApiService>(
     () => ApiService(baseUrl: ApiEndpoints.baseUrl, localStorageService: sl()),
@@ -74,7 +85,12 @@ Future<void> init() async {
     () => ProfileRepositoryImpl(sl()),
   );
   sl.registerFactory<ProfileBloc>(
-    () => ProfileBloc(profileRepository: sl(), locationService: sl()),
+    () => ProfileBloc(
+      profileRepository: sl(),
+      locationService: sl(),
+      socketService: sl(),
+      localStorageService: sl(),
+    ),
   );
 
   // ─── Feature: Branch ───────────────────────────────────────────────────────

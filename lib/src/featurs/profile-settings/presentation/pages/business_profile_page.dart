@@ -11,8 +11,12 @@ class BusinessProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => sl<ProfileBloc>()..add(GetProfileEvent())),
-        BlocProvider(create: (context) => sl<SupportBloc>()..add(GetHelpCenterEvent())),
+        BlocProvider(
+          create: (context) => sl<ProfileBloc>()..add(GetProfileEvent()),
+        ),
+        BlocProvider(
+          create: (context) => sl<SupportBloc>()..add(GetHelpCenterEvent()),
+        ),
       ],
       child: Scaffold(
         appBar: AppBar(
@@ -31,6 +35,7 @@ class BusinessProfilePage extends StatelessWidget {
               return RefreshIndicator(
                 onRefresh: () async {
                   context.read<ProfileBloc>().add(GetProfileEvent());
+                  context.read<SupportBloc>().add(GetHelpCenterEvent());
                 },
                 child: SingleChildScrollView(
                   padding: AppPadding.getPadding12H(context),
@@ -89,7 +94,8 @@ class BusinessProfilePage extends StatelessWidget {
                         listener: (context, state) {
                           if (state is SupportError) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(state.message)));
+                              SnackBar(content: Text(state.message)),
+                            );
                           }
                         },
                         child: ProfileMenuItem(
@@ -99,11 +105,17 @@ class BusinessProfilePage extends StatelessWidget {
                             final state = context.read<SupportBloc>().state;
                             if (state is HelpCenterLoaded &&
                                 state.data.isNotEmpty) {
-                              LauncherUtils.makePhoneCall(state.data.first.phone);
+                              LauncherUtils.makePhoneCall(
+                                state.data.first.phone,
+                              );
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text("Help center contact not available")));
+                                const SnackBar(
+                                  content: Text(
+                                    "Help center contact not available",
+                                  ),
+                                ),
+                              );
                             }
                           },
                         ),
@@ -112,8 +124,9 @@ class BusinessProfilePage extends StatelessWidget {
                       ProfileMenuItem(
                         title: AppStaticStrings.termsAndConditions,
                         icon: Icons.description_outlined,
-                        onTap: () =>
-                            context.pushNamed(RoutesPath.termsAndConditionsPath),
+                        onTap: () => context.pushNamed(
+                          RoutesPath.termsAndConditionsPath,
+                        ),
                       ),
                       Divider(color: Colors.white, height: 1),
                       CustomButton(
@@ -219,7 +232,8 @@ class BusinessProfilePage extends StatelessWidget {
             Expanded(
               child: ProfileStatCard(
                 label: AppStaticStrings.totalRevenue,
-                value: "AED ${stats?.totalRevenue.toStringAsFixed(2) ?? "0.00"}",
+                value:
+                    "AED ${stats?.totalRevenue.toStringAsFixed(2) ?? "0.00"}",
                 icon: Icons.attach_money,
                 iconColor: AppColors.kGreenColor,
               ),
