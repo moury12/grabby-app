@@ -10,7 +10,8 @@ class MapCameraMoved extends LocationSelectionEvent {
 
 class MapCameraIdle extends LocationSelectionEvent {
   final LatLng position;
-  MapCameraIdle({required this.position});
+  final bool isUserAction;
+  MapCameraIdle({required this.position, this.isUserAction = false});
 }
 
 class FetchCurrentLocation extends LocationSelectionEvent {}

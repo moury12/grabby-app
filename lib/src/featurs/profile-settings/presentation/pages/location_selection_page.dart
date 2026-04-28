@@ -10,52 +10,74 @@ class LocationSelectionPage extends StatefulWidget {
 
 class _LocationSelectionPageState extends State<LocationSelectionPage> {
   GoogleMapController? _mapController;
-  final LatLng _initialPosition = const LatLng(
-    23.8103,
-    90.4125,
-  ); // Default to Dhaka
+  final LocationService _locationService = sl<LocationService>();
+  final LatLng _initialPosition = const LatLng(24.466667,54.366669); // Default to Dhaka
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LocationSelectionBloc()..add(FetchCurrentLocation()),
-      child: Builder(
-        builder: (context) {
-          return Scaffold(
-            // appBar: AppBar(
-            //   title: const Text(
-            //     'Select Location',
-            //     style: TextStyle(fontWeight: FontWeight.bold),
-            //   ),
-            //   backgroundColor: Colors.white,
-            //   foregroundColor: AppColors.kTextColor,
-            //   elevation: 0,
-            // ),
-            body: Stack(
-              children: [
-                // Google Map
-                BlocBuilder<LocationSelectionBloc, LocationSelectionState>(
-                  buildWhen: (previous, current) =>
-                      current is LocationSelectionLoading ||
-                      current is LocationSelectionError,
-                  builder: (context, state) {
-                    return GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target: _initialPosition,
-                        zoom: 15,
-                      ),
+      create: (context) => sl<LocationSelectionBloc>()..add(FetchCurrentLocation()),
+      child: BlocListener<LocationSelectionBloc, LocationSelectionState>(
+        listenWhen: (previous, current) =>
+            current is LocationSelectionUpdated ||
+            current is LocationSelectionError,
+        listener: (context, state) {
+          if (state is LocationSelectionUpdated &&
+              state.isUserAction &&
+              _mapController != null) {
+            _mapController!.animateCamera(
+              CameraUpdate.newLatLng(state.position),
+            );
+          } else if (state is LocationSelectionError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
+          }
+        },
+        child: Builder(
+          builder: (context) {
+            return Scaffold(
+              body: Stack(
+                children: [
+                  // Google Map
+                  BlocBuilder<LocationSelectionBloc, LocationSelectionState>(
+                    buildWhen: (previous, current) =>
+                        previous is LocationSelectionInitial ||
+                        previous is LocationSelectionLoading,
+                    builder: (context, state) {
+                      // Only show full screen loader if we don't have a map controller yet 
+                      // AND we are in an initial or loading state.
+                      if (_mapController == null && 
+                          (state is LocationSelectionInitial || state is LocationSelectionLoading)) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.kPrimaryColor,
+                          ),
+                        );
+                      }
+
+                      LatLng initialTarget = _initialPosition;
+                      if (state is LocationSelectionUpdated) {
+                        initialTarget = state.position;
+                      }
+
+                      return GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                          target: initialTarget,
+                          zoom: 15,
+                        ),
                       onMapCreated: (controller) {
                         _mapController = controller;
                       },
                       onCameraMove: (position) {
                         context.read<LocationSelectionBloc>().add(
-                          MapCameraMoved(position: position.target),
-                        );
+                              MapCameraMoved(position: position.target),
+                            );
                       },
                       onCameraIdle: () async {
                         if (_mapController != null) {
-                          final LatLngBounds bounds = await _mapController!
-                              .getVisibleRegion();
+                          final LatLngBounds bounds =
+                              await _mapController!.getVisibleRegion();
                           final LatLng center = LatLng(
                             (bounds.northeast.latitude +
                                     bounds.southwest.latitude) /
@@ -66,8 +88,8 @@ class _LocationSelectionPageState extends State<LocationSelectionPage> {
                           );
                           if (context.mounted) {
                             context.read<LocationSelectionBloc>().add(
-                              MapCameraIdle(position: center),
-                            );
+                                  MapCameraIdle(position: center),
+                                );
                           }
                         }
                       },
@@ -79,18 +101,24 @@ class _LocationSelectionPageState extends State<LocationSelectionPage> {
                   },
                 ),
 
-                // Center Pin
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: 35,
-                    ), // Offset to point the tip of the pin
-                    child: Icon(
-                      Icons.location_on_rounded,
-                      size: 34,
-                      color: AppColors.kPrimaryColor,
-                    ),
-                  ),
+                // Center Pin (Only show if not loading)
+                BlocBuilder<LocationSelectionBloc, LocationSelectionState>(
+                  builder: (context, state) {
+                    if (_mapController == null && 
+                        (state is LocationSelectionLoading || state is LocationSelectionInitial)) {
+                      return const SizedBox.shrink();
+                    }
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 35),
+                        child: Icon(
+                          Icons.location_on_rounded,
+                          size: 34,
+                          color: AppColors.kPrimaryColor,
+                        ),
+                      ),
+                    );
+                  },
                 ),
 
                 // Bottom Info & Confirm Button
@@ -203,8 +231,8 @@ class _LocationSelectionPageState extends State<LocationSelectionPage> {
                   child: FloatingActionButton(
                     onPressed: () {
                       context.read<LocationSelectionBloc>().add(
-                        FetchCurrentLocation(),
-                      );
+                            FetchCurrentLocation(),
+                          );
                     },
                     backgroundColor: Colors.white,
                     foregroundColor: AppColors.kPrimaryColor,
@@ -212,28 +240,11 @@ class _LocationSelectionPageState extends State<LocationSelectionPage> {
                     child: const Icon(Icons.my_location),
                   ),
                 ),
-
-                // Listener for camera animation
-                BlocListener<LocationSelectionBloc, LocationSelectionState>(
-                  listener: (context, state) {
-                    if (state is LocationSelectionUpdated &&
-                        _mapController != null) {
-                      _mapController!.animateCamera(
-                        CameraUpdate.newLatLng(state.position),
-                      );
-                    } else if (state is LocationSelectionError) {
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text(state.message)));
-                    }
-                  },
-                  child: const SizedBox.shrink(),
-                ),
               ],
             ),
           );
         },
       ),
-    );
+    ));
   }
 }

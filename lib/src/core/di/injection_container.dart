@@ -187,4 +187,7 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<SupportRepository>(() => SupportRepositoryImpl(sl()));
   sl.registerFactory<SupportBloc>(() => SupportBloc(repository: sl()));
+  sl.registerFactory<LocationSelectionBloc>(
+    () => LocationSelectionBloc(locationService: sl()),
+  );
 }

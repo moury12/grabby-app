@@ -5,14 +5,19 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:meta/meta.dart';
 
+import '../../../../core/core_export.dart';
+
 part 'location_selection_event.dart';
 part 'location_selection_state.dart';
 
 class LocationSelectionBloc
     extends Bloc<LocationSelectionEvent, LocationSelectionState> {
+  final LocationService _locationService;
   Timer? _debounce;
 
-  LocationSelectionBloc() : super(LocationSelectionInitial()) {
+  LocationSelectionBloc({required LocationService locationService})
+      : _locationService = locationService,
+        super(LocationSelectionInitial()) {
     on<MapCameraMoved>(_onMapCameraMoved);
     on<MapCameraIdle>(_onMapCameraIdle);
     on<FetchCurrentLocation>(_onFetchCurrentLocation);
@@ -33,7 +38,7 @@ class LocationSelectionBloc
   ) async {
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      add(_ReverseGeocodeEvent(event.position));
+      add(_ReverseGeocodeEvent(event.position, isUserAction: event.isUserAction));
     });
   }
 
@@ -46,6 +51,7 @@ class LocationSelectionBloc
         position: event.position,
         address: "Fetching address...",
         isReverseGeocoding: true,
+        isUserAction: event.isUserAction,
       ),
     );
 
@@ -76,6 +82,7 @@ class LocationSelectionBloc
             position: event.position,
             address: address,
             isReverseGeocoding: false,
+            isUserAction: event.isUserAction,
           ),
         );
       } else {
@@ -84,6 +91,7 @@ class LocationSelectionBloc
             position: event.position,
             address: "Address not found",
             isReverseGeocoding: false,
+            isUserAction: event.isUserAction,
           ),
         );
       }
@@ -93,6 +101,7 @@ class LocationSelectionBloc
           position: event.position,
           address: "Error fetching address",
           isReverseGeocoding: false,
+          isUserAction: event.isUserAction,
         ),
       );
     }
@@ -104,41 +113,14 @@ class LocationSelectionBloc
   ) async {
     emit(LocationSelectionLoading());
     try {
-      bool serviceEnabled;
-      LocationPermission permission;
+      final Position? position = await _locationService.getCurrentPosition();
 
-      serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        emit(
-          LocationSelectionError(message: 'Location services are disabled.'),
-        );
-        return;
+      if (position != null) {
+        LatLng latLng = LatLng(position.latitude, position.longitude);
+        add(MapCameraIdle(position: latLng, isUserAction: true));
+      } else {
+        emit(LocationSelectionError(message: 'Could not fetch current location. Please check your permissions.'));
       }
-
-      permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          emit(
-            LocationSelectionError(message: 'Location permissions are denied'),
-          );
-          return;
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        emit(
-          LocationSelectionError(
-            message: 'Location permissions are permanently denied.',
-          ),
-        );
-        return;
-      }
-
-      Position position = await Geolocator.getCurrentPosition();
-      LatLng latLng = LatLng(position.latitude, position.longitude);
-
-      add(MapCameraIdle(position: latLng));
     } catch (e) {
       emit(LocationSelectionError(message: e.toString()));
     }
@@ -161,5 +143,6 @@ class LocationSelectionBloc
 // Internal event for handling the async geocoding after debounce
 class _ReverseGeocodeEvent extends LocationSelectionEvent {
   final LatLng position;
-  _ReverseGeocodeEvent(this.position);
+  final bool isUserAction;
+  _ReverseGeocodeEvent(this.position, {this.isUserAction = false});
 }

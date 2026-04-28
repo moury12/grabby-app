@@ -205,23 +205,24 @@ class _SignUpPageState extends State<SignUpPage> {
                                   ButtonTapWidget(
                                     onTap: () {
                                       context.pushNamed(
-                                          RoutesPath.termsAndConditionsPath);
+                                        RoutesPath.termsAndConditionsPath,
+                                      );
                                     },
                                     child: CustomText(
                                       AppStaticStrings.termsAndConditions,
                                       color: AppColors.kPrimaryColor,
                                     ),
                                   ),
-                                  CustomText(AppStaticStrings.and),
-                                  ButtonTapWidget(
-                                    onTap: () {
-                                      // TODO: Navigate to Privacy Policy
-                                    },
-                                    child: CustomText(
-                                      AppStaticStrings.privacyPolicy,
-                                      color: AppColors.kPrimaryColor,
-                                    ),
-                                  ),
+                                  // CustomText(AppStaticStrings.and),
+                                  // ButtonTapWidget(
+                                  //   onTap: () {
+                                  //     // TODO: Navigate to Privacy Policy
+                                  //   },
+                                  //   child: CustomText(
+                                  //     AppStaticStrings.privacyPolicy,
+                                  //     color: AppColors.kPrimaryColor,
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ),

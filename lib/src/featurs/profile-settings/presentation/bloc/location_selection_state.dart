@@ -12,10 +12,13 @@ class LocationSelectionUpdated extends LocationSelectionState {
   final String address;
   final bool isReverseGeocoding;
 
+  final bool isUserAction;
+
   LocationSelectionUpdated({
     required this.position,
     required this.address,
     this.isReverseGeocoding = false,
+    this.isUserAction = false,
   });
 }
 

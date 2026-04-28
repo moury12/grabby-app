@@ -15,7 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   //   text: kDebugMode ? "sayor98367@algarr.com" : "",
   // );
   final _emailController = TextEditingController(
-    text: kDebugMode ? "lolini5440@bpotogo.com" : "",
+    text: kDebugMode ? "wemolov506@hacknapp.com" : "",
   );
 
   final _passwordController = TextEditingController(
