@@ -9,7 +9,8 @@ import '../../../../core/services/socket_service.dart';
 
 class ShopOrderDetailsPage extends StatefulWidget {
   final String orderId;
-  const ShopOrderDetailsPage({super.key, required this.orderId});
+  final String socketOrderID;
+  const ShopOrderDetailsPage({super.key, required this.orderId, required this.socketOrderID});
 
   @override
   State<ShopOrderDetailsPage> createState() => _ShopOrderDetailsPageState();
@@ -30,7 +31,7 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
 
   void _initSocket() {
     final socketService = sl<SocketService>();
-    socketService.on('locationUpdate/${widget.orderId}', (data) {
+    socketService.on('locationUpdate/${widget.socketOrderID}', (data) {
       if (data != null && data['lat'] != null && data['lon'] != null) {
         log("customer location: $data");
         if (mounted) {
@@ -157,7 +158,7 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
 
   @override
   void dispose() {
-    sl<SocketService>().off('locationUpdate/${widget.orderId}');
+    sl<SocketService>().off('locationUpdate/${widget.socketOrderID}');
     _mapController?.dispose();
     super.dispose();
   }

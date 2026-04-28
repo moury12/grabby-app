@@ -279,7 +279,10 @@ class AppRouter {
         builder: (BuildContext context, GoRouterState state) {
           return BlocProvider(
             create: (context) => sl<OrderBloc>(),
-            child: ShopOrderDetailsPage(orderId: state.extra as String),
+            child: ShopOrderDetailsPage(
+              orderId: (state.extra as OrderModel).id ?? '',
+              socketOrderID: (state.extra as OrderModel).orderId ?? '',
+            ),
           );
         },
       ),

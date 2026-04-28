@@ -148,7 +148,7 @@ class _ShopOrderManagementPageState extends State<ShopOrderManagementPage> {
                   onTap: () async {
                     final result = await context.pushNamed(
                       RoutesPath.shopOrderDetailsPath,
-                      extra: order.id,
+                      extra: order,
                     );
                     if (result == true) {
                       _fetchOrders();

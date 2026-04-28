@@ -20,11 +20,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required LocationService locationService,
     required SocketService socketService,
     required LocalStorageService localStorageService,
-  })  : _profileRepository = profileRepository,
-        _locationService = locationService,
-        _socketService = socketService,
-        _localStorageService = localStorageService,
-        super(ProfileInitial()) {
+  }) : _profileRepository = profileRepository,
+       _locationService = locationService,
+       _socketService = socketService,
+       _localStorageService = localStorageService,
+       super(ProfileInitial()) {
     on<GetProfileEvent>(_onGetProfile);
     on<UpdateProfileEvent>(_onUpdateProfile);
   }
@@ -44,7 +44,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         final token = _localStorageService.getAccessToken();
         if (token != null) {
           _socketService.connect(token);
-          
+
           // Initial Location Emit
           final position = await _locationService.getCurrentPosition();
           if (position != null) {
@@ -80,20 +80,26 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   void _emitLocation(Position position, String token) {
-    try {
-      final Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-      final String userId = decodedToken['userId'] ?? '';
-      final String role = decodedToken['role'] ?? '';
+    {
+      try {
+        final Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+        final String userId = decodedToken['userId'] ?? '';
+        final String role = decodedToken['role'] ?? '';
 
-      _socketService.emit('updateLocation', {
-        // 'userId': userId,
-        // 'role': role,
-        'lat': position.latitude,
-        'lon': position.longitude,
-      });
-      debugPrint('Emitted location: $role - $userId (${position.latitude}, ${position.longitude})');
-    } catch (e) {
-      debugPrint('Error emitting location: $e');
+        if (role != 'SHOP_OWNER') {
+          _socketService.emit('updateLocation', {
+            // 'userId': userId,
+            // 'role': role,
+            'lat': position.latitude,
+            'lon': position.longitude,
+          });
+          debugPrint(
+            'Emitted location: $role - $userId (${position.latitude}, ${position.longitude})',
+          );
+        }
+      } catch (e) {
+        debugPrint('Error emitting location: $e');
+      }
     }
   }
 
@@ -113,7 +119,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       // 1. Fetch current location
       final locationData = await _locationService.getLocationData();
       if (locationData == null) {
-        emit(ProfileError('Failed to get current location. Please check your permissions.'));
+        emit(
+          ProfileError(
+            'Failed to get current location. Please check your permissions.',
+          ),
+        );
         return;
       }
 
