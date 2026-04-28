@@ -3,11 +3,14 @@ import 'package:grabby_app/src/core/services/socket_service.dart';
 import 'package:grabby_app/src/featurs/onboarding-splash/data/datasources/onboarding_remote_data_source.dart';
 import 'package:grabby_app/src/featurs/onboarding-splash/domain/repositories/onboarding_repository.dart';
 import 'package:grabby_app/src/featurs/onboarding-splash/presentation/bloc/info_bloc/onboarding_info_bloc.dart';
+import 'package:grabby_app/src/featurs/profile-settings/data/datasources/notification_remote_data_source.dart';
+import 'package:grabby_app/src/featurs/profile-settings/data/repositories/notification_repository_impl.dart';
 import 'package:grabby_app/src/featurs/profile-settings/data/services/branch_service.dart';
 import 'package:grabby_app/src/featurs/profile-settings/presentation/bloc/branch/branch_bloc.dart';
 
 import 'package:grabby_app/src/featurs/branch/data/datasources/branch_remote_data_source.dart';
 import 'package:grabby_app/src/featurs/branch/data/repositories/branch_repository_impl.dart';
+import 'package:grabby_app/src/featurs/profile-settings/presentation/bloc/notification/notification_bloc.dart';
 import 'package:grabby_app/src/featurs/reward/data/datasources/reward_remote_data_source.dart';
 import 'package:grabby_app/src/featurs/reward/data/repositories/reward_repository_impl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -189,5 +192,16 @@ Future<void> init() async {
   sl.registerFactory<SupportBloc>(() => SupportBloc(repository: sl()));
   sl.registerFactory<LocationSelectionBloc>(
     () => LocationSelectionBloc(locationService: sl()),
+  );
+
+  // ─── Feature: Notifications ────────────────────────────────────────────────
+  sl.registerLazySingleton<NotificationRemoteDataSource>(
+    () => NotificationRemoteDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<NotificationRepository>(
+    () => NotificationRepositoryImpl(sl()),
+  );
+  sl.registerFactory<NotificationBloc>(
+    () => NotificationBloc(repository: sl()),
   );
 }

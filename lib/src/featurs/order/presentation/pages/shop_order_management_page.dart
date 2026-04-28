@@ -52,7 +52,16 @@ class _ShopOrderManagementPageState extends State<ShopOrderManagementPage> {
               AppStaticStrings.orderManagement,
               variant: TextVariant.headlineSmall,
             ),
-            _buildBranchDropdown(),
+            BranchDropdown(
+              initialBranchId: selectedBranchId,
+              onBranchSelected: (id, name) {
+                setState(() {
+                  selectedBranchId = id;
+                  selectedBranchName = name;
+                });
+                _fetchOrders();
+              },
+            ),
           ],
         ),
         bottom: PreferredSize(
@@ -163,72 +172,4 @@ class _ShopOrderManagementPageState extends State<ShopOrderManagementPage> {
     );
   }
 
-  Widget _buildBranchDropdown() {
-    return BlocConsumer<BranchBloc, BranchState>(
-      listener: (context, state) {
-        if (state is BranchesLoaded &&
-            state.branches.isNotEmpty &&
-            selectedBranchId == null) {
-          setState(() {
-            selectedBranchId = state.branches.first.id;
-            selectedBranchName = state.branches.first.branchName;
-          });
-          _fetchOrders();
-        }
-      },
-      builder: (context, state) {
-        if (state is BranchLoading) {
-          return const SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          );
-        }
-        if (state is BranchesLoaded) {
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: SizedBox(
-                height: 30,
-                child: DropdownButton<String>(
-                  value: selectedBranchId,
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: AppColors.kPrimaryColor,
-                  ),
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      setState(() {
-                        selectedBranchId = newValue;
-                        selectedBranchName = state.branches
-                            .firstWhere((b) => b.id == newValue)
-                            .branchName;
-                      });
-                      _fetchOrders();
-                    }
-                  },
-                  items: state.branches.map<DropdownMenuItem<String>>((branch) {
-                    return DropdownMenuItem<String>(
-                      value: branch.id,
-                      child: CustomText(
-                        branch.branchName,
-                        variant: TextVariant.labelSmall,
-                        color: AppColors.kPrimaryColor,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-          );
-        }
-        return const SizedBox();
-      },
-    );
-  }
 }

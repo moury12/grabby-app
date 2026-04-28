@@ -15,9 +15,11 @@ class MenuCategoryModel {
 
   factory MenuCategoryModel.fromJson(Map<String, dynamic> json) {
     return MenuCategoryModel(
-      id: json['_id'],
-      name: json['name'],
-      shopOwnerId: json['shopOwnerId'],
+      id: json['_id'].toString() == 'null' ? "" : json['_id'].toString(),
+      name: json['name'].toString() == 'null' ? "" : json['name'].toString(),
+      shopOwnerId: json['shopOwnerId'].toString() == 'null'
+          ? ""
+          : json['shopOwnerId'].toString(),
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
     );

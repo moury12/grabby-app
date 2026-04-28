@@ -64,30 +64,34 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     }
   }
 
-  Future<void> _onCreateMenuCategory(
-    CreateMenuCategoryEvent event,
-    Emitter<MenuState> emit,
-  ) async {
-    emit(state.copyWith(status: MenuStatus.loading));
-    try {
-      final response = await _menuRepository.createMenuCategory(event.name);
-      if (response.success) {
-        // Automatically refresh categories
-        final updatedCategories = await _menuRepository.getMenuCategories();
-        emit(state.copyWith(
-          status: MenuStatus.success,
-          successMessage: response.message,
-          categories: updatedCategories.data ?? state.categories,
-        ));
-      } else {
-        emit(state.copyWith(status: MenuStatus.error, errorMessage: response.message));
-      }
-    } on ApiException catch (e) {
-      emit(state.copyWith(status: MenuStatus.error, errorMessage: e.message));
-    } catch (e) {
-      emit(state.copyWith(status: MenuStatus.error, errorMessage: 'Something went wrong.'));
+Future<void> _onCreateMenuCategory(
+  CreateMenuCategoryEvent event,
+  Emitter<MenuState> emit,
+) async {
+  emit(state.copyWith(status: MenuStatus.loading));
+  try {
+    final response = await _menuRepository.createMenuCategory(event.name);
+if (response.success && response.data != null) {
+  final updatedCategories = List<MenuCategoryModel>.from(state.categories)
+    ..add(response.data!);
+
+  emit(state.copyWith(
+    status: MenuStatus.success,
+    successMessage: response.message,
+    categories: updatedCategories,
+  ));
+} else {
+      emit(state.copyWith(
+        status: MenuStatus.error,
+        errorMessage: response.message,
+      ));
     }
+  } on ApiException catch (e) {
+    emit(state.copyWith(status: MenuStatus.error, errorMessage: e.message));
+  } catch (e) {
+    emit(state.copyWith(status: MenuStatus.error, errorMessage: 'Something went wrong.'));
   }
+}
 
   Future<void> _onDeleteMenuCategory(
     DeleteMenuCategoryEvent event,

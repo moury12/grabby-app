@@ -33,11 +33,13 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _fetchBranches({String? query}) async {
     final position = await sl<LocationService>().getCurrentPosition();
-    _branchBloc.add(GetCustomerBranchesEvent(
-      query: query,
-      lat: position?.latitude,
-      lng: position?.longitude,
-    ));
+    _branchBloc.add(
+      GetCustomerBranchesEvent(
+        query: query,
+        lat: position?.latitude,
+        lng: position?.longitude,
+      ),
+    );
   }
 
   void _onSearchChanged(String query) {
@@ -62,67 +64,72 @@ class _HomePageState extends State<HomePage> {
           } else if (state is ToggleViewState) {
             isMapView = state.isMapView;
           }
-          return CustomScrollView(
-            physics: isMapView
-                ? const NeverScrollableScrollPhysics()
-                : const AlwaysScrollableScrollPhysics(),
-            slivers: [
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: AppPadding.getPadding12(context),
-                  child: CustomTextField(
-                    textEditingController: _searchController,
-                    onChanged: _onSearchChanged,
-                    prefixIcon: Icon(
-                      CupertinoIcons.search,
-                      color: AppColors.kSecondaryTextColor.withValues(
+          return RefreshIndicator(
+            onRefresh: () async {
+              _fetchBranches();
+            },
+            child: CustomScrollView(
+              physics: isMapView
+                  ? const NeverScrollableScrollPhysics()
+                  : const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: AppPadding.getPadding12(context),
+                    child: CustomTextField(
+                      textEditingController: _searchController,
+                      onChanged: _onSearchChanged,
+                      prefixIcon: Icon(
+                        CupertinoIcons.search,
+                        color: AppColors.kSecondaryTextColor.withValues(
+                          alpha: .5,
+                        ),
+                      ),
+                      hintStyle: TextStyle(
+                        fontSize: 14,
+                        color: AppColors.kSecondaryTextColor,
+                      ),
+                      hintText: AppStaticStrings.searchCafes,
+                      borderColor: AppColors.kSecondaryTextColor.withValues(
                         alpha: .5,
                       ),
+                      borderRadius: 22,
                     ),
-                    hintStyle: TextStyle(
-                      fontSize: 14,
-                      color: AppColors.kSecondaryTextColor,
-                    ),
-                    hintText: AppStaticStrings.searchCafes,
-                    borderColor: AppColors.kSecondaryTextColor.withValues(
-                      alpha: .5,
-                    ),
-                    borderRadius: 22,
                   ),
                 ),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: AppPadding.getPadding12(context).copyWith(top: 0),
-                  child: Row(
-                    spacing: 8,
-                    children: [
-                      TabWidget(
-                        img: ImagesConstant.kListIcon,
-                        title: AppStaticStrings.listView,
-                        isSelected: !isMapView,
-                        onTap: () {
-                          context.read<HomeBloc>().add(
-                            ToggleThemeEvent(isMapView: false),
-                          );
-                        },
-                      ),
-                      TabWidget(
-                        title: AppStaticStrings.mapView,
-                        img: ImagesConstant.kMapIcon,
-                        isSelected: isMapView,
-                        onTap: () {
-                          context.read<HomeBloc>().add(
-                            ToggleThemeEvent(isMapView: true),
-                          );
-                        },
-                      ),
-                    ],
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: AppPadding.getPadding12(context).copyWith(top: 0),
+                    child: Row(
+                      spacing: 8,
+                      children: [
+                        TabWidget(
+                          img: ImagesConstant.kListIcon,
+                          title: AppStaticStrings.listView,
+                          isSelected: !isMapView,
+                          onTap: () {
+                            context.read<HomeBloc>().add(
+                              ToggleThemeEvent(isMapView: false),
+                            );
+                          },
+                        ),
+                        TabWidget(
+                          title: AppStaticStrings.mapView,
+                          img: ImagesConstant.kMapIcon,
+                          isSelected: isMapView,
+                          onTap: () {
+                            context.read<HomeBloc>().add(
+                              ToggleThemeEvent(isMapView: true),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              isMapView ? const HomeMapView() : const HomeListView(),
-            ],
+                isMapView ? const HomeMapView() : const HomeListView(),
+              ],
+            ),
           );
         },
       ),

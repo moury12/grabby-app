@@ -79,4 +79,6 @@ class ApiEndpoints {
   static const String helpCenter = "/help-center";
   static String promotedAds(double lat, double lon) =>
       "/shop-owner-plan/ads?lat=$lat&lon=$lon";
+
+  static const String notifications = "/notifications";
 }
