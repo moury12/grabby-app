@@ -15,7 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   //   text: kDebugMode ? "sayor98367@algarr.com" : "",
   // );
   final _emailController = TextEditingController(
-    text: kDebugMode ? "wemolov506@hacknapp.com" : "",
+    text: kDebugMode ? "lolini5440@bpotogo.com" : "",
   );
 
   final _passwordController = TextEditingController(
@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
               // Extract and persist the actual role from the token
               final roleStr = localStorage.getUserRoleFromToken();
               UserRole userRole = UserRole.customer;
-              
+
               if (roleStr == 'SHOP_OWNER') {
                 userRole = UserRole.shop;
               } else {
@@ -66,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
 
               // Update data source so the role is remembered on app restart
               await sl<OnboardingLocalDataSource>().saveUserRole(userRole);
-              
+
               // Update the bloc's current selection state
               sl<OnboardingSplashBloc>().selectedRole = userRole;
 

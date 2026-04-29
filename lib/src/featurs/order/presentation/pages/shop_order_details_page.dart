@@ -10,7 +10,11 @@ import '../../../../core/services/socket_service.dart';
 class ShopOrderDetailsPage extends StatefulWidget {
   final String orderId;
   final String socketOrderID;
-  const ShopOrderDetailsPage({super.key, required this.orderId, required this.socketOrderID});
+  const ShopOrderDetailsPage({
+    super.key,
+    required this.orderId,
+    required this.socketOrderID,
+  });
 
   @override
   State<ShopOrderDetailsPage> createState() => _ShopOrderDetailsPageState();
@@ -403,9 +407,18 @@ class _ShopOrderDetailsPageState extends State<ShopOrderDetailsPage> {
             fontWeight: FontWeight.bold,
           ),
           ...order.items.map(
-            (item) => _buildItemRow(
-              "${item.quantity}x ${item.menuName}",
-              "AED ${item.totalPrice?.toStringAsFixed(2)}",
+            (item) => Column(
+              children: [
+                _buildItemRow(
+                  "${item.quantity}x ${item.menuName}",
+                  "AED ${item.totalPrice?.toStringAsFixed(2)}",
+                ),
+                if (item.additionalItems != null &&
+                    item.additionalItems!.isNotEmpty)
+                  ...(item.additionalItems!
+                      .map((e) => _buildItemRow("+ ${e.name}", ""))
+                      .toList()),
+              ],
             ),
           ),
           const Divider(height: 1),

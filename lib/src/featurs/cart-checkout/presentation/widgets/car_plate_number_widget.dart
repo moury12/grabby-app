@@ -24,9 +24,7 @@ class CarPlateNumberWidget extends StatelessWidget {
             color: AppColors.kTextColor,
           ),
           ButtonTapWidget(
-            onTap: () {
-              context.pushNamed(RoutesPath.carPlatesPath);
-            },
+            onTap: onTap,
             child: CustomText(
               AppStaticStrings.managePlates,
               fontSize: 13,

@@ -80,8 +80,14 @@ class _BranchDropdownState extends State<BranchDropdown> {
                       setState(() {
                         selectedBranchId = newValue;
                       });
-                      widget.onBranchSelected(branch.id, branch.branchName);
-                    }
+  if (selectedBranchId != null) {
+      context.read<OrderBloc>().add(
+        FetchBranchOrdersEvent(
+          branchId: selectedBranchId!,
+          // status: tabs[selectedTabIndex],
+        ),
+      );
+    }                    }
                   },
                   items: state.branches.map<DropdownMenuItem<String>>((branch) {
                     return DropdownMenuItem<String>(

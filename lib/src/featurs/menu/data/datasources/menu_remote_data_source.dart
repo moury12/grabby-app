@@ -58,8 +58,8 @@ class MenuRemoteDataSourceImpl implements MenuRemoteDataSource {
     return await apiService.post<MenuCategoryModel>(
       ApiEndpoints.createMenuCategory,
       data: {"name": name},
-      fromJson: (data) =>
-          MenuCategoryModel.fromJson(data as Map<String, dynamic>),
+      fromJson: (json) =>
+          MenuCategoryModel.fromJson(json['data'] as Map<String, dynamic>),
     );
   }
 

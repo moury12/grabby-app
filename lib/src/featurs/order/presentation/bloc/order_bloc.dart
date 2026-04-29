@@ -50,6 +50,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         emit(state.copyWith(
           status: OrderStatus.success,
           orders: response.data ?? [],
+          totalOrders: response.meta?['total'] as int?,
         ));
       } else {
         emit(state.copyWith(status: OrderStatus.failure, errorMessage: response.message));

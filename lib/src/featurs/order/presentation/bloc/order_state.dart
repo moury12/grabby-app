@@ -9,6 +9,7 @@ class OrderState {
   final OrderModel? selectedOrder;
   final String? errorMessage;
   final String? successMessage;
+  final int? totalOrders;
 
   OrderState({
     this.status = OrderStatus.initial,
@@ -16,6 +17,7 @@ class OrderState {
     this.selectedOrder,
     this.errorMessage,
     this.successMessage,
+    this.totalOrders,
   });
 
   OrderState copyWith({
@@ -24,6 +26,7 @@ class OrderState {
     OrderModel? selectedOrder,
     String? errorMessage,
     String? successMessage,
+    int? totalOrders,
   }) {
     return OrderState(
       status: status ?? this.status,
@@ -31,6 +34,7 @@ class OrderState {
       selectedOrder: selectedOrder ?? this.selectedOrder,
       errorMessage: errorMessage ?? this.errorMessage,
       successMessage: successMessage ?? this.successMessage,
+      totalOrders: totalOrders ?? this.totalOrders,
     );
   }
 }
