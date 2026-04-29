@@ -39,7 +39,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   }
 
   Future<void> _onFetchMyOrders(FetchMyOrdersEvent event, Emitter<OrderState> emit) async {
-    emit(state.copyWith(status: OrderStatus.loading));
+    emit(state.copyWith(status: OrderStatus.loading, successMessage: null, errorMessage: null));
     try {
       final response = await _orderRepository.getMyOrders(
         status: event.status,
@@ -51,14 +51,16 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
           status: OrderStatus.success,
           orders: response.data ?? [],
           totalOrders: response.meta?['total'] as int?,
+          successMessage: null,
+          errorMessage: null,
         ));
       } else {
-        emit(state.copyWith(status: OrderStatus.failure, errorMessage: response.message));
+        emit(state.copyWith(status: OrderStatus.failure, errorMessage: response.message, successMessage: null));
       }
     } on ApiException catch (e) {
-      emit(state.copyWith(status: OrderStatus.failure, errorMessage: e.message));
+      emit(state.copyWith(status: OrderStatus.failure, errorMessage: e.message, successMessage: null));
     } catch (e) {
-      emit(state.copyWith(status: OrderStatus.failure, errorMessage: "Failed to fetch orders."));
+      emit(state.copyWith(status: OrderStatus.failure, errorMessage: "Failed to fetch orders.", successMessage: null));
     }
   }
 
@@ -94,6 +96,8 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         emit(state.copyWith(
           status: OrderStatus.success,
           orders: response.data ?? [],
+          fetchedBranchId: event.branchId,
+          fetchedStatus: event.status,
         ));
       } else {
         emit(state.copyWith(status: OrderStatus.failure, errorMessage: response.message));
@@ -134,6 +138,8 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
           status: OrderStatus.success,
           successMessage: response.message,
         ));
+        // Immediately clear the successMessage to prevent repeated triggers
+        emit(state.copyWith(successMessage: null));
       } else {
         emit(state.copyWith(status: OrderStatus.failure, errorMessage: response.message));
       }

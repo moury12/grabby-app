@@ -10,6 +10,9 @@ class OrderState {
   final String? errorMessage;
   final String? successMessage;
   final int? totalOrders;
+  // Tracks which query produced the current orders list
+  final String? fetchedBranchId;
+  final String? fetchedStatus;
 
   OrderState({
     this.status = OrderStatus.initial,
@@ -18,6 +21,8 @@ class OrderState {
     this.errorMessage,
     this.successMessage,
     this.totalOrders,
+    this.fetchedBranchId,
+    this.fetchedStatus,
   });
 
   OrderState copyWith({
@@ -27,6 +32,8 @@ class OrderState {
     String? errorMessage,
     String? successMessage,
     int? totalOrders,
+    String? fetchedBranchId,
+    String? fetchedStatus,
   }) {
     return OrderState(
       status: status ?? this.status,
@@ -35,6 +42,8 @@ class OrderState {
       errorMessage: errorMessage ?? this.errorMessage,
       successMessage: successMessage ?? this.successMessage,
       totalOrders: totalOrders ?? this.totalOrders,
+      fetchedBranchId: fetchedBranchId ?? this.fetchedBranchId,
+      fetchedStatus: fetchedStatus ?? this.fetchedStatus,
     );
   }
 }

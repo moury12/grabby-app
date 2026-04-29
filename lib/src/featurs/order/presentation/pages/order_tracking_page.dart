@@ -1,4 +1,3 @@
-
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../src_export.dart';
 
@@ -151,13 +150,13 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                           iconPath: ImagesConstant.kCallIcon,
                           backgroundColor: AppColors.kSecondaryColor,
                           onPressed: () async {
-                             if (branch?.phoneNumber != null) {
-                                final Uri launchUri = Uri(
-                                  scheme: 'tel',
-                                  path: branch!.phoneNumber,
-                                );
-                                await launchUrl(launchUri);
-                              }
+                            if (branch?.phoneNumber != null) {
+                              final Uri launchUri = Uri(
+                                scheme: 'tel',
+                                path: branch!.phoneNumber,
+                              );
+                              await launchUrl(launchUri);
+                            }
                           },
                         ),
                       ),
@@ -176,10 +175,26 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                       ),
                       Column(
                         children: order.items.map((item) {
-                          return TrackingOrderItem(
-                            quantity: "${item.quantity}x",
-                            title: item.menuName,
-                            price: "AED ${item.totalPrice?.toStringAsFixed(2)}",
+                          return Column(
+                            children: [
+                              TrackingOrderItem(
+                                quantity: "${item.quantity}x",
+                                title: item.menuName,
+                                price:
+                                    "AED ${item.totalPrice?.toStringAsFixed(2)}",
+                              ),
+                              if (item.additionalItems != null &&
+                                  item.additionalItems!.isNotEmpty)
+                                ...(item.additionalItems!
+                                    .map(
+                                      (e) => TrackingOrderItem(
+                                        quantity: "+",
+                                        title: e.name,
+                                        price: "",
+                                      ),
+                                    )
+                                    .toList()),
+                            ],
                           );
                         }).toList(),
                       ),

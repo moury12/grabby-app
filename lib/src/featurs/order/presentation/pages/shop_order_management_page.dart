@@ -16,6 +16,7 @@ class _ShopOrderManagementPageState extends State<ShopOrderManagementPage> {
   int selectedTabIndex = 0;
 
   final List<String> tabs = [
+    'all',
     'placed',
     'preparing',
     'ready',
@@ -144,7 +145,6 @@ class _ShopOrderManagementPageState extends State<ShopOrderManagementPage> {
             );
           }
 
-
           return RefreshIndicator(
             onRefresh: () async => _fetchOrders(),
             child: ListView.builder(
@@ -171,5 +171,4 @@ class _ShopOrderManagementPageState extends State<ShopOrderManagementPage> {
       ),
     );
   }
-
 }
