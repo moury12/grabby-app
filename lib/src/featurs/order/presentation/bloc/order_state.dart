@@ -34,13 +34,15 @@ class OrderState {
     int? totalOrders,
     String? fetchedBranchId,
     String? fetchedStatus,
+    bool clearSuccessMessage = false,
+    bool clearErrorMessage = false,
   }) {
     return OrderState(
       status: status ?? this.status,
       orders: orders ?? this.orders,
       selectedOrder: selectedOrder ?? this.selectedOrder,
-      errorMessage: errorMessage ?? this.errorMessage,
-      successMessage: successMessage ?? this.successMessage,
+      errorMessage: clearErrorMessage ? null : (errorMessage ?? this.errorMessage),
+      successMessage: clearSuccessMessage ? null : (successMessage ?? this.successMessage),
       totalOrders: totalOrders ?? this.totalOrders,
       fetchedBranchId: fetchedBranchId ?? this.fetchedBranchId,
       fetchedStatus: fetchedStatus ?? this.fetchedStatus,

@@ -1,6 +1,5 @@
 
 import '../../../../src_export.dart';
-import '../widgets/order_card.dart';
 
 class OrderHistoryPage extends StatefulWidget {
   const OrderHistoryPage({super.key});

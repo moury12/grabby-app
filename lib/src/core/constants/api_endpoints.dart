@@ -24,6 +24,7 @@ class ApiEndpoints {
   static const String updateShopOwnerProfile = "/shop-owner/profile";
   static const String updateUserLocation = "/customers/location";
   static const String updateShopOwnerLocation = "/shop-owner/location";
+  static const String pricingPlan = "/pricing-plan";
 
   // ─── Shop Owner Business ────────────────────────────────────────────────────
   static const String saveBusinessInfo = "/shop-owner/business/info";

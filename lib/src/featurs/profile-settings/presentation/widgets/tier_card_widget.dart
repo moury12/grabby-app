@@ -12,6 +12,7 @@ class TierCardWidget extends StatelessWidget {
         context.pushNamed(RoutesPath.campaignTierDetailName, extra: tier);
       },
       child: Container(
+        padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -25,18 +26,17 @@ class TierCardWidget extends StatelessWidget {
           ],
         ),
         child: Row(
+          spacing: 6,
           children: [
-            Column(
-              children: [
-                space12H,
-                SvgPicture.asset(
-                  tier['icon'],
-                  // height: 24,
-                  // width: 24,
-                  // colorFilter: ColorFilter.mode(tier['color'], BlendMode.srcIn),
-                ),
-              ],
-            ),
+            if (tier['icon'].toString().startsWith('http'))
+              CustomNetworkImage(imageUrl: tier['icon'], width: 40, height: 40)
+            else
+              SvgPicture.asset(
+                tier['icon'],
+                // height: 24,
+                // width: 24,
+                // colorFilter: ColorFilter.mode(tier['color'], BlendMode.srcIn),
+              ),
             // space12W,
             Expanded(
               child: Column(
@@ -102,6 +102,5 @@ class TierCardWidget extends StatelessWidget {
         ),
       ),
     );
-    ;
   }
 }

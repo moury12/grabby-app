@@ -62,12 +62,10 @@ class CampaignTierDetailPage extends StatelessWidget {
                     ),
                   ),
                   space8H,
-                  const CheckmarkListItem(
-                    title: AppStaticStrings.promotedShopsBeginning,
-                  ),
-                  const CheckmarkListItem(
-                    title: AppStaticStrings.newlyAddedShopNotification,
-                  ),
+                  if (tierData['features'] != null)
+                    ...(tierData['features'] as List<String>).map(
+                      (feature) => CheckmarkListItem(title: feature),
+                    ),
                 ],
               ),
             ),

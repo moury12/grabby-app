@@ -1,45 +1,54 @@
 import '../../../../src_export.dart';
 
-class MarketingCampaignsPage extends StatelessWidget {
+class MarketingCampaignsPage extends StatefulWidget {
   const MarketingCampaignsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> campaignTiers = [
-      {
-        'tier': AppStaticStrings.tier1,
-        'duration': AppStaticStrings.fiveDaysCampaign,
-        'price': '200',
-        'perDay': '40',
-        'icon': ImagesConstant.kMarketingCampaigns1,
-        'color': const Color(0xFF1E88E5),
-      },
-      {
-        'tier': AppStaticStrings.tier2,
-        'duration': AppStaticStrings.tenDaysCampaign,
-        'price': '400',
-        'perDay': '40',
-        'icon': ImagesConstant.kMarketingCampaigns2,
-        'color': const Color(0xFF9575CD),
-      },
-      {
-        'tier': AppStaticStrings.tier3,
-        'duration': AppStaticStrings.twentyDaysCampaign,
-        'price': '550',
-        'perDay': '27',
-        'icon': ImagesConstant.kMarketingCampaigns3,
-        'color': const Color(0xFFFB8C00),
-      },
-      {
-        'tier': AppStaticStrings.tier4,
-        'duration': AppStaticStrings.thirtyDaysCampaign,
-        'price': '660',
-        'perDay': '22',
-        'icon': ImagesConstant.kMarketingCampaigns4,
-        'color': const Color(0xFFFBC02D),
-      },
-    ];
+  State<MarketingCampaignsPage> createState() => _MarketingCampaignsPageState();
+}
 
+class _MarketingCampaignsPageState extends State<MarketingCampaignsPage> {
+  bool _isLoading = true;
+  List<Map<String, dynamic>> _campaignTiers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPricingPlans();
+  }
+
+  Future<void> _fetchPricingPlans() async {
+    setState(() { _isLoading = true; });
+    try {
+      final response = await sl<ApiService>().get<List<dynamic>>(
+        ApiEndpoints.pricingPlan,
+        fromJson: (json) => json['data'] as List<dynamic>,
+      );
+      if (response.success && response.data != null) {
+        final List<dynamic> data = response.data!;
+        setState(() {
+          _campaignTiers = data.map((item) => {
+            'tier': item['name'] ?? '',
+            'duration': item['name'] ?? '',
+            'features': (item['details'] as String?)?.split(',').map((e) => e.trim()).toList() ?? [],
+            'price': item['price']?.toString() ?? '0',
+            'perDay': item['perDay']?.toString() ?? '0',
+            'icon': item['icon'] ?? '',
+            'color': const Color(0xFF1E88E5),
+            'fullData': item,
+          }).toList();
+          _isLoading = false;
+        });
+      } else {
+        setState(() { _isLoading = false; _campaignTiers = []; });
+      }
+    } catch (e) {
+      setState(() { _isLoading = false; _campaignTiers = []; });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const CustomText(
@@ -48,9 +57,12 @@ class MarketingCampaignsPage extends StatelessWidget {
           fontWeight: FontWeight.w600,
         ),
       ),
-      body: SingleChildScrollView(
-        padding: AppPadding.getPadding12(context).copyWith(top: 0),
-        child: Column(
+      body: RefreshIndicator(
+        onRefresh: _fetchPricingPlans,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: AppPadding.getPadding12(context).copyWith(top: 0),
+          child: Column(
           spacing: 8,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -107,17 +119,27 @@ class MarketingCampaignsPage extends StatelessWidget {
             ),
 
             // Campaign Tiers List
-            ListView.separated(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: campaignTiers.length,
-              separatorBuilder: (context, index) => space12H,
-              itemBuilder: (context, index) {
-                final tier = campaignTiers[index];
-                return TierCardWidget(tier: tier);
-              },
-            ),
+            _isLoading
+                ? const Center(child: Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: CircularProgressIndicator(),
+                  ))
+                : _campaignTiers.isEmpty
+                    ? const Center(child: Padding(
+                        padding: EdgeInsets.all(20.0),
+                        child: Text("No campaigns available"),
+                      ))
+                    : ListView.separated(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _campaignTiers.length,
+                        separatorBuilder: (context, index) => space12H,
+                        itemBuilder: (context, index) {
+                          final tier = _campaignTiers[index];
+                          return TierCardWidget(tier: tier);
+                        },
+                      ),
 
             // FAQ Section
             const CustomText(
@@ -141,6 +163,7 @@ class MarketingCampaignsPage extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 

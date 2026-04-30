@@ -149,6 +149,16 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         }
       }
 
+      print('Profile update data:');
+      print(' - Name: ${event.name}');
+      print(' - Email: ${event.email}');
+      print(' - Phone: ${event.phoneNumber}');
+      print(' - Shop Name: ${event.shopName}');
+      print(' - License: ${event.shopLicenseNumber}');
+      print(' - Address: ${locationData.address}');
+      print(' - Lat: ${locationData.latitude} (${locationData.latitude.runtimeType})');
+      print(' - Lon: ${locationData.longitude} (${locationData.longitude.runtimeType})');
+
       // 3. Update Profile (For Customers, this includes the location data in the same call)
       final response = await _profileRepository.updateProfile(
         name: event.name,

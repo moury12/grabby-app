@@ -1,7 +1,5 @@
 
 import '../../../../src_export.dart';
-import '../../domain/repositories/order_repository.dart';
-import '../../data/models/order_model.dart';
 
 part 'order_event.dart';
 part 'order_state.dart';
@@ -39,7 +37,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   }
 
   Future<void> _onFetchMyOrders(FetchMyOrdersEvent event, Emitter<OrderState> emit) async {
-    emit(state.copyWith(status: OrderStatus.loading, successMessage: null, errorMessage: null));
+    emit(state.copyWith(status: OrderStatus.loading, clearSuccessMessage: true, clearErrorMessage: true));
     try {
       final response = await _orderRepository.getMyOrders(
         status: event.status,
@@ -51,16 +49,16 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
           status: OrderStatus.success,
           orders: response.data ?? [],
           totalOrders: response.meta?['total'] as int?,
-          successMessage: null,
-          errorMessage: null,
+          clearSuccessMessage: true,
+          clearErrorMessage: true,
         ));
       } else {
-        emit(state.copyWith(status: OrderStatus.failure, errorMessage: response.message, successMessage: null));
+        emit(state.copyWith(status: OrderStatus.failure, errorMessage: response.message, clearSuccessMessage: true));
       }
     } on ApiException catch (e) {
-      emit(state.copyWith(status: OrderStatus.failure, errorMessage: e.message, successMessage: null));
+      emit(state.copyWith(status: OrderStatus.failure, errorMessage: e.message, clearSuccessMessage: true));
     } catch (e) {
-      emit(state.copyWith(status: OrderStatus.failure, errorMessage: "Failed to fetch orders.", successMessage: null));
+      emit(state.copyWith(status: OrderStatus.failure, errorMessage: "Failed to fetch orders.", clearSuccessMessage: true));
     }
   }
 
@@ -139,7 +137,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
           successMessage: response.message,
         ));
         // Immediately clear the successMessage to prevent repeated triggers
-        emit(state.copyWith(successMessage: null));
+        emit(state.copyWith(clearSuccessMessage: true));
       } else {
         emit(state.copyWith(status: OrderStatus.failure, errorMessage: response.message));
       }

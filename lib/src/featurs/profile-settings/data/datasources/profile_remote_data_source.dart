@@ -81,12 +81,16 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
           filename: profileImage.path.split('/').last,
         );
       }
-
-      // Always use FormData for consistency with multipart endpoints
-      final formData = dio.FormData.fromMap(data);
-      print('Updating profile at $endpoint with fields: ${data.keys.toString()}');
       
-      return await apiService.patch<void>(endpoint, data: formData);
+      print('Sending profile update to $endpoint');
+      print('Payload data: $data');
+
+      if (profileImage != null) {
+        final formData = dio.FormData.fromMap(data);
+        return await apiService.patch<void>(endpoint, data: formData);
+      } else {
+        return await apiService.patch<void>(endpoint, data: data);
+      }
     } catch (e) {
       print('Error in updateProfile: $e');
       rethrow;
@@ -107,6 +111,9 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       };
 
       String endpoint = ApiEndpoints.updateUserLocation;
+
+      print('Updating user location at $endpoint');
+      print('Payload data: $data');
 
       final role = localStorageService.getUserRoleFromToken();
       if (role == 'SHOP_OWNER') {
