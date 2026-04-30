@@ -3,7 +3,8 @@ class ApiEndpoints {
 
   // ─── Base URL ──────────────────────────────────────────────────────────────
   // Swap this based on environment (dev / staging / prod)
-  static const String baseUrl = "http://10.10.20.50:5001";
+  // static const String baseUrl = "http://10.10.20.50:5001";
+  static const String baseUrl = "http://16.170.141.14:5001";
 
   // ─── Auth ──────────────────────────────────────────────────────────────────
   static const String customerRegister = "/auth/customer/register";
@@ -44,7 +45,8 @@ class ApiEndpoints {
   static const String branchBase = "/shop-owner/branch";
   static String branchUpdate(String id) => "/shop-owner/branch/$id";
   static String branchDelete(String id) => "/shop-owner/branch/$id";
-  static String branchAvailability(String id) => "/shop-owner/branch/$id/availability";
+  static String branchAvailability(String id) =>
+      "/shop-owner/branch/$id/availability";
 
   // ─── Customer Branch Browsing ─────────────────────────────────────────────
   static const String customerBranches = "/customers/branches";
