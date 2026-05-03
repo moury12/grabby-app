@@ -17,10 +17,12 @@ class _HomeMapViewState extends State<HomeMapView> {
   GoogleMapController? _mapController;
   Set<Marker> _markers = {};
   final Map<String, BitmapDescriptor> _customIcons = {};
+  BitmapDescriptor? _placeholderIcon;
 
   @override
   void initState() {
     super.initState();
+    _loadPlaceholder();
     _getCurrentLocation();
     
     // Check if state is already loaded and load markers
@@ -28,6 +30,11 @@ class _HomeMapViewState extends State<HomeMapView> {
     if (branchBloc.state is CustomerBranchesLoaded) {
       _loadMarkers((branchBloc.state as CustomerBranchesLoaded).branches);
     }
+  }
+
+  Future<void> _loadPlaceholder() async {
+    _placeholderIcon = await _getPlaceholderIcon(isPlaceholder: true);
+    if (mounted) setState(() {});
   }
 
   Future<void> _getCurrentLocation() async {
@@ -43,7 +50,7 @@ class _HomeMapViewState extends State<HomeMapView> {
 
   Future<void> _loadMarkers(List<CustomerBranchModel> branches) async {
     bool updated = false;
-    for (var branch in branches) {
+    await Future.wait(branches.map((branch) async {
       if (!_customIcons.containsKey(branch.id)) {
         try {
           final icon = await _getMarkerIcon(branch);
@@ -53,7 +60,8 @@ class _HomeMapViewState extends State<HomeMapView> {
           debugPrint("Error loading marker for ${branch.branchName}: $e");
         }
       }
-    }
+    }));
+
     if (updated && mounted) {
       setState(() {});
     }
@@ -77,6 +85,68 @@ class _HomeMapViewState extends State<HomeMapView> {
     });
     stream.addListener(listener);
     return completer.future;
+  }
+
+  Future<BitmapDescriptor> _getPlaceholderIcon({bool isPlaceholder = false}) async {
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    final Paint paint = Paint()..color = Colors.white;
+    final Paint shadowPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.2)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
+
+    const double width = 300.0;
+    const double height = 100.0;
+    const double radius = 50.0;
+
+    // Draw shadow
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        const Rect.fromLTWH(5, 5, width, height),
+        const Radius.circular(radius),
+      ),
+      shadowPaint,
+    );
+
+    // Draw white background
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        const Rect.fromLTWH(0, 0, width, height),
+        const Radius.circular(radius),
+      ),
+      paint,
+    );
+
+    if (isPlaceholder) {
+      // Draw placeholder circle for image
+      final Paint placeholderPaint = Paint()..color = Colors.grey.shade200;
+      canvas.drawCircle(const Offset(50, 50), 40, placeholderPaint);
+      
+      // Draw placeholder lines for text
+      final Paint linePaint = Paint()..color = Colors.grey.shade100;
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          const Rect.fromLTWH(110, 25, 150, 20),
+          const Radius.circular(4),
+        ),
+        linePaint,
+      );
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          const Rect.fromLTWH(110, 55, 100, 15),
+          const Radius.circular(4),
+        ),
+        linePaint,
+      );
+    }
+
+    final ui.Image markerImage = await pictureRecorder.endRecording().toImage(
+          width.toInt() + 10,
+          height.toInt() + 10,
+        );
+    final ByteData? byteData =
+        await markerImage.toByteData(format: ui.ImageByteFormat.png);
+    return BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
   }
 
   Future<BitmapDescriptor> _getMarkerIcon(CustomerBranchModel branch) async {
@@ -233,7 +303,8 @@ class _HomeMapViewState extends State<HomeMapView> {
               return Marker(
                 markerId: MarkerId(branch.id),
                 position: LatLng(branch.lat, branch.lng),
-                icon: _customIcons[branch.id] ?? BitmapDescriptor.defaultMarker,
+                icon: _customIcons[branch.id] ?? 
+                      (_placeholderIcon ?? BitmapDescriptor.defaultMarker),
                 onTap: () {
                   context.pushNamed(
                     RoutesPath.restruantDetailsPath,
