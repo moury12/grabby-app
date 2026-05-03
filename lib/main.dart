@@ -43,6 +43,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => sl<ProfileBloc>()..add(GetProfileEvent()),
         ),
+        BlocProvider(
+          create: (context) => sl<CartBloc>(),
+        ),
       ],
       child: MaterialApp.router(
         title: 'Grabby App',

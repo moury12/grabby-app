@@ -21,6 +21,7 @@ class _MenuPageState extends State<MenuPage> {
     context
         .read<CustomerBranchBloc>()
         .add(GetCustomerBranchDetailEvent(widget.branchId));
+    context.read<CartBloc>().add(FetchCartEvent(widget.branchId));
   }
 
   @override
@@ -62,6 +63,84 @@ class _MenuPageState extends State<MenuPage> {
             },
           ),
         ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: BlocBuilder<CartBloc, CartState>(
+        builder: (context, cartState) {
+          if (cartState.cart != null && cartState.cart!.totalItems > 0) {
+            return BlocBuilder<CustomerBranchBloc, CustomerBranchState>(
+              builder: (context, branchState) {
+                if (branchState is CustomerBranchDetailLoaded) {
+                  final shopOwnerId = branchState.branch.menuCategories
+                      ?.firstOrNull?.menus.firstOrNull?.shopOwnerId;
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: ButtonTapWidget(
+                      onTap: () {
+                        context.pushNamed(
+                          RoutesPath.cartPath,
+                          extra: {
+                            'branchId': branchState.branch.id,
+                            'shopOwnerId': shopOwnerId,
+                          },
+                        );
+                      },
+                      child: Container(
+                        height: 56,
+                        decoration: BoxDecoration(
+                          color: AppColors.kPrimaryColor,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color:
+                                  AppColors.kPrimaryColor.withValues(alpha: 0.3),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: CustomText(
+                                "${cartState.cart!.items?.length}",
+                                color: AppColors.kPrimaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            const Expanded(
+                              child: CustomText(
+                                "View Cart",
+                                color: Colors.white,
+                                variant: TextVariant.titleMedium,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            CustomText(
+                              "AED ${cartState.cart!.totalAmount.toStringAsFixed(2)}",
+                              color: Colors.white,
+                              variant: TextVariant.titleMedium,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            );
+          }
+          return const SizedBox.shrink();
+        },
       ),
       body: BlocBuilder<CustomerBranchBloc, CustomerBranchState>(
         builder: (context, state) {

@@ -114,10 +114,7 @@ class AppRouter {
         path: RoutesPath.itemDetailsPath,
         name: RoutesPath.itemDetailsPath,
         builder: (BuildContext context, GoRouterState state) {
-          return BlocProvider(
-            create: (context) => sl<CartBloc>(),
-            child: const ItemDetailsPage(),
-          );
+          return const ItemDetailsPage();
         },
       ),
       GoRoute(
@@ -126,7 +123,6 @@ class AppRouter {
         builder: (BuildContext context, GoRouterState state) {
           return MultiBlocProvider(
             providers: [
-              BlocProvider(create: (context) => sl<CartBloc>()),
               BlocProvider(create: (context) => sl<OrderBloc>()),
             ],
             child: const CartPage(),

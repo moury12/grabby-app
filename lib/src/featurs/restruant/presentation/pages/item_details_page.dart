@@ -41,10 +41,11 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(state.successMessage!)));
-          context.pushNamed(
-            RoutesPath.cartPath,
-            extra: {'branchId': branchId, 'shopOwnerId': item.shopOwnerId},
-          );
+          Navigator.pop(context);
+          // context.pushNamed(
+          //   RoutesPath.cartPath,
+          //   extra: {'branchId': branchId, 'shopOwnerId': item.shopOwnerId},
+          // );
         } else if (state.status == CartStatus.error &&
             state.errorMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
