@@ -36,5 +36,12 @@ class UpdateOrderStatusEvent extends OrderEvent {
 
 class CancelOrderEvent extends OrderEvent {
   final String orderId;
-  CancelOrderEvent(this.orderId);
+  final String? cancelNote;
+  CancelOrderEvent(this.orderId, {this.cancelNote});
+}
+
+class RespondToCancelEvent extends OrderEvent {
+  final String orderId;
+  final String action; // 'accept' or 'decline'
+  RespondToCancelEvent({required this.orderId, required this.action});
 }

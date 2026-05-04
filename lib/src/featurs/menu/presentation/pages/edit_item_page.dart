@@ -21,7 +21,7 @@ class _EditItemPageState extends State<EditItemPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _loyaltyController = TextEditingController();
+
   MenuCategoryModel? _selectedCategory;
   final List<CustomizationGroupModel> _customizationGroups = [];
 
@@ -35,7 +35,7 @@ class _EditItemPageState extends State<EditItemPage> {
       _nameController.text = item.itemName;
       _priceController.text = item.price.toString();
       _descriptionController.text = item.description;
-      _loyaltyController.text = item.stamp.toString();
+      giveStamp = item.stampActive;
       availableNow = item.isAvailable;
       _customizationGroups.addAll(item.additionalItems);
       log(
@@ -45,7 +45,7 @@ class _EditItemPageState extends State<EditItemPage> {
       _nameController.text = "Matcha";
       _priceController.text = "12";
       _descriptionController.text = "Description";
-      _loyaltyController.text = "10";
+      giveStamp = true;
     }
   }
 
@@ -110,11 +110,7 @@ class _EditItemPageState extends State<EditItemPage> {
                   ),
                   _buildAddCustomizationButton(context),
                   _buildCustomizationGroups(),
-                  CustomTextField(
-                    title: AppStaticStrings.loyalty,
-                    textEditingController: _loyaltyController,
-                    keyboardType: TextInputType.number,
-                  ),
+                  _buildLoyaltySection(),
                   _buildAvailableNowSection(),
                   _buildActionButtons(context, state),
                   const SizedBox(height: 40),
@@ -178,6 +174,38 @@ class _EditItemPageState extends State<EditItemPage> {
                     alpha: 0.5,
                   ),
                   borderRadius: 10,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLoyaltySection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 8,
+      children: [
+        const CustomText(AppStaticStrings.loyalty, fontWeight: FontWeight.bold),
+        Container(
+          // padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Checkbox(
+                value: giveStamp,
+                onChanged: (val) => setState(() => giveStamp = val ?? false),
+                activeColor: AppColors.kPrimaryColor,
+              ),
+              const Expanded(
+                child: CustomText(
+                  AppStaticStrings.giveStampForItem,
+                  fontSize: 13,
                 ),
               ),
             ],
@@ -453,7 +481,7 @@ class _EditItemPageState extends State<EditItemPage> {
                   categoryId: _selectedCategory!.id,
                   price: double.tryParse(_priceController.text),
                   description: _descriptionController.text,
-                  stamp: int.tryParse(_loyaltyController.text),
+                  stampActive: giveStamp,
                   isAvailable: availableNow,
                   additionalItems: _customizationGroups,
                   image: _pickedImage,
@@ -466,7 +494,7 @@ class _EditItemPageState extends State<EditItemPage> {
                   categoryId: _selectedCategory!.id,
                   price: double.tryParse(_priceController.text) ?? 0.0,
                   description: _descriptionController.text,
-                  stamp: int.tryParse(_loyaltyController.text) ?? 0,
+                  stampActive: giveStamp,
                   isAvailable: availableNow,
                   additionalItems: _customizationGroups,
                   image: _pickedImage,

@@ -107,6 +107,7 @@ class _RestruantDetailsPageState extends State<RestruantDetailsPage> {
                               ),
                               OpeningTimeTextWidget(
                                 openHours: branch.timing,
+                                isOpen: branch.isOpen,
                               ),
                             ],
                           ),

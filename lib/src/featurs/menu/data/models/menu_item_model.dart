@@ -23,12 +23,16 @@ class PaginationMeta {
   final int limit;
   final int total;
   final int totalPage;
+  final int totalAvailable;
+  final int totalUnavailable;
 
   PaginationMeta({
     required this.page,
     required this.limit,
     required this.total,
     required this.totalPage,
+    required this.totalAvailable,
+    required this.totalUnavailable,
   });
 
   factory PaginationMeta.fromJson(Map<String, dynamic> json) {
@@ -37,6 +41,8 @@ class PaginationMeta {
       limit: json['limit'] ?? 10,
       total: json['total'] ?? 0,
       totalPage: json['totalPage'] ?? 1,
+      totalAvailable: json['totalAvailable'] ?? 0,
+      totalUnavailable: json['totalUnavailable'] ?? 0,
     );
   }
 }
@@ -47,7 +53,7 @@ class MenuItemModel {
   final dynamic category; // Can be String (ID) or CategoryInfo (Object)
   final double price;
   final String description;
-  final int stamp;
+  final bool stampActive;
   final bool isAvailable;
   final List<CustomizationGroupModel> additionalItems;
   final String? image;
@@ -59,7 +65,7 @@ class MenuItemModel {
     required this.category,
     required this.price,
     required this.description,
-    required this.stamp,
+    required this.stampActive,
     required this.isAvailable,
     required this.additionalItems,
     this.image,
@@ -79,7 +85,7 @@ class MenuItemModel {
           : json['category'] ?? '',
       price: (json['price'] ?? 0).toDouble(),
       description: json['description'] ?? '',
-      stamp: json['stamp'] ?? 0,
+      stampActive: json['stampActive'] ?? json['stamp'] ?? false,
       isAvailable: json['isAvailable'] ?? true,
       additionalItems: () {
         final rawAdditionalItems =
@@ -123,7 +129,7 @@ class MenuItemModel {
           : category,
       'price': price,
       'description': description,
-      'stamp': stamp,
+      'stampActive': stampActive,
       "isAvailable": isAvailable,
       "additionalItems": additionalItems.map((e) => e.toJson()).toList(),
     };
@@ -144,20 +150,27 @@ class CategoryInfo {
 class ShopOwnerInfo {
   final String id;
   final String name;
+  final String shopName;
 
-  ShopOwnerInfo({required this.id, required this.name});
+  ShopOwnerInfo({required this.id, required this.name, required this.shopName});
 
   factory ShopOwnerInfo.fromJson(Map<String, dynamic> json) {
-    return ShopOwnerInfo(id: json['_id'] ?? '', name: json['name'] ?? '');
+    return ShopOwnerInfo(
+      id: json['_id'] ?? '',
+      name: json['name'] ?? '',
+      shopName: json['shop_name'] ?? '',
+    );
   }
 }
 
 class CustomizationGroupModel {
+  final String? id;
   final String groupName;
   final String type; // 'regular' or 'optional'
   final List<CustomizationItemModel> items;
 
   CustomizationGroupModel({
+    this.id,
     required this.groupName,
     required this.type,
     required this.items,
@@ -165,6 +178,7 @@ class CustomizationGroupModel {
 
   factory CustomizationGroupModel.fromJson(Map<String, dynamic> json) {
     return CustomizationGroupModel(
+      id: json['_id'],
       groupName: json['groupName'] ?? '',
       type: json['type'] ?? 'regular',
       // FIX: Cast 'e' to Map<String, dynamic>
@@ -189,14 +203,21 @@ class CustomizationGroupModel {
 }
 
 class CustomizationItemModel {
+  final String? id;
   final String name;
   final double price;
   final String? image;
 
-  CustomizationItemModel({required this.name, required this.price, this.image});
+  CustomizationItemModel({
+    this.id,
+    required this.name,
+    required this.price,
+    this.image,
+  });
 
   factory CustomizationItemModel.fromJson(Map<String, dynamic> json) {
     return CustomizationItemModel(
+      id: json['_id'],
       name: json['name'] ?? '',
       price: (json['price'] ?? 0).toDouble(),
       image: json['image'],

@@ -1,5 +1,4 @@
 import '../../../../src_export.dart';
-import '../widgets/shop_order_card.dart';
 import '../../../profile-settings/presentation/bloc/branch/branch_bloc.dart';
 
 class ShopOrderManagementPage extends StatefulWidget {
@@ -27,17 +26,28 @@ class _ShopOrderManagementPageState extends State<ShopOrderManagementPage> {
   @override
   void initState() {
     super.initState();
+    final orderState = context.read<OrderBloc>().state;
+    selectedBranchId = orderState.fetchedBranchId;
+    final lastStatus = orderState.fetchedStatus;
+    if (lastStatus != null) {
+      selectedTabIndex = tabs.indexOf(lastStatus);
+      if (selectedTabIndex == -1) selectedTabIndex = 0;
+    }
     context.read<BranchBloc>().add(GetBranchesEvent());
+    if (selectedBranchId != null) {
+      _fetchOrders();
+    }
   }
 
   void _fetchOrders() {
     if (selectedBranchId != null) {
+      final status = tabs[selectedTabIndex];
       context.read<OrderBloc>().add(
-        FetchBranchOrdersEvent(
-          branchId: selectedBranchId!,
-          status: tabs[selectedTabIndex],
-        ),
-      );
+            FetchBranchOrdersEvent(
+              branchId: selectedBranchId!,
+              status: status == 'all' ? null : status,
+            ),
+          );
     }
   }
 
@@ -138,7 +148,7 @@ class _ShopOrderManagementPageState extends State<ShopOrderManagementPage> {
               onRefresh: () async => _fetchOrders(),
               child: Stack(
                 children: [
-                  ListView(),
+                  ListView(physics: const AlwaysScrollableScrollPhysics()),
                   const Center(child: CustomText("No orders found")),
                 ],
               ),

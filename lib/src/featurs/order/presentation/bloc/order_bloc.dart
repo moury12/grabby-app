@@ -14,6 +14,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     on<FetchBranchOrdersEvent>(_onFetchBranchOrders);
     on<UpdateOrderStatusEvent>(_onUpdateOrderStatus);
     on<CancelOrderEvent>(_onCancelOrder);
+    on<RespondToCancelEvent>(_onRespondToCancel);
   }
 
   Future<void> _onCreateOrder(CreateOrderEvent event, Emitter<OrderState> emit) async {
@@ -130,7 +131,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   Future<void> _onCancelOrder(CancelOrderEvent event, Emitter<OrderState> emit) async {
     emit(state.copyWith(status: OrderStatus.loading));
     try {
-      final response = await _orderRepository.cancelOrder(event.orderId);
+      final response = await _orderRepository.cancelOrder(event.orderId, cancelNote: event.cancelNote);
       if (response.success && response.data != null) {
         emit(state.copyWith(
           status: OrderStatus.success,
@@ -145,6 +146,26 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       emit(state.copyWith(status: OrderStatus.failure, errorMessage: e.message));
     } catch (e) {
       emit(state.copyWith(status: OrderStatus.failure, errorMessage: "Failed to cancel order."));
+    }
+  }
+
+  Future<void> _onRespondToCancel(RespondToCancelEvent event, Emitter<OrderState> emit) async {
+    emit(state.copyWith(status: OrderStatus.loading));
+    try {
+      final response = await _orderRepository.respondToCancel(event.orderId, event.action);
+      if (response.success && response.data != null) {
+        emit(state.copyWith(
+          status: OrderStatus.success,
+          successMessage: response.message,
+        ));
+        emit(state.copyWith(clearSuccessMessage: true));
+      } else {
+        emit(state.copyWith(status: OrderStatus.failure, errorMessage: response.message));
+      }
+    } on ApiException catch (e) {
+      emit(state.copyWith(status: OrderStatus.failure, errorMessage: e.message));
+    } catch (e) {
+      emit(state.copyWith(status: OrderStatus.failure, errorMessage: "Failed to respond to cancellation."));
     }
   }
 }

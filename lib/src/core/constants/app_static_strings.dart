@@ -17,6 +17,9 @@ static const String paymentSuccess = "Payment Success";
   static const String loginAccount = "Login Account";
   static const String shopContactPhone = "Shop Contact Phone";
   static const String shopContactEmail = "Shop Contact Email";
+  static const String reasonOfCancel = "Reason of Cancel";
+  static const String accept = "Accept";
+  static const String decline = "Decline";
   static const String emailAddressOrPhoneNumber =
       "Email Address Or Phone Number";
   static const String password = "Password";

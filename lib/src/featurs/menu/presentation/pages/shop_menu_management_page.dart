@@ -279,10 +279,17 @@ class _ShopMenuManagementPageState extends State<ShopMenuManagementPage> {
           color: isSelected ? AppColors.kPrimaryColor : Colors.white,
           borderRadius: BorderRadius.circular(10),
         ),
-        child: CustomText(
-          label,
-          color: isSelected ? Colors.white : AppColors.kSecondaryTextColor,
-          fontWeight: FontWeight.w600,
+        child: Row(
+          spacing: 8,
+          children: [
+            if (category?.isStampActive ?? false)
+              Image.asset("assets/icons/stamp_category_icon.png", height: 15),
+            CustomText(
+              label,
+              color: isSelected ? Colors.white : AppColors.kSecondaryTextColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ],
         ),
       ),
     );

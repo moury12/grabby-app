@@ -93,13 +93,14 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                 ),
               ),
             ),
-            if (item.stamp != null && item.stamp! > 0)
+            // if (item.stampActive == true && item.stamp != null && item.stamp! > 0)
+            if (item.stampActive == true)
               SliverPadding(
                 padding: const EdgeInsets.all(12),
                 sliver: SliverToBoxAdapter(
                   child: LoyaltyStampsWidget(
                     currentStamps: item.totalStamps ?? 0,
-                    totalStamps: item.stamp ?? 0,
+                    totalStamps: item.stamp ?? 10,
                     remainingStamps: item.remainingStamps ?? 0,
                     isFree: item.isFree,
                   ),
@@ -257,13 +258,17 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
     return Column(
       children: addons.map((addon) {
         final groupSelections = _selectedAdditionalItems[e.id] ?? [];
-        final isSelected = groupSelections.any((element) => element.id == addon.id);
+        final isSelected = groupSelections.any(
+          (element) => element.id == addon.id,
+        );
 
         return InkWell(
           onTap: () {
             setState(() {
               if (isSelected) {
-                groupSelections.removeWhere((element) => element.id == addon.id);
+                groupSelections.removeWhere(
+                  (element) => element.id == addon.id,
+                );
               } else {
                 groupSelections.add(addon);
               }

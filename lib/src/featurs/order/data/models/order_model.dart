@@ -18,6 +18,8 @@ class OrderModel {
   final String? createdAt;
   final String? updatedAt;
   final bool? nearByShop;
+  final String? cancelNote;
+  final String? cancelStatus;
 
   OrderModel({
     this.id,
@@ -37,6 +39,8 @@ class OrderModel {
     this.createdAt,
     this.updatedAt,
     this.nearByShop,
+    this.cancelNote,
+    this.cancelStatus,
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
@@ -64,6 +68,8 @@ class OrderModel {
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
       nearByShop: json['nearByShop'],
+      cancelNote: json['cancelNote'],
+      cancelStatus: json['cancelStatus'],
     );
   }
 
@@ -76,6 +82,8 @@ class OrderModel {
       'paymentMethod': paymentMethod,
       'carPlates': carPlates,
       'nearByShop': nearByShop,
+      'cancelNote': cancelNote,
+      'cancelStatus': cancelStatus,
     };
   }
 }

@@ -13,13 +13,13 @@ class _BranchTimingsPageState extends State<BranchTimingsPage> {
   ShopBranchModel? _selectedBranch;
 
   final Map<String, Map<String, dynamic>> _timings = {
-    "Monday": {"isOpen": true, "open": "8:00 AM", "close": "10:00 PM"},
-    "Tuesday": {"isOpen": true, "open": "8:00 AM", "close": "10:00 PM"},
-    "Wednesday": {"isOpen": true, "open": "8:00 AM", "close": "10:00 PM"},
-    "Thursday": {"isOpen": true, "open": "8:00 AM", "close": "10:00 PM"},
-    "Friday": {"isOpen": true, "open": "8:00 AM", "close": "10:00 PM"},
-    "Saturday": {"isOpen": true, "open": "8:00 AM", "close": "10:00 PM"},
-    "Sunday": {"isOpen": true, "open": "8:00 AM", "close": "10:00 PM"},
+    "Monday": {"isClosed": false, "open": "8:00 AM", "close": "10:00 PM"},
+    "Tuesday": {"isClosed": false, "open": "8:00 AM", "close": "10:00 PM"},
+    "Wednesday": {"isClosed": false, "open": "8:00 AM", "close": "10:00 PM"},
+    "Thursday": {"isClosed": false, "open": "8:00 AM", "close": "10:00 PM"},
+    "Friday": {"isClosed": false, "open": "8:00 AM", "close": "10:00 PM"},
+    "Saturday": {"isClosed": false, "open": "8:00 AM", "close": "10:00 PM"},
+    "Sunday": {"isClosed": false, "open": "8:00 AM", "close": "10:00 PM"},
   };
 
   void _updateTimingsFromBranch(ShopBranchModel branch) {
@@ -27,7 +27,7 @@ class _BranchTimingsPageState extends State<BranchTimingsPage> {
       for (var a in branch.availability) {
         if (_timings.containsKey(a.day)) {
           _timings[a.day] = {
-            "isOpen": !a.isClosed,
+            "isClosed": a.isClosed,
             "open": a.open,
             "close": a.close,
           };
@@ -36,7 +36,7 @@ class _BranchTimingsPageState extends State<BranchTimingsPage> {
     } else {
       // reset to default if empty
       _timings.forEach((key, value) {
-        _timings[key] = {"isOpen": true, "open": "8:00 AM", "close": "10:00 PM"};
+        _timings[key] = {"isClosed": false, "open": "8:00 AM", "close": "10:00 PM"};
       });
     }
   }
@@ -66,7 +66,7 @@ class _BranchTimingsPageState extends State<BranchTimingsPage> {
         "day": day,
         "open": data["open"],
         "close": data["close"],
-        "isClosed": !(data["isOpen"] as bool),
+        "isClosed": data["isClosed"],
       });
     });
     context.read<BranchBloc>().add(UpdateBranchAvailabilityEvent(_selectedBranch!.id, availability));
@@ -142,7 +142,7 @@ class _BranchTimingsPageState extends State<BranchTimingsPage> {
                         ..._timings.entries.map((entry) {
                           return TimingRow(
                             day: entry.key,
-                            isOpen: entry.value["isOpen"],
+                            isOpen: !(entry.value["isClosed"] as bool),
                             openingTime: entry.value["open"],
                             closingTime: entry.value["close"],
                             onOpeningTimeTap: () => _selectTime(entry.key, true),
@@ -150,7 +150,7 @@ class _BranchTimingsPageState extends State<BranchTimingsPage> {
                                 _selectTime(entry.key, false),
                             onToggle: (val) {
                               setState(() {
-                                _timings[entry.key]!["isOpen"] = val;
+                                _timings[entry.key]!["isClosed"] = !val;
                               });
                             },
                           );

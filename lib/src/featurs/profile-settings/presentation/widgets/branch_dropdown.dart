@@ -73,22 +73,19 @@ class _BranchDropdownState extends State<BranchDropdown> {
                     color: AppColors.kPrimaryColor,
                     size: 20,
                   ),
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      final branch =
-                          state.branches.firstWhere((b) => b.id == newValue);
-                      setState(() {
-                        selectedBranchId = newValue;
-                      });
-  if (selectedBranchId != null) {
-      context.read<OrderBloc>().add(
-        FetchBranchOrdersEvent(
-          branchId: selectedBranchId!,
-          // status: tabs[selectedTabIndex],
-        ),
-      );
-    }                    }
-                  },
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        final branch =
+                            state.branches.firstWhere((b) => b.id == newValue);
+                        setState(() {
+                          selectedBranchId = newValue;
+                        });
+                        widget.onBranchSelected(
+                          branch.id,
+                          branch.branchName,
+                        );
+                      }
+                    },
                   items: state.branches.map<DropdownMenuItem<String>>((branch) {
                     return DropdownMenuItem<String>(
                       value: branch.id,

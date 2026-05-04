@@ -7,7 +7,8 @@ abstract class OrderRemoteDataSource {
   Future<ApiResponse<OrderModel>> getOrderDetails(String orderId);
   Future<ApiResponse<List<OrderModel>>> getBranchOrders(String branchId, {String? status, int page = 1, int limit = 10});
   Future<ApiResponse<OrderModel>> updateOrderStatus(String orderId, String status);
-  Future<ApiResponse<OrderModel>> cancelOrder(String orderId);
+  Future<ApiResponse<OrderModel>> cancelOrder(String orderId, {String? cancelNote});
+  Future<ApiResponse<OrderModel>> respondToCancel(String orderId, String action);
 }
 
 class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
@@ -80,9 +81,19 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
   }
 
   @override
-  Future<ApiResponse<OrderModel>> cancelOrder(String orderId) async {
+  Future<ApiResponse<OrderModel>> cancelOrder(String orderId, {String? cancelNote}) async {
     return await apiService.patch<OrderModel>(
       ApiEndpoints.cancelOrder(orderId),
+      data: cancelNote != null ? {"cancelNote": cancelNote} : null,
+      fromJson: (json) => OrderModel.fromJson(json['data'] as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Future<ApiResponse<OrderModel>> respondToCancel(String orderId, String action) async {
+    return await apiService.patch<OrderModel>(
+      ApiEndpoints.cancelRespond(orderId),
+      data: {"action": action},
       fromJson: (json) => OrderModel.fromJson(json['data'] as Map<String, dynamic>),
     );
   }

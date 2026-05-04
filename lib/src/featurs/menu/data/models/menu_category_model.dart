@@ -1,12 +1,14 @@
 class MenuCategoryModel {
   final String id;
   final String name;
+  final bool isStampActive;
   final String shopOwnerId;
   final DateTime createdAt;
   final DateTime updatedAt;
 
   MenuCategoryModel({
     required this.id,
+    required this.isStampActive,
     required this.name,
     required this.shopOwnerId,
     required this.createdAt,
@@ -15,13 +17,16 @@ class MenuCategoryModel {
 
   factory MenuCategoryModel.fromJson(Map<String, dynamic> json) {
     return MenuCategoryModel(
-      id: json['_id'].toString() == 'null' ? "" : json['_id'].toString(),
-      name: json['name'].toString() == 'null' ? "" : json['name'].toString(),
-      shopOwnerId: json['shopOwnerId'].toString() == 'null'
-          ? ""
-          : json['shopOwnerId'].toString(),
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      id: json['_id']?.toString() ?? "",
+      name: json['name']?.toString() ?? "",
+      isStampActive: json['stampActive'] ?? false,
+      shopOwnerId: json['shopOwnerId']?.toString() ?? "",
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : DateTime.now(),
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : DateTime.now(),
     );
   }
 
@@ -29,6 +34,7 @@ class MenuCategoryModel {
     return {
       '_id': id,
       'name': name,
+      'stampActive': isStampActive,
       'shopOwnerId': shopOwnerId,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),

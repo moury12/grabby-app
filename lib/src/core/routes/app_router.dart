@@ -197,7 +197,7 @@ class AppRouter {
         path: RoutesPath.orderCanceledPath,
         name: RoutesPath.orderCanceledPath,
         builder: (BuildContext context, GoRouterState state) {
-          return const OrderCanceledPage();
+          return  OrderCanceledPage(orderId: state.extra as String,);
         },
       ),
       GoRoute(

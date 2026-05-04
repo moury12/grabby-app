@@ -1,4 +1,3 @@
-
 import 'package:intl/intl.dart';
 import '../../../../src_export.dart';
 
@@ -6,18 +5,18 @@ class ShopOrderCard extends StatelessWidget {
   final OrderModel order;
   final VoidCallback? onTap;
 
-  const ShopOrderCard({
-    super.key,
-    required this.order,
-    this.onTap,
-  });
+  const ShopOrderCard({super.key, required this.order, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    final customer = order.customerId is CustomerInfo ? (order.customerId as CustomerInfo) : null;
+    final customer = order.customerId is CustomerInfo
+        ? (order.customerId as CustomerInfo)
+        : null;
     final customerName = customer?.name ?? "Customer";
-    final pickupType = order.pickupType == "carPickup" ? "Car Pickup - ${order.carPlates}" : "Walk-in";
-    final time = order.createdAt != null 
+    final pickupType = order.pickupType == "carPickup"
+        ? "Car Pickup - ${order.carPlates}"
+        : "Walk-in";
+    final time = order.createdAt != null
         ? DateFormat('h:mm a').format(DateTime.parse(order.createdAt!))
         : "";
     final isPaid = order.paymentStatus?.toLowerCase() == "paid";
@@ -62,12 +61,12 @@ class ShopOrderCard extends StatelessWidget {
               variant: TextVariant.titleMedium,
               fontWeight: FontWeight.bold,
             ),
+
             // CustomText(
             //   "0 ${AppStaticStrings.ordersCount} \u2022 0 ${AppStaticStrings.stampsCount}",
             //   variant: TextVariant.labelSmall,
             //   color: AppColors.kSecondaryTextColor,
             // ),
-
             const Divider(height: 1, color: AppColors.kAccentColor),
 
             ...order.items.map(
@@ -115,6 +114,7 @@ class ShopOrderCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+
                     // Commented out "Customer Arrived" as requested
                     /*
                     if (hasArrived)
@@ -137,35 +137,34 @@ class ShopOrderCard extends StatelessWidget {
                         ),
                       )
                     */
-                    
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.kPrimaryColor.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(appRadius),
-                        ),
-                        child: Row(
-                          spacing: 4,
-                          children: [
-                            Icon(
-                              order.pickupType == "carPickup"
-                                  ? Icons.directions_car_filled_outlined
-                                  : Icons.person_outline,
-                              size: 16,
-                              color: AppColors.kPrimaryColor,
-                            ),
-                            CustomText(
-                              pickupType,
-                              variant: TextVariant.labelSmall,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.kPrimaryColor,
-                            ),
-                          ],
-                        ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
                       ),
+                      decoration: BoxDecoration(
+                        color: AppColors.kPrimaryColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(appRadius),
+                      ),
+                      child: Row(
+                        spacing: 4,
+                        children: [
+                          Icon(
+                            order.pickupType == "carPickup"
+                                ? Icons.directions_car_filled_outlined
+                                : Icons.person_outline,
+                            size: 16,
+                            color: AppColors.kPrimaryColor,
+                          ),
+                          CustomText(
+                            pickupType,
+                            variant: TextVariant.labelSmall,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.kPrimaryColor,
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
                 CustomText(
@@ -176,6 +175,69 @@ class ShopOrderCard extends StatelessWidget {
                 ),
               ],
             ),
+            if ((order.cancelNote?.isNotEmpty ?? false) &&
+                order.cancelStatus == "pending")
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 8,
+                children: [
+                  const Divider(height: 1, color: AppColors.kAccentColor),
+                  CustomText(
+                    AppStaticStrings.reasonOfCancel,
+                    variant: TextVariant.titleMedium,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  CustomText(
+                    order.cancelNote ?? "Not provided",
+                    variant: TextVariant.bodyMedium,
+                    color: AppColors.kTextColor,
+                  ),
+                  Row(
+                    spacing: 12,
+                    children: [
+                      Expanded(
+                        child: CustomButton(
+                          text: AppStaticStrings.accept,
+                          onPressed: () {
+                            context.read<OrderBloc>().add(
+                                  RespondToCancelEvent(
+                                    orderId: order.id ?? "",
+                                    action: "accept",
+                                  ),
+                                );
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () {
+                            context.read<OrderBloc>().add(
+                                  RespondToCancelEvent(
+                                    orderId: order.id ?? "",
+                                    action: "decline",
+                                  ),
+                                );
+                          },
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(
+                              color: AppColors.kPrimaryColor,
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const CustomText(
+                            AppStaticStrings.decline,
+                            color: AppColors.kPrimaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
           ],
         ),
       ),

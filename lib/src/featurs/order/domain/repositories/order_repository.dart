@@ -9,7 +9,8 @@ abstract class OrderRepository {
   Future<ApiResponse<OrderModel>> getOrderDetails(String orderId);
   Future<ApiResponse<List<OrderModel>>> getBranchOrders(String branchId, {String? status, int page = 1, int limit = 10});
   Future<ApiResponse<OrderModel>> updateOrderStatus(String orderId, String status);
-  Future<ApiResponse<OrderModel>> cancelOrder(String orderId);
+  Future<ApiResponse<OrderModel>> cancelOrder(String orderId, {String? cancelNote});
+  Future<ApiResponse<OrderModel>> respondToCancel(String orderId, String action);
 }
 
 class OrderRepositoryImpl implements OrderRepository {
@@ -36,6 +37,10 @@ class OrderRepositoryImpl implements OrderRepository {
       remoteDataSource.updateOrderStatus(orderId, status);
 
   @override
-  Future<ApiResponse<OrderModel>> cancelOrder(String orderId) =>
-      remoteDataSource.cancelOrder(orderId);
+  Future<ApiResponse<OrderModel>> cancelOrder(String orderId, {String? cancelNote}) =>
+      remoteDataSource.cancelOrder(orderId, cancelNote: cancelNote);
+
+  @override
+  Future<ApiResponse<OrderModel>> respondToCancel(String orderId, String action) =>
+      remoteDataSource.respondToCancel(orderId, action);
 }

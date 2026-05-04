@@ -33,7 +33,7 @@ class CreateMenuItemEvent extends MenuEvent {
   final String categoryId;
   final double price;
   final String description;
-  final int stamp;
+  final bool stampActive;
   final bool isAvailable;
   final List<CustomizationGroupModel> additionalItems;
   final File? image;
@@ -43,7 +43,7 @@ class CreateMenuItemEvent extends MenuEvent {
     required this.categoryId,
     required this.price,
     required this.description,
-    required this.stamp,
+    required this.stampActive,
     required this.isAvailable,
     required this.additionalItems,
     this.image,
@@ -56,7 +56,7 @@ class UpdateMenuItemEvent extends MenuEvent {
   final String? categoryId;
   final double? price;
   final String? description;
-  final int? stamp;
+  final bool stampActive;
   final bool? isAvailable;
   final List<CustomizationGroupModel>? additionalItems;
   final File? image;
@@ -67,7 +67,7 @@ class UpdateMenuItemEvent extends MenuEvent {
     this.categoryId,
     this.price,
     this.description,
-    this.stamp,
+    this.stampActive = false,
     this.isAvailable,
     this.additionalItems,
     this.image,

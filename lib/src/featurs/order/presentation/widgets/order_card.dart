@@ -130,8 +130,15 @@ class OrderCard extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      context.read<OrderBloc>().add(CancelOrderEvent(order.id ?? ""));
+                      context.pushNamed(
+                        RoutesPath.orderCanceledPath,
+                        extra: order.id,
+                      );
                     },
+                    // onPressed: () {
+
+                    //   context.read<OrderBloc>().add(CancelOrderEvent(order.id ?? ""));
+                    // },
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: AppColors.kPrimaryColor),
                       padding: const EdgeInsets.symmetric(vertical: 12),

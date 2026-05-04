@@ -19,7 +19,7 @@ abstract class MenuRemoteDataSource {
     required String categoryId,
     required double price,
     required String description,
-    required int stamp,
+    required bool stamp,
     required bool isAvailable,
     required List<CustomizationGroupModel> additionalItems,
     File? image,
@@ -30,7 +30,7 @@ abstract class MenuRemoteDataSource {
     String? categoryId,
     double? price,
     String? description,
-    int? stamp,
+    bool? stamp,
     bool? isAvailable,
     List<CustomizationGroupModel>? additionalItems,
     File? image,
@@ -99,7 +99,7 @@ class MenuRemoteDataSourceImpl implements MenuRemoteDataSource {
     required String categoryId,
     required double price,
     required String description,
-    required int stamp,
+    required bool stamp,
     required bool isAvailable,
     required List<CustomizationGroupModel> additionalItems,
     File? image,
@@ -109,7 +109,7 @@ class MenuRemoteDataSourceImpl implements MenuRemoteDataSource {
       "category": categoryId,
       "price": price,
       "description": description,
-      "stamp": stamp,
+      "stampActive": stamp,
       "isAvailable": isAvailable,
       "additionalItems": jsonEncode(
         additionalItems.map((e) => e.toJson()).toList(),
@@ -137,7 +137,7 @@ class MenuRemoteDataSourceImpl implements MenuRemoteDataSource {
     String? categoryId,
     double? price,
     String? description,
-    int? stamp,
+    bool? stamp,
     bool? isAvailable,
     List<CustomizationGroupModel>? additionalItems,
     File? image,
@@ -148,7 +148,7 @@ class MenuRemoteDataSourceImpl implements MenuRemoteDataSource {
     if (categoryId != null) data["category"] = categoryId;
     if (price != null) data["price"] = price;
     if (description != null) data["description"] = description;
-    if (stamp != null) data["stamp"] = stamp;
+    if (stamp != null) data["stampActive"] = stamp;
     if (isAvailable != null) data["isAvailable"] = isAvailable;
     if (additionalItems != null) {
       data["additionalItems"] = jsonEncode(

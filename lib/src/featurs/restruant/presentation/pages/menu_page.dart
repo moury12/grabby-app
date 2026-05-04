@@ -151,10 +151,7 @@ class _MenuPageState extends State<MenuPage> {
           } else if (state is CustomerBranchDetailLoaded) {
             final branch = state.branch;
             final menuCategories = branch.menuCategories ?? [];
-            final categories = [
-              AppStaticStrings.allItems,
-              ...(branch.menuCategories?.map((e) => e.name).toList() ?? []),
-            ];
+
 
             return RefreshIndicator(
               onRefresh: () async => _fetchMenu(),
@@ -170,17 +167,29 @@ class _MenuPageState extends State<MenuPage> {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         spacing: 8,
-                        children: categories.map((category) {
-                          return _buildCategoryChip(
-                            category,
-                            _selectedCategory == category,
+                        children: [
+                          _buildCategoryChip(
+                            AppStaticStrings.allItems,
+                            _selectedCategory == AppStaticStrings.allItems,
                             onTap: () {
                               setState(() {
-                                _selectedCategory = category;
+                                _selectedCategory = AppStaticStrings.allItems;
                               });
                             },
-                          );
-                        }).toList(),
+                          ),
+                          ...menuCategories.map((cat) {
+                            return _buildCategoryChip(
+                              cat.name,
+                              _selectedCategory == cat.name,
+                              stampActive: cat.stampActive,
+                              onTap: () {
+                                setState(() {
+                                  _selectedCategory = cat.name;
+                                });
+                              },
+                            );
+                          }),
+                        ],
                       ),
                     ),
 
@@ -226,6 +235,7 @@ class _MenuPageState extends State<MenuPage> {
   Widget _buildCategoryChip(
     String label,
     bool isSelected, {
+    bool stampActive = false,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
@@ -239,7 +249,7 @@ class _MenuPageState extends State<MenuPage> {
         child: Row(
           spacing: 6,
           children: [
-            if (label == AppStaticStrings.hotCoffee)
+            if (stampActive)
               Image.asset("assets/icons/stamp_category_icon.png", height: 15),
             CustomText(
               label,

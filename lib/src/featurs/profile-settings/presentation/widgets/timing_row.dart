@@ -34,23 +34,31 @@ class TimingRow extends StatelessWidget {
               variant: TextVariant.titleSmall,
               fontWeight: FontWeight.bold,
             ),
-            if (isOpen)
-              Container(
+            ButtonTapWidget(
+              onTap: () {
+                if (onToggle != null) {
+                  onToggle!(!isOpen);
+                }
+              },
+              child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
                   vertical: 2,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.kGreenColor.withValues(alpha: 0.1),
+                  color: isOpen
+                      ? AppColors.kGreenColor.withValues(alpha: 0.1)
+                      : Colors.red.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const CustomText(
-                  "Open",
+                child: CustomText(
+                  isOpen ? "Open" : "Closed",
                   variant: TextVariant.labelSmall,
-                  color: AppColors.kGreenColor,
+                  color: isOpen ? AppColors.kGreenColor : Colors.red,
                   fontWeight: FontWeight.w600,
                 ),
               ),
+            ),
           ],
         ),
 

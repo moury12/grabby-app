@@ -13,6 +13,7 @@ class CustomerBranchModel {
   final List<String> tags;
   final double lat;
   final double lng;
+  final int? totalStamps;
   final List<CustomerMenuCategory>? menuCategories;
 
   const CustomerBranchModel({
@@ -29,6 +30,7 @@ class CustomerBranchModel {
     required this.tags,
     required this.lat,
     required this.lng,
+    this.totalStamps,
     this.menuCategories,
   });
 
@@ -47,6 +49,7 @@ class CustomerBranchModel {
       tags: List<String>.from(json['tags'] ?? []),
       lat: (json['lat'] ?? 0.0).toDouble(),
       lng: (json['lng'] ?? 0.0).toDouble(),
+      totalStamps: (json['totalStamps'] as num?)?.toInt(),
       menuCategories: json['menu_categories'] != null
           ? (json['menu_categories'] as List)
               .map((e) => CustomerMenuCategory.fromJson(e))
@@ -59,11 +62,13 @@ class CustomerBranchModel {
 class CustomerMenuCategory {
   final String id;
   final String name;
+  final bool stampActive;
   final List<CustomerMenuItem> menus;
 
   const CustomerMenuCategory({
     required this.id,
     required this.name,
+    required this.stampActive,
     required this.menus,
   });
 
@@ -71,6 +76,7 @@ class CustomerMenuCategory {
     return CustomerMenuCategory(
       id: json['_id'] ?? '',
       name: json['name'] ?? '',
+      stampActive: json['stampActive'] ?? false,
       menus: (json['menus'] as List? ?? [])
           .map((e) => CustomerMenuItem.fromJson(e))
           .toList(),
@@ -88,10 +94,14 @@ class CustomerMenuItem {
   final bool isAvailable;
   final CustomerMenuItemCategory? category;
   final List<CustomerCustomizationGroup>? additionalItems;
+  final bool stampActive;
   final int? totalStamps;
   final bool isFree;
   final int? remainingStamps;
   final String? shopOwnerId;
+  final double? originalPrice;
+  final bool? discount;
+  final int? discountParcent;
 
   const CustomerMenuItem({
     required this.id,
@@ -103,10 +113,14 @@ class CustomerMenuItem {
     required this.isAvailable,
     this.category,
     this.additionalItems,
+    required this.stampActive,
     this.totalStamps,
     this.isFree = false,
     this.remainingStamps,
     this.shopOwnerId,
+    this.originalPrice,
+    this.discount,
+    this.discountParcent,
   });
 
   factory CustomerMenuItem.fromJson(Map<String, dynamic> json) {
@@ -126,10 +140,14 @@ class CustomerMenuItem {
               .map((e) => CustomerCustomizationGroup.fromJson(e))
               .toList()
           : null,
+      stampActive: json['stampActive'] ?? false,
       totalStamps: (json['totalStamps'] as num?)?.toInt(),
       isFree: json['isFree'] ?? false,
       remainingStamps: (json['remainingStamps'] as num?)?.toInt(),
       shopOwnerId: json['shopOwnerId'],
+      originalPrice: (json['originalPrice'] as num?)?.toDouble(),
+      discount: json['discount'],
+      discountParcent: (json['discountParcent'] as num?)?.toInt(),
     );
   }
 }
@@ -140,6 +158,7 @@ class CustomerMenuItemCategory {
   final String? shopOwnerId;
   final String? createdAt;
   final String? updatedAt;
+  final bool? stampActive;
   final int? v;
 
   const CustomerMenuItemCategory({
@@ -148,6 +167,7 @@ class CustomerMenuItemCategory {
     this.shopOwnerId,
     this.createdAt,
     this.updatedAt,
+    this.stampActive,
     this.v,
   });
 
@@ -158,6 +178,7 @@ class CustomerMenuItemCategory {
       shopOwnerId: json['shopOwnerId'],
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
+      stampActive: json['stampActive'],
       v: (json['__v'] as num?)?.toInt(),
     );
   }
