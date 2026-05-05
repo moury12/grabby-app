@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../src_export.dart';
 
@@ -150,6 +152,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                           iconPath: ImagesConstant.kCallIcon,
                           backgroundColor: AppColors.kSecondaryColor,
                           onPressed: () async {
+                            log("Calling ${branch!.phoneNumber}");
                             if (branch?.phoneNumber != null) {
                               final Uri launchUri = Uri(
                                 scheme: 'tel',

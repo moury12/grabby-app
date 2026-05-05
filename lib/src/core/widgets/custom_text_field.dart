@@ -143,8 +143,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
               maxLines: widget.maxLines,
               minLines: widget.minLines,
               obscureText: widget.isPassword ? obscureText : false,
-              validator: widget.validator ?? (value) {
-                if (widget.isRequired == true && (value == null || value.isEmpty)) {
+              validator: (value) {
+                final trimmedValue = value?.trim();
+                if (widget.validator != null) {
+                  return widget.validator!(trimmedValue);
+                }
+                if (widget.isRequired == true && (trimmedValue == null || trimmedValue.isEmpty)) {
                   return AppStaticStrings.required;
                 }
                 return null;

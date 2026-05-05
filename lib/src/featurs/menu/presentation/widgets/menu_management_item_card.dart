@@ -12,6 +12,10 @@ class MenuManagementItemCard extends StatelessWidget {
   final VoidCallback onDelete;
   final VoidCallback onToggleVisibility;
   final bool isVisible;
+  final bool isDiscount;
+  final double? originalPrice;
+  final double? discountParcent;
+  final String? eventName;
 
   const MenuManagementItemCard({
     super.key,
@@ -26,6 +30,10 @@ class MenuManagementItemCard extends StatelessWidget {
     required this.onDelete,
     required this.onToggleVisibility,
     this.isVisible = true,
+    this.isDiscount = false,
+    this.originalPrice,
+    this.discountParcent,
+    this.eventName,
   });
 
   @override
@@ -65,11 +73,42 @@ class MenuManagementItemCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    CustomText(
-                      price,
-                      variant: TextVariant.titleMedium,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.kPrimaryColor,
+                    Column(
+                      children: [
+                        if (isDiscount) ...[
+                          CustomText(
+                            "AED ${originalPrice?.toStringAsFixed(2)}",
+                            variant: TextVariant.bodySmall,
+                            fontWeight: FontWeight.normal,
+                            color: AppColors.kTextColor,
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                          CustomText(
+                            price,
+                            variant: TextVariant.titleMedium,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.kPrimaryColor,
+                          ),
+                          
+                          // CustomText(
+                          //   "AED ${discountParcent?.toStringAsFixed(2)}%",
+                          //   variant: TextVariant.titleMedium,
+                          //   fontWeight: FontWeight.bold,
+                          //   color: AppColors.kPrimaryColor,
+                          // ),
+                          // CustomText(
+                          //   eventName ?? "",
+                          //   variant: TextVariant.labelSmall,
+                          //   color: AppColors.kSecondaryTextColor,
+                          // ),
+                        ] else
+                          CustomText(
+                            price,
+                            variant: TextVariant.titleMedium,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.kPrimaryColor,
+                          ),
+                      ],
                     ),
                   ],
                 ),

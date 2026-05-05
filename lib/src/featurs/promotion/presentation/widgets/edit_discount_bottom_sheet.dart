@@ -140,7 +140,9 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
             _events = state.upcomingEvents;
           }
           return Container(
-        padding: AppPadding.getPadding16(context),
+            padding: AppPadding.getPadding16(context).copyWith(
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+            ),
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),

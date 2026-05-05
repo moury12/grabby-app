@@ -172,7 +172,7 @@ class _RestruantDetailsPageState extends State<RestruantDetailsPage> {
                                     fontWeight: FontWeight.w600,
                                   ),
                                   CustomText(
-                                    "0/10",
+                                    "${branch.totalStamps ?? 0}/10",
                                     fontSize: 14,
                                     color: AppColors.kSecondaryTextColor,
                                     fontWeight: FontWeight.w500,
@@ -181,11 +181,11 @@ class _RestruantDetailsPageState extends State<RestruantDetailsPage> {
                               ),
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
-                                child: const LinearProgressIndicator(
-                                  value: 0.0,
+                                child: LinearProgressIndicator(
+                                  value: (branch.totalStamps ?? 0) / 10.0,
                                   minHeight: 8,
                                   backgroundColor: Colors.white,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                  valueColor: const AlwaysStoppedAnimation<Color>(
                                     AppColors.kPrimaryColor,
                                   ),
                                 ),

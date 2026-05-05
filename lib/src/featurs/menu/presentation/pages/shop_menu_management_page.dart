@@ -203,6 +203,10 @@ class _ShopMenuManagementPageState extends State<ShopMenuManagementPage> {
                               return MenuManagementItemCard(
                                 title: item.itemName,
                                 description: item.description,
+                                isDiscount: item.discount ?? false,
+                                originalPrice: item.originalPrice,
+                                // discountParcent: item.discountParcent,
+                                eventName: item.eventOffer?.eventName,
                                 price: "AED ${item.price}",
                                 image: item.image ?? "",
                                 category: item.categoryName,

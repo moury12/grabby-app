@@ -11,7 +11,7 @@ class AppStaticStrings {
   static const String earnLoaylty = "Earn Loyalty Stamps";
   static const String collectDigitalStamps =
       "Collect digital stamps at your favorite shops and redeem rewards.";
-static const String paymentSuccess = "Payment Success";
+  static const String paymentSuccess = "Payment Success";
 
   static const String gladToMeetYouAgain = "Glad to meet you again!";
   static const String loginAccount = "Login Account";
@@ -351,7 +351,7 @@ static const String paymentSuccess = "Payment Success";
       "This action cannot be undone.";
   static const String yesDelete = "Yes, Delete";
   static const String discountName = "Discount Name *";
-  static const String eventOccasionOptional = "Event/Occasion (Optional) *";
+  static const String eventOccasionOptional = "Event/Occasion *";
   static const String startDate = "Start Date *";
   static const String endDate = "End Date *";
   static const String appliedToItem = "Applied To Item *";
@@ -363,8 +363,7 @@ static const String paymentSuccess = "Payment Success";
   static const String ramadanSpecial = "Ramadan Special";
   static const String weekendDiscount = "Weekend Discount";
   static const String happyHour = "Happy Hour";
-  static const String appliedToAllCoffeePastries =
-      "Applied to: ";
+  static const String appliedToAllCoffeePastries = "Applied to: ";
   static const String appliedToAll = "Applied to: All";
 
   // Business Profile
@@ -522,5 +521,6 @@ static const String paymentSuccess = "Payment Success";
   static const String branchesLabel = "Branches";
   static const String documentsLabel = "Documents";
   static const String back = "Back";
-  static const String googleMapApiKey = "REMOVED";
+  static const String googleMapApiKey =
+      "REMOVED";
 }

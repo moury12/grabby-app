@@ -30,7 +30,7 @@ class _OrderTrackingMapViewPageState extends State<OrderTrackingMapViewPage> {
   void initState() {
     super.initState();
     context.read<OrderBloc>().add(FetchOrderDetailsEvent(widget.orderId));
-    
+
     _myLocationNotifier.addListener(() {
       if (mounted) {
         setState(() {
@@ -43,7 +43,6 @@ class _OrderTrackingMapViewPageState extends State<OrderTrackingMapViewPage> {
     getLocation();
   }
 
-  
   Future<void> getLocation() async {
     Position? position = await _locationService.getCurrentPosition();
     if (position != null) {
@@ -330,6 +329,7 @@ class _OrderTrackingMapViewPageState extends State<OrderTrackingMapViewPage> {
                     CustomButton(
                       text: "Call Shop",
                       onPressed: () async {
+                        log("Calling ${branch!.phoneNumber}");
                         final Uri launchUri = Uri(
                           scheme: 'tel',
                           path: branch!.phoneNumber,

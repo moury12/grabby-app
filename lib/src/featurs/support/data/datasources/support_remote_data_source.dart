@@ -17,9 +17,15 @@ class SupportRemoteDataSourceImpl implements SupportRemoteDataSource {
   Future<ApiResponse<List<TermsAndConditionsModel>>> getTermsAndConditions() async {
     return await _apiService.get<List<TermsAndConditionsModel>>(
       ApiEndpoints.termsAndConditions,
-      fromJson: (json) => (json['data'] as List)
-          .map((e) => TermsAndConditionsModel.fromJson(e))
-          .toList(),
+      fromJson: (json) {
+        final data = json['data'];
+        if (data is List) {
+          return data.map((e) => TermsAndConditionsModel.fromJson(e)).toList();
+        } else if (data is Map<String, dynamic>) {
+          return [TermsAndConditionsModel.fromJson(data)];
+        }
+        return [];
+      },
     );
   }
 

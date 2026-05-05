@@ -17,7 +17,7 @@ class OpeningTimeTextWidget extends StatelessWidget {
         ),
         const SizedBox(width: 6),
         CustomText(
-          "${isOpen == false ? "" : AppStaticStrings.open} ${openHours ?? "7:00 AM - 9:00 PM"}",
+          openHours ?? "Open 24 Hours",
           fontSize: 13,
           fontWeight: FontWeight.w500,
           color: isOpen == false ? AppColors.kRedColor : AppColors.kGreenColor,

@@ -250,6 +250,18 @@ class _EditItemPageState extends State<EditItemPage> {
       );
     }
 
+    // Ensure _selectedCategory is always a valid reference from the updated list
+    if (_selectedCategory != null && categories.isNotEmpty) {
+      final exists = categories.any((cat) => cat.id == _selectedCategory!.id);
+      if (exists) {
+        _selectedCategory = categories.firstWhere((cat) => cat.id == _selectedCategory!.id);
+      } else {
+        _selectedCategory = null; // Reset if the category was deleted
+      }
+    } else if (categories.isEmpty) {
+      _selectedCategory = null;
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 8,

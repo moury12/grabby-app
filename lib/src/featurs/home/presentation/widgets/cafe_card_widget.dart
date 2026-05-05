@@ -6,7 +6,7 @@ class CafeCardWidget extends StatelessWidget {
   final String image;
   final String distance;
   final String openHours;
-  final bool isOpen;
+  final String status;
   final List<String> tags;
   final VoidCallback onTap;
 
@@ -16,7 +16,7 @@ class CafeCardWidget extends StatelessWidget {
     required this.image,
     required this.distance,
     required this.openHours,
-    this.isOpen = true,
+    required this.status,
     required this.onTap,
     this.tags = const ["Car", "Counter"],
   });
@@ -123,11 +123,11 @@ class CafeCardWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: CustomText(
-                      isOpen
-                          ? AppStaticStrings.openNow
-                          : AppStaticStrings.closed,
+                      status,
                       variant: TextVariant.labelSmall,
-                      color: AppColors.kGreenColor,
+                      color: status.toLowerCase() == "closed"
+                          ? AppColors.kRedColor
+                          : AppColors.kGreenColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

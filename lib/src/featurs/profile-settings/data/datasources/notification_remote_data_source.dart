@@ -15,8 +15,9 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
     return await _apiService.get<List<NotificationModel>>(
       ApiEndpoints.notifications,
       fromJson: (json) {
-        if (json is List) {
-          return json.map((e) => NotificationModel.fromJson(e)).toList();
+        final data = json['data'];
+        if (data is List) {
+          return data.map((e) => NotificationModel.fromJson(e)).toList();
         }
         return [];
       },

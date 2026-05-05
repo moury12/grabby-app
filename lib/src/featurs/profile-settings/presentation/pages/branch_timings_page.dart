@@ -36,7 +36,11 @@ class _BranchTimingsPageState extends State<BranchTimingsPage> {
     } else {
       // reset to default if empty
       _timings.forEach((key, value) {
-        _timings[key] = {"isClosed": false, "open": "8:00 AM", "close": "10:00 PM"};
+        _timings[key] = {
+          "isClosed": false,
+          "open": "8:00 AM",
+          "close": "10:00 PM",
+        };
       });
     }
   }
@@ -69,7 +73,9 @@ class _BranchTimingsPageState extends State<BranchTimingsPage> {
         "isClosed": data["isClosed"],
       });
     });
-    context.read<BranchBloc>().add(UpdateBranchAvailabilityEvent(_selectedBranch!.id, availability));
+    context.read<BranchBloc>().add(
+      UpdateBranchAvailabilityEvent(_selectedBranch!.id, availability),
+    );
   }
 
   @override
@@ -77,9 +83,13 @@ class _BranchTimingsPageState extends State<BranchTimingsPage> {
     return BlocConsumer<BranchBloc, BranchState>(
       listener: (context, state) {
         if (state is BranchOperationSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
         } else if (state is BranchError) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message), backgroundColor: Colors.red));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+          );
         } else if (state is BranchDetailsLoaded) {
           setState(() {
             _selectedBranch = state.branch;
@@ -96,40 +106,58 @@ class _BranchTimingsPageState extends State<BranchTimingsPage> {
         List<ShopBranchModel> branches = [];
         if (state is BranchesLoaded) {
           branches = state.branches;
-          if (branches.isNotEmpty) {
-            if (_selectedBranch == null) {
-              _selectedBranch = branches.first;
+          if (branches.isNotEmpty && _selectedBranch != null) {
+            final exists = branches.any((b) => b.id == _selectedBranch!.id);
+            if (exists) {
+              _selectedBranch = branches.firstWhere(
+                (b) => b.id == _selectedBranch!.id,
+              );
               _updateTimingsFromBranch(_selectedBranch!);
             } else {
-              // Update selected branch reference from new list to get latest data
-              final updatedBranch = branches.firstWhere(
-                (b) => b.id == _selectedBranch!.id,
-                orElse: () => branches.first,
-              );
-              _selectedBranch = updatedBranch;
-              _updateTimingsFromBranch(_selectedBranch!);
+              _selectedBranch = null;
             }
           }
         }
 
-        return Scaffold(
-          appBar: AppBar(
-            centerTitle: false,
-            title: CustomText(
-              AppStaticStrings.perBranch,
-              variant: TextVariant.titleLarge,
+        return PopScope(
+          canPop: _selectedBranch == null,
+          onPopInvokedWithResult: (didPop, result) {
+            if (didPop) return;
+            if (_selectedBranch != null) {
+              setState(() {
+                _selectedBranch = null;
+              });
+            }
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              centerTitle: false,
+              title: CustomText(
+                AppStaticStrings.perBranch,
+                variant: TextVariant.titleLarge,
+              ),
+              leading: BackButton(
+                onPressed: () {
+                  if (_selectedBranch != null) {
+                    setState(() {
+                      _selectedBranch = null;
+                    });
+                  } else {
+                    context.pop();
+                  }
+                },
+              ),
+              actions: [_buildBranchDropdown(branches)],
             ),
-            actions: [_buildBranchDropdown(branches)],
-          ),
           body: (state is BranchLoading && branches.isEmpty)
               ? const Center(child: CircularProgressIndicator())
               : RefreshIndicator(
                   onRefresh: () async {
                     context.read<BranchBloc>().add(GetBranchesEvent());
                     if (_selectedBranch != null) {
-                      context
-                          .read<BranchBloc>()
-                          .add(GetBranchDetailsEvent(_selectedBranch!.id));
+                      context.read<BranchBloc>().add(
+                        GetBranchDetailsEvent(_selectedBranch!.id),
+                      );
                     }
                   },
                   child: SingleChildScrollView(
@@ -139,37 +167,59 @@ class _BranchTimingsPageState extends State<BranchTimingsPage> {
                       spacing: 8,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ..._timings.entries.map((entry) {
-                          return TimingRow(
-                            day: entry.key,
-                            isOpen: !(entry.value["isClosed"] as bool),
-                            openingTime: entry.value["open"],
-                            closingTime: entry.value["close"],
-                            onOpeningTimeTap: () => _selectTime(entry.key, true),
-                            onClosingTimeTap: () =>
-                                _selectTime(entry.key, false),
-                            onToggle: (val) {
-                              setState(() {
-                                _timings[entry.key]!["isClosed"] = !val;
-                              });
-                            },
-                          );
-                        }),
+                        _selectedBranch == null
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 40),
+                                child: Center(
+                                  child: CustomText(
+                                    "Please select a branch to view and edit its timings.",
+                                    color: AppColors.kSecondaryTextColor,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              )
+                            : Column(
+                                spacing: 8,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ..._timings.entries.map((entry) {
+                                    return TimingRow(
+                                      day: entry.key,
+                                      isOpen:
+                                          !(entry.value["isClosed"] as bool),
+                                      openingTime: entry.value["open"],
+                                      closingTime: entry.value["close"],
+                                      onOpeningTimeTap: () =>
+                                          _selectTime(entry.key, true),
+                                      onClosingTimeTap: () =>
+                                          _selectTime(entry.key, false),
+                                      onToggle: (val) {
+                                        setState(() {
+                                          _timings[entry.key]!["isClosed"] =
+                                              !val;
+                                        });
+                                      },
+                                    );
+                                  }),
+                                ],
+                              ),
                         _buildHoursSummaryBox(context),
                         _buildImportantNotes(context),
                         space2H,
                         CustomButton(
                           text: "Save Timings",
-                          onPressed:
-                              _selectedBranch != null ? _saveTimings : () {},
+                          onPressed: _selectedBranch != null
+                              ? _saveTimings
+                              : () {},
                         ),
                         space4H,
                       ],
                     ),
-                  ),
                 ),
-        );
-      },
+              ),
+            ),
+          );
+        },
     );
   }
 
@@ -184,15 +234,40 @@ class _BranchTimingsPageState extends State<BranchTimingsPage> {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<ShopBranchModel>(
+          hint: const Text(
+            "Select Branch",
+            style: TextStyle(
+              color: AppColors.kPrimaryColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
+          ),
           value: _selectedBranch,
-          icon: const Icon(Icons.keyboard_arrow_down, size: 20, color: AppColors.kPrimaryColor),
-          style: const TextStyle(color: AppColors.kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 12),
+          icon: const Icon(
+            Icons.keyboard_arrow_down,
+            size: 20,
+            color: AppColors.kPrimaryColor,
+          ),
+          style: const TextStyle(
+            color: AppColors.kPrimaryColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+          ),
           onChanged: (val) {
             if (val != null) {
               context.read<BranchBloc>().add(GetBranchDetailsEvent(val.id));
             }
           },
-          items: branches.map((b) => DropdownMenuItem(value: b, child: Text(b.branchName.isNotEmpty ? b.branchName : "Unnamed Branch"))).toList(),
+          items: branches
+              .map(
+                (b) => DropdownMenuItem(
+                  value: b,
+                  child: Text(
+                    b.branchName.isNotEmpty ? b.branchName : "Unnamed Branch",
+                  ),
+                ),
+              )
+              .toList(),
         ),
       ),
     );

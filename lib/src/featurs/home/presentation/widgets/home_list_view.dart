@@ -35,6 +35,7 @@ class HomeListView extends StatelessWidget {
                         : "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=2078&auto=format&fit=crop",
                     distance: branch.distanceText,
                     openHours: branch.timing,
+                    status: branch.statusText,
                     onTap: () {
                       context.pushNamed(
                         RoutesPath.restruantDetailsPath,
