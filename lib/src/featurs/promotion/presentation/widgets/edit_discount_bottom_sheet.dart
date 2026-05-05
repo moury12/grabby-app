@@ -1,4 +1,3 @@
-import 'dart:io';
 import '../../../../src_export.dart';
 
 class EditDiscountBottomSheet extends StatefulWidget {
@@ -140,14 +139,14 @@ class _EditDiscountBottomSheetState extends State<EditDiscountBottomSheet> {
             _events = state.upcomingEvents;
           }
           return Container(
-            padding: AppPadding.getPadding16(context).copyWith(
-              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: SingleChildScrollView(
+            child: SingleChildScrollView(
+              padding: AppPadding.getPadding16(context).copyWith(
+                bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+              ),
           child: Column(
             spacing: 8,
             mainAxisSize: MainAxisSize.min,
