@@ -14,6 +14,9 @@ class CustomerBranchModel {
   final double lat;
   final double lng;
   final int? totalStamps;
+  final num? discount;
+  final String? discountType;
+  final String? endDate;
   final List<CustomerMenuCategory>? menuCategories;
 
   const CustomerBranchModel({
@@ -31,6 +34,9 @@ class CustomerBranchModel {
     required this.lat,
     required this.lng,
     this.totalStamps,
+    this.discount,
+    this.discountType,
+    this.endDate,
     this.menuCategories,
   });
 
@@ -50,6 +56,9 @@ class CustomerBranchModel {
       lat: (json['lat'] ?? 0.0).toDouble(),
       lng: (json['lng'] ?? 0.0).toDouble(),
       totalStamps: (json['totalStamps'] as num?)?.toInt(),
+      discount: json['discount'],
+      discountType: json['discountType'],
+      endDate: json['endDate'],
       menuCategories: json['menu_categories'] != null
           ? (json['menu_categories'] as List)
               .map((e) => CustomerMenuCategory.fromJson(e))
