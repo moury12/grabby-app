@@ -111,6 +111,9 @@ class CustomerMenuItem {
   final double? originalPrice;
   final bool? discount;
   final int? discountParcent;
+  final String? createdAt;
+  final String? updatedAt;
+  final CustomerEventOffer? eventOffer;
 
   const CustomerMenuItem({
     required this.id,
@@ -130,6 +133,9 @@ class CustomerMenuItem {
     this.originalPrice,
     this.discount,
     this.discountParcent,
+    this.createdAt,
+    this.updatedAt,
+    this.eventOffer,
   });
 
   factory CustomerMenuItem.fromJson(Map<String, dynamic> json) {
@@ -157,6 +163,37 @@ class CustomerMenuItem {
       originalPrice: (json['originalPrice'] as num?)?.toDouble(),
       discount: json['discount'],
       discountParcent: (json['discountParcent'] as num?)?.toInt(),
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
+      eventOffer: json['eventOffer'] != null
+          ? CustomerEventOffer.fromJson(json['eventOffer'])
+          : null,
+    );
+  }
+}
+
+class CustomerEventOffer {
+  final String? discountName;
+  final String? eventName;
+  final String? endDate;
+  final String? discountType;
+  final num? discountValue;
+
+  const CustomerEventOffer({
+    this.discountName,
+    this.eventName,
+    this.endDate,
+    this.discountType,
+    this.discountValue,
+  });
+
+  factory CustomerEventOffer.fromJson(Map<String, dynamic> json) {
+    return CustomerEventOffer(
+      discountName: json['discountName'],
+      eventName: json['eventName'],
+      endDate: json['endDate'],
+      discountType: json['discountType'],
+      discountValue: json['discountValue'],
     );
   }
 }

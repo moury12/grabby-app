@@ -18,9 +18,9 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   void _fetchMenu() {
-    context
-        .read<CustomerBranchBloc>()
-        .add(GetCustomerBranchDetailEvent(widget.branchId));
+    context.read<CustomerBranchBloc>().add(
+      GetCustomerBranchDetailEvent(widget.branchId),
+    );
     context.read<CartBloc>().add(FetchCartEvent(widget.branchId));
   }
 
@@ -37,7 +37,12 @@ class _MenuPageState extends State<MenuPage> {
                 return ButtonTapWidget(
                   onTap: () {
                     final shopOwnerId = state
-                        .branch.menuCategories?.firstOrNull?.menus.firstOrNull?.shopOwnerId;
+                        .branch
+                        .menuCategories
+                        ?.firstOrNull
+                        ?.menus
+                        .firstOrNull
+                        ?.shopOwnerId;
                     context.pushNamed(
                       RoutesPath.cartPath,
                       extra: {
@@ -71,8 +76,13 @@ class _MenuPageState extends State<MenuPage> {
             return BlocBuilder<CustomerBranchBloc, CustomerBranchState>(
               builder: (context, branchState) {
                 if (branchState is CustomerBranchDetailLoaded) {
-                  final shopOwnerId = branchState.branch.menuCategories
-                      ?.firstOrNull?.menus.firstOrNull?.shopOwnerId;
+                  final shopOwnerId = branchState
+                      .branch
+                      .menuCategories
+                      ?.firstOrNull
+                      ?.menus
+                      .firstOrNull
+                      ?.shopOwnerId;
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: ButtonTapWidget(
@@ -92,8 +102,9 @@ class _MenuPageState extends State<MenuPage> {
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color:
-                                  AppColors.kPrimaryColor.withValues(alpha: 0.3),
+                              color: AppColors.kPrimaryColor.withValues(
+                                alpha: 0.3,
+                              ),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -152,7 +163,6 @@ class _MenuPageState extends State<MenuPage> {
             final branch = state.branch;
             final menuCategories = branch.menuCategories ?? [];
 
-
             return RefreshIndicator(
               onRefresh: () async => _fetchMenu(),
               child: SingleChildScrollView(
@@ -195,32 +205,44 @@ class _MenuPageState extends State<MenuPage> {
 
                     // Menu Sections
                     ...menuCategories
-                        .where((cat) =>
-                            _selectedCategory == AppStaticStrings.allItems ||
-                            _selectedCategory == cat.name)
-                        .map((cat) => _buildMenuSection(
-                              cat.name,
-                              cat.menus
-                                  .map((item) => MenuItemWidget(
-                                        title: item.itemName,
-                                        price:
-                                            "\$${item.price.toStringAsFixed(1)}",
-                                        image: item.image != null &&
-                                                item.image!.isNotEmpty
-                                            ? "${ApiEndpoints.baseUrl}${item.image}"
-                                            : "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop",
-                                        onAdd: () {
-                                          context.pushNamed(
-                                            RoutesPath.itemDetailsPath,
-                                            extra: {
-                                              'item': item,
-                                              'branchId': branch.id,
-                                            },
-                                          );
+                        .where(
+                          (cat) =>
+                              _selectedCategory == AppStaticStrings.allItems ||
+                              _selectedCategory == cat.name,
+                        )
+                        .map(
+                          (cat) => _buildMenuSection(
+                            cat.name,
+                            cat.menus
+                                .map(
+                                  (item) => MenuItemWidget(
+                                    title: item.itemName,
+                                    price:
+                                        "AED ${item.price.toStringAsFixed(1)}",
+                                    hasDiscount: item.discount ?? false,
+                                    discount: "${item.discountParcent}% OFF",
+                                    originalPrice: item.originalPrice != null
+                                        ? "AED ${item.originalPrice!.toStringAsFixed(1)}"
+                                        : null,
+                                    image:
+                                        item.image != null &&
+                                            item.image!.isNotEmpty
+                                        ? "${ApiEndpoints.baseUrl}${item.image}"
+                                        : "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop",
+                                    onAdd: () {
+                                      context.pushNamed(
+                                        RoutesPath.itemDetailsPath,
+                                        extra: {
+                                          'item': item,
+                                          'branchId': branch.id,
                                         },
-                                      ))
-                                  .toList(),
-                            )),
+                                      );
+                                    },
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
                   ],
                 ),
               ),

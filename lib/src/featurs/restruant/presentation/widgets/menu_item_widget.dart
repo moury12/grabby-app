@@ -6,6 +6,8 @@ class MenuItemWidget extends StatelessWidget {
   final String image;
   final String? discount;
   final VoidCallback onAdd;
+  final bool hasDiscount;
+  final String? originalPrice;
 
   const MenuItemWidget({
     super.key,
@@ -14,6 +16,8 @@ class MenuItemWidget extends StatelessWidget {
     required this.image,
     this.discount,
     required this.onAdd,
+    this.hasDiscount = false,
+    this.originalPrice,
   });
 
   @override
@@ -35,7 +39,7 @@ class MenuItemWidget extends StatelessWidget {
                   width: 80,
                   radius: 12,
                 ),
-                if (discount != null)
+                if (hasDiscount == true)
                   Positioned(
                     top: 0,
                     left: 0,
@@ -52,7 +56,7 @@ class MenuItemWidget extends StatelessWidget {
                         ),
                       ),
                       child: CustomText(
-                        discount!,
+                        discount ?? '',
                         fontSize: 10,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -73,11 +77,29 @@ class MenuItemWidget extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                     color: Colors.black,
                   ),
-                  const SizedBox(height: 4),
+                   Row(
+                    children: [
+                      if (hasDiscount && originalPrice != null)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: CustomText(
+                            originalPrice!,
+                            fontSize: 14,
+                            color: Colors.grey,
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
+                      CustomText(
+                        price,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.kPrimaryColor,
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
-            CustomText(price, fontSize: 16, fontWeight: FontWeight.w600),
           ],
         ),
       ),
