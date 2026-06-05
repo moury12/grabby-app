@@ -272,6 +272,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  foloosi_plugins:
+    dependency: "direct main"
+    description:
+      name: foloosi_plugins
+      sha256: "0db3efa97a8537ca5794988c58096b65686c06a7a370095ae6773579c94bea0b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.15"
   geocoding:
     dependency: "direct main"
     description:
