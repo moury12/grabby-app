@@ -4,7 +4,7 @@ class ApiEndpoints {
   // ─── Base URL ──────────────────────────────────────────────────────────────
   // Swap this based on environment (dev / staging / prod)
   // static const String baseUrl = "http://10.10.20.50:5001";
-  static const String baseUrl = "http://16.170.141.14:5001";
+  static const String baseUrl = "http://10.10.28.71:5000";
 
   // ─── Auth ──────────────────────────────────────────────────────────────────
   static const String customerRegister = "/auth/customer/register";

@@ -297,10 +297,21 @@ class _CartPageState extends State<CartPage> {
       body: BlocListener<OrderBloc, OrderState>(
         listener: (context, state) {
           if (state.status == OrderStatus.success && state.selectedOrder != null) {
-            context.pushNamed(
-              RoutesPath.checkoutPath,
-              extra: state.selectedOrder,
-            );
+            final referenceToken = state.selectedOrder!.referenceToken;
+            if (referenceToken != null && referenceToken.isNotEmpty) {
+              context.pushNamed(
+                RoutesPath.stripePaymentWebviewPath,
+                extra: {
+                  'order': state.selectedOrder,
+                  'paymentUrl': referenceToken,
+                },
+              );
+            } else {
+              context.pushNamed(
+                RoutesPath.checkoutPath,
+                extra: state.selectedOrder,
+              );
+            }
           } else if (state.status == OrderStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.errorMessage ?? "Failed to place order")),
@@ -357,10 +368,12 @@ class _CartPageState extends State<CartPage> {
                             ))
                         .toList(),
                     pickupType: _isCarPickup ? "carPickup" : "walkIn",
+                    applyGrabbyCredit: 0.0,
+                    applyPromoCode: 0.0,
                     totalAmount: _appliedPromo != null && _appliedPromo!.isValid
                         ? _appliedPromo!.finalPrice
                         : cart.totalAmount,
-                    paymentMethod: "Credit Card",
+                    paymentMethod: "stripe",
                     carPlates:
                         _isCarPickup ? (_selectedCarPlate?.plateCode ?? "") : null,
                   );

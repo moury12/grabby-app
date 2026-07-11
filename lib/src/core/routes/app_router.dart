@@ -1,4 +1,5 @@
 import 'package:grabby_app/src/featurs/cart-checkout/presentation/bloc/cart_bloc.dart';
+import 'package:grabby_app/src/featurs/cart-checkout/presentation/pages/stripe_payment_webview_page.dart';
 import 'package:grabby_app/src/featurs/profile-settings/presentation/bloc/branch/branch_bloc.dart';
 import 'package:grabby_app/src/featurs/support/presentation/bloc/support_bloc.dart';
 import 'package:grabby_app/src/featurs/support/presentation/pages/terms_and_conditions_page.dart';
@@ -161,6 +162,17 @@ class AppRouter {
         name: RoutesPath.paymentSuccessPath,
         builder: (BuildContext context, GoRouterState state) {
           return PaymentSuccessPage(order: state.extra as OrderModel);
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.stripePaymentWebviewPath,
+        name: RoutesPath.stripePaymentWebviewPath,
+        builder: (BuildContext context, GoRouterState state) {
+          final args = state.extra as Map<String, dynamic>;
+          return StripePaymentWebviewPage(
+            order: args['order'] as OrderModel,
+            paymentUrl: args['paymentUrl'] as String,
+          );
         },
       ),
       GoRoute(

@@ -17,6 +17,7 @@ class RoutesPath {
   static const String addCarPlatePath = '/AddCarPlatePage';
   static const String checkoutPath = '/CheckoutPage';
   static const String paymentSuccessPath = '/PaymentSuccessPage';
+  static const String stripePaymentWebviewPath = '/StripePaymentWebviewPage';
   static const String orderTrackingPath = '/OrderTrackingPage';
   static const String orderHistoryPath = '/OrderHistoryPage';
   static const String orderTrackingMapViewPath = '/OrderTrackingMapViewPage';

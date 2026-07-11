@@ -20,6 +20,7 @@ class OrderModel {
   final bool? nearByShop;
   final String? cancelNote;
   final String? cancelStatus;
+  final String? referenceToken;
 
   OrderModel({
     this.id,
@@ -41,6 +42,7 @@ class OrderModel {
     this.nearByShop,
     this.cancelNote,
     this.cancelStatus,
+    this.referenceToken,
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
@@ -70,6 +72,7 @@ class OrderModel {
       nearByShop: json['nearByShop'],
       cancelNote: json['cancelNote'],
       cancelStatus: json['cancelStatus'],
+      referenceToken: json['referenceToken'],
     );
   }
 
@@ -78,6 +81,8 @@ class OrderModel {
       'branchId': branchId is BranchInfo ? (branchId as BranchInfo).id : branchId,
       'items': items.map((e) => e.toJson()).toList(),
       'pickupType': pickupType,
+      'applyGrabbyCredit': applyGrabbyCredit,
+      'applyPromoCode': applyPromoCode,
       'totalAmount': totalAmount,
       'paymentMethod': paymentMethod,
       'carPlates': carPlates,
