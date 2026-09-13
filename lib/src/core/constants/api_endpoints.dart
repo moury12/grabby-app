@@ -4,7 +4,7 @@ class ApiEndpoints {
   // ─── Base URL ──────────────────────────────────────────────────────────────
   // Swap this based on environment (dev / staging / prod)
   // static const String baseUrl = "http://10.10.20.50:5001";
-  static const String baseUrl = "http://10.10.28.71:5000";
+  static const String baseUrl = "https://api.grabbyapp.ae/api/v1";
 
   // ─── Auth ──────────────────────────────────────────────────────────────────
   static const String customerRegister = "/auth/customer/register";
@@ -31,6 +31,9 @@ class ApiEndpoints {
   static const String saveBusinessInfo = "/shop-owner/business/info";
   static const String saveBranches = "/shop-owner/business/branches";
   static const String saveBusinessDocuments = "/shop-owner/business/documents";
+  static const String stripeConnectOnboardingLink =
+      "/shop-owner/stripe-connect/onboarding-link";
+  static const String stripeConnectStatus = "/shop-owner/stripe-connect/status";
 
   // ─── Menu ───────────────────────────────────────────────────────────────────
   static const String createMenuCategory = "/menu-category/create";
@@ -74,6 +77,9 @@ class ApiEndpoints {
   static String updateOrderStatus(String id) => "/orders/$id/status";
   static String cancelOrder(String id) => "/orders/$id/cancel";
   static String cancelRespond(String id) => "/orders/$id/cancel-respond";
+  static String retryPayout(String id) => "/orders/$id/retry-payout";
+  static String verifyPayment(String orderId) =>
+      "/orders/verify-payment/$orderId";
   static const String shopDashboard = "/dashboard/shop-owner";
 
   // ─── Onboarding ────────────────────────────────────────────────────────────

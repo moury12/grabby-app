@@ -33,6 +33,9 @@ import 'package:grabby_app/src/featurs/home/presentation/bloc/promoted_ads_bloc.
 import 'package:grabby_app/src/featurs/support/data/datasources/support_remote_data_source.dart';
 import 'package:grabby_app/src/featurs/support/domain/repositories/support_repository.dart';
 import 'package:grabby_app/src/featurs/support/presentation/bloc/support_bloc.dart';
+import 'package:grabby_app/src/featurs/profile-settings/data/datasources/stripe_connect_remote_data_source.dart';
+import 'package:grabby_app/src/featurs/profile-settings/data/repositories/stripe_connect_repository.dart';
+import 'package:grabby_app/src/featurs/profile-settings/presentation/bloc/stripe_connect/stripe_connect_bloc.dart';
 import '../../src_export.dart' ;
 
 final sl = GetIt.instance;
@@ -94,6 +97,16 @@ Future<void> init() async {
       socketService: sl(),
       localStorageService: sl(),
     ),
+  );
+
+  sl.registerLazySingleton<StripeConnectRemoteDataSource>(
+    () => StripeConnectRemoteDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<StripeConnectRepository>(
+    () => StripeConnectRepositoryImpl(sl()),
+  );
+  sl.registerFactory<StripeConnectBloc>(
+    () => StripeConnectBloc(repository: sl()),
   );
 
   // ─── Feature: Branch ───────────────────────────────────────────────────────

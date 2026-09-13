@@ -3,6 +3,7 @@ import 'package:grabby_app/src/featurs/cart-checkout/presentation/pages/stripe_p
 import 'package:grabby_app/src/featurs/profile-settings/presentation/bloc/branch/branch_bloc.dart';
 import 'package:grabby_app/src/featurs/support/presentation/bloc/support_bloc.dart';
 import 'package:grabby_app/src/featurs/support/presentation/pages/terms_and_conditions_page.dart';
+import 'package:grabby_app/src/featurs/profile-settings/presentation/pages/stripe_connect_webview_page.dart';
 
 import '../../src_export.dart';
 
@@ -412,6 +413,14 @@ class AppRouter {
             create: (context) => sl<SupportBloc>(),
             child: const TermsAndConditionsPage(),
           );
+        },
+      ),
+      GoRoute(
+        path: RoutesPath.stripeConnectWebviewPath,
+        name: RoutesPath.stripeConnectWebviewPath,
+        builder: (BuildContext context, GoRouterState state) {
+          final url = state.extra as String? ?? '';
+          return StripeConnectWebviewPage(onboardingUrl: url);
         },
       ),
     ],

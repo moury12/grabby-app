@@ -23,7 +23,7 @@ class SocketService {
       debugPrint('Connecting to socket at ${ApiEndpoints.baseUrl} with userId: $userId, role: $role');
 
       _socket = io.io(
-        ApiEndpoints.baseUrl,
+        "https://api.grabbyapp.ae/",
         io.OptionBuilder()
             .setTransports(['websocket']) // Use websocket first
             // .setAuth({'token': token})    // Many servers require token in auth

@@ -1,6 +1,8 @@
 import 'package:grabby_app/src/core/utils/launcher_utils.dart';
 import 'package:grabby_app/src/featurs/home/presentation/bloc/shop_dashboard_bloc.dart';
 import 'package:grabby_app/src/featurs/support/presentation/bloc/support_bloc.dart';
+import 'package:grabby_app/src/featurs/profile-settings/presentation/bloc/stripe_connect/stripe_connect_bloc.dart';
+import 'package:grabby_app/src/featurs/profile-settings/data/models/stripe_connect_model.dart';
 
 import '../../../../src_export.dart';
 
@@ -16,6 +18,10 @@ class BusinessProfilePage extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => sl<SupportBloc>()..add(GetHelpCenterEvent()),
+        ),
+        BlocProvider(
+          create: (context) =>
+              sl<StripeConnectBloc>()..add(FetchStripeConnectStatusEvent()),
         ),
       ],
       child: Scaffold(
@@ -36,6 +42,9 @@ class BusinessProfilePage extends StatelessWidget {
                 onRefresh: () async {
                   context.read<ProfileBloc>().add(GetProfileEvent());
                   context.read<SupportBloc>().add(GetHelpCenterEvent());
+                  context
+                      .read<StripeConnectBloc>()
+                      .add(FetchStripeConnectStatusEvent());
                 },
                 child: SingleChildScrollView(
                   padding: AppPadding.getPadding12H(context),
@@ -47,6 +56,8 @@ class BusinessProfilePage extends StatelessWidget {
                       _buildBusinessHeader(context, profile),
                       space2H,
                       _buildStatsRow(context),
+                      space2H,
+                      _buildPayoutCard(context),
                       space2H,
                       ProfileMenuItem(
                         title: AppStaticStrings.branchManagement,
@@ -257,6 +268,209 @@ class BusinessProfilePage extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  Widget _buildPayoutCard(BuildContext context) {
+    return BlocConsumer<StripeConnectBloc, StripeConnectState>(
+      listener: (context, state) async {
+        if (state is StripeOnboardingLinkGenerated) {
+          final result = await context.pushNamed<bool>(
+            RoutesPath.stripeConnectWebviewPath,
+            extra: state.url,
+          );
+          if (result == true && context.mounted) {
+            context.read<StripeConnectBloc>().add(FetchStripeConnectStatusEvent());
+          }
+        } else if (state is StripeConnectError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        }
+      },
+      builder: (context, state) {
+        StripeConnectStatusModel? status;
+        bool isLoading = state is StripeConnectLoading;
+        if (state is StripeConnectLoaded) {
+          status = state.status;
+        } else if (state is StripeOnboardingLinkGenerated) {
+          status = state.currentStatus;
+        }
+
+        final isConnected = status?.stripeAccountConnected ?? false;
+        final bankDetails = status?.bankDetails;
+
+        return Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(appRadius),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.kPrimaryColor.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.account_balance_outlined,
+                          color: AppColors.kPrimaryColor,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const CustomText(
+                        "Payout Bank Account",
+                        variant: TextVariant.titleMedium,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isConnected
+                          ? AppColors.kGreenColor.withValues(alpha: 0.15)
+                          : Colors.orange.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          isConnected
+                              ? Icons.check_circle
+                              : Icons.warning_amber_rounded,
+                          size: 14,
+                          color: isConnected
+                              ? AppColors.kGreenColor
+                              : Colors.orange.shade800,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          isConnected ? "Connected" : "Not Connected",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: isConnected
+                                ? AppColors.kGreenColor
+                                : Colors.orange.shade800,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              if (isLoading)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              else if (isConnected && bankDetails != null) ...[
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.kBackgroundColor.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    children: [
+                      _buildBankDetailRow(
+                          "Bank Name", bankDetails.bankName ?? "N/A"),
+                      const SizedBox(height: 4),
+                      _buildBankDetailRow(
+                          "Account Holder", bankDetails.accountHolderName ?? "N/A"),
+                      const SizedBox(height: 4),
+                      _buildBankDetailRow(
+                        "Account Number",
+                        bankDetails.accountNumberLast4 != null
+                            ? "•••• ${bankDetails.accountNumberLast4}"
+                            : "N/A",
+                      ),
+                      const SizedBox(height: 4),
+                      _buildBankDetailRow(
+                        "Currency",
+                        (bankDetails.currency ?? "AED").toUpperCase(),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton.icon(
+                    onPressed: () {
+                      context
+                          .read<StripeConnectBloc>()
+                          .add(GetStripeOnboardingLinkEvent());
+                    },
+                    icon: const Icon(Icons.edit, size: 16),
+                    label: const Text("Manage Bank Account"),
+                  ),
+                ),
+              ] else ...[
+                const CustomText(
+                  "Link your IBAN / bank account via Stripe Connect to receive automated 90% payouts on completed orders.",
+                  variant: TextVariant.bodySmall,
+                  color: Colors.grey,
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: CustomButton(
+                    text: "Connect Bank Account",
+                    onPressed: () {
+                      context
+                          .read<StripeConnectBloc>()
+                          .add(GetStripeOnboardingLinkEvent());
+                    },
+                    icon: Icons.open_in_new,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBankDetailRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, color: Colors.grey),
+        ),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 }
