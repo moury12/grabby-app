@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:foloosi_plugins/foloosi_plugins.dart';
 import '../../../../src_export.dart';
 
 class PaymentPage extends StatefulWidget {
@@ -15,95 +13,24 @@ class PaymentPage extends StatefulWidget {
 class _PaymentPageState extends State<PaymentPage> {
   bool _isProcessing = false;
 
-  // ⚠️ Dollar sign ($) গুলো escape করা হয়েছে \$ দিয়ে
-  // Production-এ backend থেকে load করুন
-  static const String _merchantKey =
-      'test_\$2y\$10\$yoK80pKrWVZTc-knSG9.7eYT98X4efBTa.N7sFgToeSPXXRnlgrCG';
-  // static const String _merchantKey =
-  //     'live_\$2y\$10\$6O0mhc6Iq.KtV2xyGFLaw.FEdhsn64OR7a9jV9zxvJ9ugSjck14IS';
-  Future<void> _startFoloosiPayment() async {
+  Future<void> _startPayment() async {
     if (_isProcessing) return;
     setState(() => _isProcessing = true);
 
     try {
-      // Step 1: Init SDK with merchantKey + custom color
-      final initData = {
-        "merchantKey": _merchantKey,
-        "customColor": "#A59BF9", // তোমার app-এর primary color
-      };
-      await FoloosiPlugins.init(json.encode(initData));
-
-      FoloosiPlugins.setLogVisible(true); // debug-এ true, production-এ false
-
-      final profileState = context.read<ProfileBloc>().state;
-      final profile = profileState is ProfileLoaded ? profileState.profileData : null;
-
-      // Step 2: Payment payload
-      final paymentData = {
-        "orderId":
-            widget.order.orderId ??
-            "ORD${DateTime.now().millisecondsSinceEpoch}",
-        "orderDescription": "Grabby Order Payment",
-        "orderAmount": widget.order.totalAmount,
-        "state": "",
-        "postalCode": "000000", // UAE
-        "country": "ARE", // ISO 3-digit
-        "currencyCode": "AED",
-        "customerUniqueReference": widget.order.orderId ?? "",
-        "customer": {
-          "name": profile?.name ?? "Customer",
-          "email": profile?.email ?? "",
-          "mobile": profile?.phoneNumber ?? "",
-          "code": "+971",
-          "address": profile?.addressName ?? "",
-          "city": "Dubai",
-        },
-      };
-
-      // Step 3: Launch Foloosi payment screen
-      final result = await FoloosiPlugins.makePayment(json.encode(paymentData));
+      await Future.delayed(const Duration(seconds: 1)); // Simulate processing
 
       if (!mounted) return;
       setState(() => _isProcessing = false);
 
-      if (result != null) {
-        _handlePaymentResult(result);
-      } else {
-        _showError("Payment was cancelled.");
-      }
-    } on Exception catch (e) {
-      if (!mounted) return;
-      setState(() => _isProcessing = false);
-      _showError("Payment failed: ${e.toString()}");
-    }
-  }
-
-  void _handlePaymentResult(dynamic result) {
-    debugPrint("Foloosi Payment Result: $result");
-
-    try {
-      final data = result is String ? json.decode(result) : result;
-      final status = data['status']?.toString().toLowerCase();
-
-      if (status == 'success' ||
-          status == '1' ||
-          data['transaction_no'] != null) {
-        final transactionNo =
-            data['transaction_no'] ?? data['data']?['transaction_no'] ?? '';
-
-        context.pushReplacementNamed(
-          RoutesPath.paymentSuccessPath,
-          extra: widget.order,
-        );
-      } else {
-        _showError("Payment not completed. Status: $status");
-      }
-    } catch (_) {
-      // result string-ই success message হতে পারে
       context.pushReplacementNamed(
         RoutesPath.paymentSuccessPath,
         extra: widget.order,
       );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isProcessing = false);
+      _showError("Payment failed: ${e.toString()}");
     }
   }
 
@@ -141,10 +68,10 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
             ),
 
-            // Payment Method — Foloosi
+            // Payment Method
             _buildSection(
               title: AppStaticStrings.paymentMethod,
-              child: _buildFoloosiCard(),
+              child: _buildPaymentCard(),
             ),
 
             // Order Summary
@@ -190,16 +117,16 @@ class _PaymentPageState extends State<PaymentPage> {
       bottomNavigationBar: Padding(
         padding: AppPadding.getPadding12(context).copyWith(bottom: 24),
         child: CustomButton(
-          text: _isProcessing ? "Processing..." : "Pay with Foloosi",
+          text: _isProcessing ? "Processing..." : "Confirm Payment",
           onPressed: () {
-            _isProcessing ? null : _startFoloosiPayment();
+            _isProcessing ? null : _startPayment();
           },
         ),
       ),
     );
   }
 
-  Widget _buildFoloosiCard() {
+  Widget _buildPaymentCard() {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -224,14 +151,7 @@ class _PaymentPageState extends State<PaymentPage> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Center(
-              child: Text(
-                'F',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: Icon(Icons.payment, color: Colors.white),
             ),
           ),
           const SizedBox(width: 14),
@@ -240,7 +160,7 @@ class _PaymentPageState extends State<PaymentPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomText(
-                  'Foloosi',
+                  'Payment',
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),

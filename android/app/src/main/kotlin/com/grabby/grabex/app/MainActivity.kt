@@ -1,4 +1,4 @@
-package com.example.grabby_app
+package com.grabby.grabex.app
 
 import io.flutter.embedding.android.FlutterActivity
 

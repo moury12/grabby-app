@@ -53,13 +53,20 @@ dependencies:
   socket_io_client: ^3.1.2
   flutter_polyline_points: ^3.1.0
   onesignal_flutter: ^5.5.1
-  foloosi_plugins: ^1.0.15
   change_app_package_name: ^1.5.0
   webview_flutter: ^4.14.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.4
 
+flutter_launcher_icons:
+  ios: true
+  android: false   # 🚫 Don’t touch Android icons
+  image_path_ios: "assets/icons/app_icon.jpg"
+
+  remove_alpha_ios: true
+  
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your

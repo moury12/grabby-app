@@ -34,10 +34,6 @@ PODS:
     - DKImagePickerController/PhotoGallery
     - Flutter
   - Flutter (1.0.0)
-  - Foloosi-iOS-SDK (1.5.1)
-  - foloosi_plugins (1.0.15):
-    - Flutter
-    - Foloosi-iOS-SDK (~> 1.5.0)
   - geocoding_ios (1.0.5):
     - Flutter
   - geolocator_apple (1.2.0):
@@ -124,7 +120,6 @@ PODS:
 DEPENDENCIES:
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - Flutter (from `Flutter`)
-  - foloosi_plugins (from `.symlinks/plugins/foloosi_plugins/ios`)
   - geocoding_ios (from `.symlinks/plugins/geocoding_ios/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/darwin`)
   - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
@@ -139,7 +134,6 @@ SPEC REPOS:
   trunk:
     - DKImagePickerController
     - DKPhotoGallery
-    - Foloosi-iOS-SDK
     - Google-Maps-iOS-Utils
     - GoogleMaps
     - OneSignalXCFramework
@@ -151,8 +145,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/file_picker/ios"
   Flutter:
     :path: Flutter
-  foloosi_plugins:
-    :path: ".symlinks/plugins/foloosi_plugins/ios"
   geocoding_ios:
     :path: ".symlinks/plugins/geocoding_ios/ios"
   geolocator_apple:
@@ -175,25 +167,23 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   DKImagePickerController: 946cec48c7873164274ecc4624d19e3da4c1ef3c
   DKPhotoGallery: b3834fecb755ee09a593d7c9e389d8b5d6deed60
-  file_picker: b159e0c068aef54932bb15dc9fd1571818edaf49
+  file_picker: a0560bc09d61de87f12d246fc47d2119e6ef37be
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  Foloosi-iOS-SDK: 7188cf80738eb29ec3742a63eeeabdf2504185c4
-  foloosi_plugins: 4e73343304e046c772bc1664fec0104a9f232696
-  geocoding_ios: eafacae6ad11a1eb56681f7d11df602a5fd49416
-  geolocator_apple: 66b711889fd333205763b83c9dcf0a57a28c7afd
+  geocoding_ios: 33776c9ebb98d037b5e025bb0e7537f6dd19646e
+  geolocator_apple: ab36aa0e8b7d7a2d7639b3b4e48308394e8cef5e
   Google-Maps-iOS-Utils: 66d6de12be1ce6d3742a54661e7a79cb317a9321
-  google_maps_flutter_ios: 11687ec5d93f8e025e12daab0a5636fa9f71d53e
+  google_maps_flutter_ios: 0cf046caf50b00d95071f79e8031fcd5ef902beb
   GoogleMaps: 8939898920281c649150e0af74aa291c60f2e77d
-  image_picker_ios: 4f2f91b01abdb52842a8e277617df877e40f905b
-  onesignal_flutter: dc6f5e684148ebd0133326c85ecb86147a14bbf6
+  image_picker_ios: e0ece4aa2a75771a7de3fa735d26d90817041326
+  onesignal_flutter: e2e682f7c4b0604ddba445d4f8ea6e79c77dabe1
   OneSignalXCFramework: 943852e7d70d719f73e9669d48620aeec1b93022
   SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
-  shared_preferences_foundation: 5086985c1d43c5ba4d5e69a4e8083a389e2909e6
-  sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
+  shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
+  sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
   SwiftyGif: 706c60cf65fa2bc5ee0313beece843c8eb8194d4
-  url_launcher_ios: bb13df5870e8c4234ca12609d04010a21be43dfa
-  webview_flutter_wkwebview: 29eb20d43355b48fe7d07113835b9128f84e3af4
+  url_launcher_ios: 7a95fa5b60cc718a708b8f2966718e93db0cef1b
+  webview_flutter_wkwebview: 8ebf4fded22593026f7dbff1fbff31ea98573c8d
 
 PODFILE CHECKSUM: e30f02f9d1c72c47bb6344a0a748c9d268180865
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.17.0
