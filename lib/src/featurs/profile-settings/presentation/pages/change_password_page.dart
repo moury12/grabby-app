@@ -23,86 +23,81 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is ChangePasswordSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
-          context.pop();
-        } else if (state is AuthFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.kRedColor,
-            ),
-          );
-        }
-      },
-      child: Scaffold(
-        backgroundColor: AppColors.kBackgroundColor,
-        appBar: AppBar(
-          title: const Text(AppStaticStrings.changePassword),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            onPressed: () => context.pop(),
-            icon: const Icon(Icons.arrow_back, color: AppColors.kTextColor),
-          ),
-        ),
-        body: SingleChildScrollView(
-          padding: AppPadding.getPadding12(context),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 12,
-              children: [
-                _buildField(
-                  label: AppStaticStrings.typePassword,
-                  hint: "••••••••",
-                  controller: _oldPasswordController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return AppStaticStrings.required;
-                    }
-                    return null;
-                  },
-                ),
-                _buildField(
-                  label: AppStaticStrings.newPassword,
-                  hint: "••••••••",
-                  controller: _newPasswordController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return AppStaticStrings.required;
-                    }
-                    if (value.length < 6) {
-                      return "Password must be at least 6 characters";
-                    }
-                    return null;
-                  },
-                ),
-                _buildField(
-                  label: AppStaticStrings.newConfirmPassword,
-                  hint: "••••••••",
-                  controller: _confirmPasswordController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return AppStaticStrings.required;
-                    }
-                    if (value != _newPasswordController.text) {
-                      return "Passwords do not match";
-                    }
-                    return null;
-                  },
-                ),
+    return BlocProvider(
+      create: (context) => sl<AuthBloc>(),
+      child: BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is ChangePasswordSuccess) {
+            CustomSnackbar.show(context, state.message);
+            context.pop();
+          } else if (state is AuthFailure) {
+            CustomSnackbar.show(context, state.message, isError: true);
+          }
+        },
+        builder: (context, state) {
+          final isLoading = state is AuthLoading;
 
-                BlocBuilder<AuthBloc, AuthState>(
-                  builder: (context, state) {
-                    return CustomButton(
+          return Scaffold(
+            backgroundColor: AppColors.kBackgroundColor,
+            appBar: AppBar(
+              title: const Text(AppStaticStrings.changePassword),
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                onPressed: () => context.pop(),
+                icon: const Icon(Icons.arrow_back, color: AppColors.kTextColor),
+              ),
+            ),
+            body: SingleChildScrollView(
+              padding: AppPadding.getPadding12(context),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 12,
+                  children: [
+                    _buildField(
+                      label: AppStaticStrings.typePassword,
+                      hint: "••••••••",
+                      controller: _oldPasswordController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return AppStaticStrings.required;
+                        }
+                        return null;
+                      },
+                    ),
+                    _buildField(
+                      label: AppStaticStrings.newPassword,
+                      hint: "••••••••",
+                      controller: _newPasswordController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return AppStaticStrings.required;
+                        }
+                        if (value.length < 6) {
+                          return "Password must be at least 6 characters";
+                        }
+                        return null;
+                      },
+                    ),
+                    _buildField(
+                      label: AppStaticStrings.newConfirmPassword,
+                      hint: "••••••••",
+                      controller: _confirmPasswordController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return AppStaticStrings.required;
+                        }
+                        if (value != _newPasswordController.text) {
+                          return "Passwords do not match";
+                        }
+                        return null;
+                      },
+                    ),
+                    CustomButton(
                       text: AppStaticStrings.update,
-                      isLoading: state is AuthLoading,
+                      isLoading: isLoading,
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           context.read<AuthBloc>().add(
@@ -117,13 +112,13 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                       },
                       backgroundColor: AppColors.kPrimaryColor,
                       borderRadius: 12,
-                    );
-                  },
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
@@ -132,7 +127,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     required String label,
     required String hint,
     required TextEditingController controller,
-   FormFieldValidator<dynamic>? validator,
+    FormFieldValidator<dynamic>? validator,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,11 +138,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           textEditingController: controller,
           hintText: hint,
           validator: validator,
-          suffixIcon: const Icon(
-            Icons.visibility_off_outlined,
-            color: AppColors.kSecondaryTextColor,
-            size: 20,
-          ),
           isPassword: true,
         ),
       ],

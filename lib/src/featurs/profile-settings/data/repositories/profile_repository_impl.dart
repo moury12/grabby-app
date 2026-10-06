@@ -21,6 +21,7 @@ abstract class ProfileRepository {
     required double lat,
     required double lon,
   });
+  Future<ApiResponse<void>> deleteAccount();
 }
 
 class ProfileRepositoryImpl implements ProfileRepository {
@@ -73,5 +74,10 @@ class ProfileRepositoryImpl implements ProfileRepository {
       lat: lat,
       lon: lon,
     );
+  }
+
+  @override
+  Future<ApiResponse<void>> deleteAccount() async {
+    return await remoteDataSource.deleteAccount();
   }
 }

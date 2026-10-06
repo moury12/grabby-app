@@ -22,6 +22,7 @@ abstract class ProfileRemoteDataSource {
     required double lat,
     required double lon,
   });
+  Future<ApiResponse<void>> deleteAccount();
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
@@ -127,5 +128,10 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       print('Error in updateUserLocation: $e');
       rethrow;
     }
+  }
+
+  @override
+  Future<ApiResponse<void>> deleteAccount() async {
+    return await apiService.delete<void>(ApiEndpoints.deleteAccount);
   }
 }

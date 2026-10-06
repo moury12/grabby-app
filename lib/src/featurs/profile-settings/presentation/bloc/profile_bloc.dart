@@ -27,6 +27,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
        super(ProfileInitial()) {
     on<GetProfileEvent>(_onGetProfile);
     on<UpdateProfileEvent>(_onUpdateProfile);
+    on<DeleteAccountEvent>(_onDeleteAccount);
   }
 
   Future<void> _onGetProfile(
@@ -188,6 +189,31 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     } catch (e, stackTrace) {
       print('ProfileBloc Unexpected Error: $e');
       print('Stacktrace: $stackTrace');
+      emit(ProfileError('Something went wrong. Please try again.'));
+    }
+  }
+
+  Future<void> _onDeleteAccount(
+    DeleteAccountEvent event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(ProfileLoading());
+    try {
+      final response = await _profileRepository.deleteAccount();
+      if (response.success) {
+        _locationSubscription?.cancel();
+        _socketService.disconnect();
+        await _localStorageService.clearAuthData();
+        emit(DeleteAccountSuccess(response.message));
+      } else {
+        emit(ProfileError(response.message));
+      }
+    } on ApiException catch (e) {
+      debugPrint('ProfileBloc deleteAccount ApiException: ${e.message}');
+      emit(ProfileError(e.message));
+    } catch (e, stackTrace) {
+      debugPrint('ProfileBloc deleteAccount Unexpected Error: $e');
+      debugPrint('Stacktrace: $stackTrace');
       emit(ProfileError('Something went wrong. Please try again.'));
     }
   }

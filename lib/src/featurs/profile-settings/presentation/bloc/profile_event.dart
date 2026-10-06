@@ -25,3 +25,5 @@ class UpdateProfileEvent extends ProfileEvent {
     this.contactPhone,
   });
 }
+
+class DeleteAccountEvent extends ProfileEvent {}

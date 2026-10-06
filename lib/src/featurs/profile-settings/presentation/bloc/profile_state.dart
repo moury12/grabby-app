@@ -16,6 +16,11 @@ class ProfileUpdateSuccess extends ProfileState {
   ProfileUpdateSuccess([this.message = 'Profile updated successfully']);
 }
 
+class DeleteAccountSuccess extends ProfileState {
+  final String message;
+  DeleteAccountSuccess([this.message = 'Your account has been deleted successfully']);
+}
+
 class ProfileError extends ProfileState {
   final String message;
   ProfileError(this.message);

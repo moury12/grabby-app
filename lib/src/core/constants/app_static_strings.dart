@@ -251,6 +251,8 @@ class AppStaticStrings {
   static const String accountSettings = "Account Settings";
   static const String changePassword = "Change Password";
   static const String deleteAccount = "Delete Account";
+  static const String areYouSureDeleteAccount =
+      "Are you sure you want to delete your account? This action cannot be undone.";
   static const String typePassword = "Type Password";
   static const String newPassword = "New Password";
   static const String newConfirmPassword = "New Confirm Password";
