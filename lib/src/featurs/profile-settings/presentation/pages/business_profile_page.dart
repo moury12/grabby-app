@@ -73,13 +73,13 @@ class BusinessProfilePage extends StatelessWidget {
                             context.pushNamed(RoutesPath.branchTimingsName),
                       ),
                       Divider(color: Colors.white, height: 1),
-                      ProfileMenuItem(
-                        title: AppStaticStrings.marketingCampaigns,
-                        icon: Icons.campaign_outlined,
-                        onTap: () => context.pushNamed(
-                          RoutesPath.marketingCampaignsName,
-                        ),
-                      ),
+                      // ProfileMenuItem(
+                      //   title: AppStaticStrings.marketingCampaigns,
+                      //   icon: Icons.campaign_outlined,
+                      //   onTap: () => context.pushNamed(
+                      //     RoutesPath.marketingCampaignsName,
+                      //   ),
+                      // ),
                       Divider(color: Colors.white, height: 1),
                       ProfileMenuItem(
                         title: AppStaticStrings.settings,

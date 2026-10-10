@@ -1,603 +1,139 @@
-flutter precache --force --ios --verbose
-#fix the issue for flutter framework not found
-
-@contextScopeItemMention from here u need to perferom hit an post api 
-endpoint: /orders
-body: {
-  "branchId": "{{branchId}}",
-  "items": [
-    {
-      "productId": "{{menuId}}",
-      "menuName": "Cappuccino Deluxe",
-      "menuPrice": 22,
-      "menuImage": "/images/image/cappuccino.png",
-      "quantity": 1,
-      "additionalItems": [
-        {
-          "itemId": "69abda42ddcc21dbd181cca9",
-          "name": "Whipped Cream",
-          "price": 2.5,
-          "quantity": 1
-        }
-      ],
-      "totalPrice": 24.5
-    }
-  ],
-  "pickupType": "carPickup",
- 
-  "totalAmount": 24.5, //this payment will be subtotal alwys from cart model
-  "paymentMethod": "Credit Card",
-  "carPlates": "DXB 12345"
-}
-nd payment is just credit card right now 
-@contextScopeItemMention in this page  show data from the post method response , here is response : {
-    "statusCode": 201,
-    "success": true,
-    "message": "Order created successfully",
-    "data": {
-        "orderId": "ORD-260423-0002",
-        "customerId": "69abe179ddcc21dbd181ccce",
-        "branchId": "69abda42ddcc21dbd181cca9",
-        "items": [
-            {
-                "productId": "69d5f135f11015b5775a951f",
-                "menuName": "Cappuccino Deluxe",
-                "menuPrice": 22,
-                "menuImage": "/images/image/cappuccino.png",
-                "quantity": 1,
-                "additionalItems": [
-                    {
-                        "itemId": "69abda42ddcc21dbd181cca9",
-                        "name": "Whipped Cream",
-                        "price": 2.5,
-                        "quantity": 1,
-                        "_id": "69e9a0d9c9ceacd1afab7583",
-                        "id": "69e9a0d9c9ceacd1afab7583"
-                    }
-                ],
-                "totalPrice": 24.5,
-                "_id": "69e9a0d9c9ceacd1afab7582"
-            }
-        ],
-        "pickupType": "carPickup",
-        "applyGrabbyCredit": 0,
-        "applyPromoCode": 0,
-        "totalAmount": 24.5,
-        "carPlates": "DXB 12345",
-        "status": "pending",
-        "paymentStatus": "paid",
-        "paymentMethod": "Credit Card",
-        "transactionId": "6478ytwefgfwe456743654",
-        "_id": "69e9a0d9c9ceacd1afab7581",
-        "createdAt": "2026-04-23T04:32:25.803Z",
-        "updatedAt": "2026-04-23T04:32:25.803Z",
-        "__v": 0,
-        "id": "69e9a0d9c9ceacd1afab7581"
-    }
-}
-
-and then for get order list 
-end point :/orders/my-orders?status=placed&status=preparing/page=1&limit=10
-- status for active orders = placed, preparing, ready
-- status for all no need to add status params 
--status for complete = completed
--status for cancel = cancelled
-
-@contextScopeItemMention u need to implement it here 
-here is response : {
-    "statusCode": 200,
-    "success": true,
-    "message": "Orders retrieved successfully",
-    "meta": {
-        "page": 1,
-        "limit": 10,
-        "total": 2,
-        "totalPage": 1
-    },
-    "data": [
-        {
-            "_id": "69e9c6937a78785a5ecd83dc",
-            "orderId": "ORD-260423-0002",
-            "customerId": "69abe179ddcc21dbd181ccce",
-            "branchId": {
-                "_id": "69abda42ddcc21dbd181cca9",
-                "branch_name": "Branch 2 - JBR",
-                "address": "JBR The Walk, Shop 5"
-            },
-            "items": [
-                {
-                    "productId": "69d5f135f11015b5775a951f",
-                    "menuName": "Cappuccino Deluxe",
-                    "menuPrice": 22,
-                    "menuImage": "/images/image/cappuccino.png",
-                    "quantity": 1,
-                    "additionalItems": [
-                        {
-                            "itemId": "69abda42ddcc21dbd181cca9",
-                            "name": "Whipped Cream",
-                            "price": 2.5,
-                            "quantity": 1,
-                            "_id": "69e9c6937a78785a5ecd83de",
-                            "id": "69e9c6937a78785a5ecd83de"
-                        }
-                    ],
-                    "totalPrice": 24.5,
-                    "_id": "69e9c6937a78785a5ecd83dd"
-                }
-            ],
-            "pickupType": "carPickup",
-            "applyGrabbyCredit": 0,
-            "applyPromoCode": 0,
-            "totalAmount": 24.5,
-            "carPlates": "DXB 12345",
-            "status": "placed",
-            "paymentStatus": "paid",
-            "paymentMethod": "Credit Card",
-            "transactionId": "6478ytwefgfwe456743654",
-            "createdAt": "2026-04-23T07:13:23.766Z",
-            "updatedAt": "2026-04-23T07:13:23.766Z",
-            "id": "69e9c6937a78785a5ecd83dc"
-        },
-        {
-            "_id": "69e9a77a512b83dcfc57e114",
-            "orderId": "ORD-260423-0001",
-            "customerId": "69abe179ddcc21dbd181ccce",
-            "branchId": {
-                "_id": "69abda42ddcc21dbd181cca9",
-                "branch_name": "Branch 2 - JBR",
-                "address": "JBR The Walk, Shop 5"
-            },
-            "items": [
-                {
-                    "productId": "69d5f135f11015b5775a951f",
-                    "menuName": "Cappuccino Deluxe",
-                    "menuPrice": 22,
-                    "menuImage": "/images/image/cappuccino.png",
-                    "quantity": 1,
-                    "additionalItems": [
-                        {
-                            "itemId": "69abda42ddcc21dbd181cca9",
-                            "name": "Whipped Cream",
-                            "price": 2.5,
-                            "quantity": 1,
-                            "_id": "69e9a77a512b83dcfc57e116",
-                            "id": "69e9a77a512b83dcfc57e116"
-                        }
-                    ],
-                    "totalPrice": 24.5,
-                    "_id": "69e9a77a512b83dcfc57e115"
-                }
-            ],
-            "pickupType": "carPickup",
-            "applyGrabbyCredit": 0,
-            "applyPromoCode": 0,
-            "totalAmount": 24.5,
-            "carPlates": "DXB 12345",
-            "status": "preparing",
-            "paymentStatus": "paid",
-            "paymentMethod": "Credit Card",
-            "transactionId": "6478ytwefgfwe456743654",
-            "createdAt": "2026-04-23T05:00:42.957Z",
-            "updatedAt": "2026-04-23T05:13:16.141Z",
-            "id": "69e9a77a512b83dcfc57e114"
-        }
-    ]
-}
+# Grabby App 🍔📍
+
+A modern, multi-vendor food discovery, ordering, and branch management mobile application built with **Flutter**, utilizing **Clean Architecture** and **BLoC (Business Logic Component)** pattern.
+
+Grabby connects customers with local restaurants and food shops while empowering business owners to manage multiple branch locations, real-time incoming orders, menus, and marketing campaigns from a single unified platform.
+
+---
+
+## 📱 App Purpose & Core Value Proposition
+
+Grabby bridges the gap between culinary merchants and food lovers through an intuitive, location-aware digital marketplace. It serves two distinct user roles:
+
+1. **Customers:** Discover nearby eateries, explore localized menus, place orders seamlessly, track fulfillment status in real-time on live maps, and earn loyalty rewards.
+2. **Shop Owners / Merchants:** Operate and scale single or multi-branch restaurant businesses, manage real-time order workflows, customize operational hours and menus per branch, and monitor business performance.
+
+---
+
+## 👥 User Roles & Features Breakdown
+
+### 1. 🛍️ Shop Owner (Merchant) Role
+
+The merchant interface is tailored for streamlined kitchen and multi-branch operations:
+
+- **Multi-Branch Operations & Onboarding:**
+  - **Branch Creation & Profiling:** Add multiple branch locations with specific names, addresses, contact details, and precise Google Maps coordinates.
+  - **Operational Timings (`branch_timings_page`):** Set daily opening and closing hours, operational shifts, and active/inactive status per branch.
+  - **Menu Synchronization:** Choose to share a universal menu across all branches or customize unique menus for specific branch locations.
+- **Shop Dashboard & Analytics (`ShopHomePage`):**
+  - High-level business overview with real-time statistics (total orders, revenue, active orders).
+  - Branch-wise filter dropdown to switch performance and order metrics across different outlets dynamically.
+- **Live Order Management (`ShopOrderManagementPage`):**
+  - End-to-end status lifecycle tabs: `Placed` ➔ `Preparing` ➔ `Ready` ➔ `Completed` / `Cancelled`.
+  - Detailed order view with itemized receipts, customer notes, delivery details, and one-tap status updates.
+- **Menu & Category Management (`ShopMenuManagementPage`):**
+  - Add, edit, and organize categories and food items with pricing, descriptions, preparation times, and dish imagery.
+  - Fast search with debounced filtering and item availability toggles.
+- **Business Profile & Payouts:**
+  - Automated payout onboarding via **Stripe Connect** WebView.
+  - Document verification submission for business compliance.
+
+---
+
+### 2. 🍽️ Customer Role
+
+The customer interface provides an engaging, hyper-local dining and delivery experience:
+
+- **Hyper-Local Discovery & Search (`HomePage`):**
+  - Automatically fetches nearby branches based on the customer's GPS coordinates (`lat`/`lng`).
+  - View real-time status badges (`Open Now` / `Closed`), estimated distances, delivery times, and active branch promotions.
+  - Search and filter by cuisine, food category, or restaurant name.
+- **Menu Exploration & Cart Checkout:**
+  - Rich menu browsing categorized by items, add-ons, and pricing.
+  - Frictionless cart management with promo code validation and clear pricing breakdowns.
+- **Real-Time Order Tracking & Live Map (`OrderTrackingPage` & `OrderTrackingMapViewPage`):**
+  - Real-time updates showing progress from kitchen preparation to dispatch and delivery.
+  - Interactive Google Maps tracking showing branch location, customer delivery destination, and delivery progression.
+- **Loyalty Rewards & Promotions:**
+  - **Digital Stamp Cards (`RewardModule`):** Earn stamps on eligible branch orders and redeem them for free food or exclusive discounts.
+  - **Promotions & Offers:** Banner carousels and promotional popups showcasing active merchant deals.
+
+---
+
+## 🏗️ Project Architecture & Tech Stack
+
+This project follows **Feature-First Clean Architecture**:
+
+```text
+lib/
+├── main.dart
+├── src/
+│   ├── core/                  # Shared utilities, themes, network clients, constants
+│   │   ├── constants/
+│   │   ├── network/
+│   │   ├── theme/
+│   │   └── utils/
+│   └── featurs/               # Modular Feature Slices
+│       ├── auth/              # Multi-step authentication, onboarding, role selection
+│       ├── branch/            # Branch data models, repositories, and logic
+│       ├── cart-checkout/     # Cart management, coupon application, checkout flow
+│       ├── home/              # Customer feed & Merchant dashboard
+│       ├── menu/              # Menu and category CRUD & listings
+│       ├── navigation/        # Bottom navigation bars (Customer & Shop)
+│       ├── order/             # Order placement, merchant management & live tracking
+│       ├── profile-settings/  # Account settings, branch timings, Stripe Connect
+│       ├── promotion/         # Marketing banners and discount campaigns
+│       ├── restruant/         # Restaurant/branch details and profiles
+│       ├── reward/            # Customer loyalty stamp rewards
+│       └── support/           # Help center and customer support
+```
+
+### Key Libraries & Dependencies
+
+- **State Management:** `flutter_bloc` & `bloc`
+- **Routing:** `go_router` (declarative routing with deep links)
+- **Dependency Injection:** `get_it`
+- **Maps & Geolocation:** `google_maps_flutter`, `geolocator`
+- **Networking:** `dio` / `http` with interceptors
+- **Payment & Verification:** `pinput`, Stripe Connect integration
+- **Styling & Assets:** `flutter_svg`, `cached_network_image`, `cupertino_icons`
+
+---
 
-@contextScopeItemMention 
-in here it will load order details page 
-end point: /orders/{{orderId}}, 
+## 🚀 Getting Started
 
-{
+### Prerequisites
 
-    "statusCode": 200,
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (>= 3.10.7)
+- [Dart SDK](https://dart.dev/get-dart)
+- Xcode (for iOS builds) / Android Studio (for Android builds)
+- Google Maps API Key configured for both Android and iOS
 
-    "success": true,
+### Installation
 
-    "message": "Order retrieved successfully",
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/moury12/grabby-app.git
+   cd grabby_app
+   ```
 
-    "data": {
+2. **Install dependencies:**
+   ```bash
+   flutter pub get
+   ```
 
-        "_id": "69e9c6937a78785a5ecd83dc",
+3. **Configure Environment Keys:**
+   - Add your Google Maps API key to:
+     - Android: `android/app/src/main/AndroidManifest.xml`
+     - iOS: `ios/Runner/AppDelegate.swift`
 
-        "orderId": "ORD-260423-0002",
+4. **Run the application:**
+   ```bash
+   flutter run
+   ```
 
-        "customerId": {
+---
 
-            "_id": "69abe179ddcc21dbd181ccce",
+## 📋 App Store Review Information (Apple)
 
-            "name": "John Updated",
-
-            "email": "tss.sta.gpt@gmail.com",
-
-            "phone_number": "+971501234567"
-
-        },
-
-        "branchId": {
-
-            "_id": "69abda42ddcc21dbd181cca9",
-
-            "shopOwnerId": "69abd78b7cd774b6e0a41acd",
-
-            "branch_name": "Branch 2 - JBR",
-
-            "address": "JBR The Walk, Shop 5",
-
-            "lat": 25.0773,
-
-            "lng": 55.133,
-
-            "phone_number": "+971504445566",
-
-            "availability": [
-
-                {
-
-                    "day": "Sunday",
-
-                    "open": "7:00 AM",
-
-                    "close": "11:00 PM",
-
-                    "isClosed": false
-
-                },
-
-                {
-
-                    "day": "Monday",
-
-                    "open": "7:00 AM",
-
-                    "close": "11:00 PM",
-
-                    "isClosed": false
-
-                },
-
-                {
-
-                    "day": "Tuesday",
-
-                    "open": "7:00 AM",
-
-                    "close": "11:00 PM",
-
-                    "isClosed": false
-
-                },
-
-                {
-
-                    "day": "Wednesday",
-
-                    "open": "7:00 AM",
-
-                    "close": "11:00 PM",
-
-                    "isClosed": false
-
-                },
-
-                {
-
-                    "day": "Thursday",
-
-                    "open": "7:00 AM",
-
-                    "close": "12:00 AM",
-
-                    "isClosed": false
-
-                },
-
-                {
-
-                    "day": "Friday",
-
-                    "open": "2:00 PM",
-
-                    "close": "12:00 AM",
-
-                    "isClosed": false
-
-                },
-
-                {
-
-                    "day": "Saturday",
-
-                    "open": "8:00 AM",
-
-                    "close": "11:00 PM",
-
-                    "isClosed": false
-
-                }
-
-            ],
-
-            "applyMenuForAll": false,
-
-            "__v": 0,
-
-            "createdAt": "2026-03-07T07:56:50.375Z",
-
-            "updatedAt": "2026-03-07T07:56:50.375Z"
-
-        },
-
-        "items": [
-
-            {
-
-                "productId": "69d5f135f11015b5775a951f",
-
-                "menuName": "Cappuccino Deluxe",
-
-                "menuPrice": 22,
-
-                "menuImage": "/images/image/cappuccino.png",
-
-                "quantity": 1,
-
-                "additionalItems": [
-
-                    {
-
-                        "itemId": "69abda42ddcc21dbd181cca9",
-
-                        "name": "Whipped Cream",
-
-                        "price": 2.5,
-
-                        "quantity": 1,
-
-                        "_id": "69e9c6937a78785a5ecd83de",
-
-                        "id": "69e9c6937a78785a5ecd83de"
-
-                    }
-
-                ],
-
-                "totalPrice": 24.5,
-
-                "_id": "69e9c6937a78785a5ecd83dd"
-
-            }
-
-        ],
-
-        "pickupType": "carPickup",
-
-        "applyGrabbyCredit": 0,
-
-        "applyPromoCode": 0,
-
-        "totalAmount": 24.5,
-
-        "carPlates": "DXB 12345",
-
-        "status": "placed",
-
-        "paymentStatus": "paid",
-
-        "paymentMethod": "Credit Card",
-
-        "transactionId": "6478ytwefgfwe456743654",
-
-        "createdAt": "2026-04-23T07:13:23.766Z",
-
-        "updatedAt": "2026-04-23T07:13:23.766Z",
-
-        "__v": 0,
-
-        "id": "69e9c6937a78785a5ecd83dc"
-
-    }
-
-}
-
-
-
-here is response 
-status will be this 'placed', 'preparing', 'ready', 'completed' it will by dynamic step by step 
-implement call function to that branch num @contextScopeItemMention 
-here show shop on map 
-shop name order id  for now notify shop will be as it is 
-
-______________ this is all for customer side ___________
-
-
-@contextScopeItemMention 
-need to show the dynamic branches 
-@contextScopeItemMention 
-from here u will get the list 
-@contextScopeItemMention 
-here u need to show this tabs 
-'placed', 'preparing', 'ready', 'completed', 'cancelled'
-
-end point for get order list : orders/branch/{{branchId}}?status=placed&page=1&limit=10
-response : {
-    "statusCode": 200,
-    "success": true,
-    "message": "Branch orders retrieved successfully",
-    "meta": {
-        "page": 1,
-        "limit": 10,
-        "total": 1,
-        "totalPage": 1
-    },
-    "data": [
-        {
-            "_id": "69e9a77a512b83dcfc57e114",
-            "orderId": "ORD-260423-0001",
-            "customerId": {
-                "_id": "69abe179ddcc21dbd181ccce",
-                "name": "John Updated",
-                "email": "tss.sta.gpt@gmail.com",
-                "phone_number": "+971501234567"
-            },
-            "branchId": "69abda42ddcc21dbd181cca9",
-            "items": [
-                {
-                    "productId": "69d5f135f11015b5775a951f",
-                    "menuName": "Cappuccino Deluxe",
-                    "menuPrice": 22,
-                    "menuImage": "/images/image/cappuccino.png",
-                    "quantity": 1,
-                    "additionalItems": [
-                        {
-                            "itemId": "69abda42ddcc21dbd181cca9",
-                            "name": "Whipped Cream",
-                            "price": 2.5,
-                            "quantity": 1,
-                            "_id": "69e9a77a512b83dcfc57e116",
-                            "id": "69e9a77a512b83dcfc57e116"
-                        }
-                    ],
-                    "totalPrice": 24.5,
-                    "_id": "69e9a77a512b83dcfc57e115"
-                }
-            ],
-            "pickupType": "carPickup",
-            "applyGrabbyCredit": 0,
-            "applyPromoCode": 0,
-            "totalAmount": 24.5,
-            "carPlates": "DXB 12345",
-            "status": "placed",
-            "paymentStatus": "paid",
-            "paymentMethod": "Credit Card",
-            "transactionId": "6478ytwefgfwe456743654",
-            "createdAt": "2026-04-23T05:00:42.957Z",
-            "updatedAt": "2026-04-23T05:00:42.957Z",
-            "id": "69e9a77a512b83dcfc57e114"
-        }
-    ]
-}
-@contextScopeItemMention 
-right now this part need to comment out 
-@contextScopeItemMention 
-right now it will be unpaid just 
-
-
-@contextScopeItemMention 
-here need to show order details : 
-end point: 
-/orders/{{orderId}}
-response : {
-    "statusCode": 200,
-    "success": true,
-    "message": "Order retrieved successfully",
-    "data": {
-        "_id": "69e9a77a512b83dcfc57e114",
-        "orderId": "ORD-260423-0001",
-        "customerId": {
-            "_id": "69abe179ddcc21dbd181ccce",
-            "name": "John Updated",
-            "email": "tss.sta.gpt@gmail.com",
-            "phone_number": "+971501234567"
-        },
-        "branchId": {
-            "_id": "69abda42ddcc21dbd181cca9",
-            "branch_name": "Branch 2 - JBR",
-            "address": "JBR The Walk, Shop 5"
-        },
-        "items": [
-            {
-                "productId": "69d5f135f11015b5775a951f",
-                "menuName": "Cappuccino Deluxe",
-                "menuPrice": 22,
-                "menuImage": "/images/image/cappuccino.png",
-                "quantity": 1,
-                "additionalItems": [
-                    {
-                        "itemId": "69abda42ddcc21dbd181cca9",
-                        "name": "Whipped Cream",
-                        "price": 2.5,
-                        "quantity": 1,
-                        "_id": "69e9a77a512b83dcfc57e116",
-                        "id": "69e9a77a512b83dcfc57e116"
-                    }
-                ],
-                "totalPrice": 24.5,
-                "_id": "69e9a77a512b83dcfc57e115"
-            }
-        ],
-        "pickupType": "carPickup",
-        "applyGrabbyCredit": 0,
-        "applyPromoCode": 0,
-        "totalAmount": 24.5,
-        "carPlates": "DXB 12345",
-        "status": "placed",
-        "paymentStatus": "paid",
-        "paymentMethod": "Credit Card",
-        "transactionId": "6478ytwefgfwe456743654",
-        "createdAt": "2026-04-23T05:00:42.957Z",
-        "updatedAt": "2026-04-23T05:00:42.957Z",
-        "__v": 0,
-        "id": "69e9a77a512b83dcfc57e114"
-    }
-}
-@contextScopeItemMention 
-from here need update status 
-endpoint: /orders/{{orderId}}/status
-body: {
-  "status": "preparing"
-}
-response : {
-    "statusCode": 200,
-    "success": true,
-    "message": "Order status updated successfully",
-    "data": {
-        "_id": "69e9a77a512b83dcfc57e114",
-        "orderId": "ORD-260423-0001",
-        "customerId": "69abe179ddcc21dbd181ccce",
-        "branchId": "69abda42ddcc21dbd181cca9",
-        "items": [
-            {
-                "productId": "69d5f135f11015b5775a951f",
-                "menuName": "Cappuccino Deluxe",
-                "menuPrice": 22,
-                "menuImage": "/images/image/cappuccino.png",
-                "quantity": 1,
-                "additionalItems": [
-                    {
-                        "itemId": "69abda42ddcc21dbd181cca9",
-                        "name": "Whipped Cream",
-                        "price": 2.5,
-                        "quantity": 1,
-                        "_id": "69e9a77a512b83dcfc57e116",
-                        "id": "69e9a77a512b83dcfc57e116"
-                    }
-                ],
-                "totalPrice": 24.5,
-                "_id": "69e9a77a512b83dcfc57e115"
-            }
-        ],
-        "pickupType": "carPickup",
-        "applyGrabbyCredit": 0,
-        "applyPromoCode": 0,
-        "totalAmount": 24.5,
-        "carPlates": "DXB 12345",
-        "status": "preparing",
-        "paymentStatus": "paid",
-        "paymentMethod": "Credit Card",
-        "transactionId": "6478ytwefgfwe456743654",
-        "createdAt": "2026-04-23T05:00:42.957Z",
-        "updatedAt": "2026-04-23T05:13:16.141Z",
-        "__v": 0,
-        "id": "69e9a77a512b83dcfc57e114"
-    }
-}
-
- after update autometicaly refresh that page @contextScopeItemMention 
-nd tab will be change automatically based on update status 
-_______________ this is all shop owner order system-----------------
-
-every page must have refresh feature implemented use sliver so can empty list also can be refresh 
-set dynamic data 
-and avoid unnecessary complexity 
-
+For App Store submission inquiries, please refer to the detailed role breakdown, business model description, and access credentials provided in App Store Connect Resolution Center.
