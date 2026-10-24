@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 
 import '../../../../src_export.dart';
@@ -50,7 +51,9 @@ class _SignUpPageState extends State<SignUpPage> {
         return;
       }
       final role = widget.extra?['role'] as String? ?? 'customer';
-      if (role == 'shop') {
+      // On iOS, shop owner registration is not permitted per Apple Guideline 3.1.1.
+      // Shop owners must register via the web portal.
+      if (role == 'shop' && !Platform.isIOS) {
         context.read<AuthBloc>().add(
           RegisterShopOwnerEvent(
             name: _nameController.text.trim(),
