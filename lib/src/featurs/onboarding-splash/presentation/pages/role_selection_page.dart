@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import '../../../../src_export.dart';
 
 /// The role-selection screen where the user chooses Customer or Driver.
@@ -49,12 +51,24 @@ class RoleSelectionPage extends StatelessWidget {
                       role: UserRole.customer,
                     ),
 
-                    RoleCard(
-                      title: AppStaticStrings.continueAsShop,
-                      subtitle: AppStaticStrings.manageOrdersAndMenu,
-                      icon: ImagesConstant.kShopOwnerIcon,
-                      role: UserRole.shop,
-                    ),
+                    if (!Platform.isIOS)
+                      RoleCard(
+                        title: AppStaticStrings.continueAsShop,
+                        subtitle: AppStaticStrings.manageOrdersAndMenu,
+                        icon: ImagesConstant.kShopOwnerIcon,
+                        role: UserRole.shop,
+                      )
+                    else
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 4.0),
+                        child: CustomText(
+                          'To register your business, please visit our website.',
+                          variant: TextVariant.labelSmall,
+                          color: AppColors.kSecondaryTextColor,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                     const Spacer(),
                   ],
                 ),

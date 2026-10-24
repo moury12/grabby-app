@@ -48,3 +48,5 @@ app.*.map.json
 android/local.properties
 ios/Flutter/Secrets.xcconfig
 Secrets.xcconfig
+config.bat
+node_modules
